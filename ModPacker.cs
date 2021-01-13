@@ -18,21 +18,21 @@ namespace AM2R_ModPacker
     public partial class ModPacker : Form
     {
         private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
-        private bool originalLoaded, modLoaded, androidLoaded;
-        private string localPath, originalLocation, modLocation, androidLocation;
+        private bool isOriginalLoaded, isModLoaded, isApkLoaded;
+        private string localPath, originalPath, modPath, apkPath;
         private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll" };
         private ModProfile profile;
         public ModPacker()
         {
             InitializeComponent();
             profile = new ModProfile(1, "", "", false, "default", false, false);
-            originalLoaded = false;
-            modLoaded = false;
-            androidLoaded = false;
+            isOriginalLoaded = false;
+            isModLoaded = false;
+            isApkLoaded = false;
 
             localPath = Directory.GetCurrentDirectory();
-            originalLocation = "";
-            modLocation = "";
+            originalPath = "";
+            modPath = "";
         }
 
         #region WinForms events
@@ -40,9 +40,9 @@ namespace AM2R_ModPacker
         private void OriginalButton_Click(object sender, EventArgs e)
         {
             // Open window to select AM2R 1.1
-            (originalLoaded, originalLocation) = SelectFile("Please select AM2R_11.zip", "zip", "zip files (*.zip)|*.zip");
+            (isOriginalLoaded, originalPath) = SelectFile("Please select AM2R_11.zip", "zip", "zip files (*.zip)|*.zip");
 
-            OriginalLabel.Visible = originalLoaded; 
+            OriginalLabel.Visible = isOriginalLoaded; 
 
             UpdateCreateButton();
         }
@@ -50,9 +50,9 @@ namespace AM2R_ModPacker
         private void ModButton_Click(object sender, EventArgs e)
         {
             // Open window to select modded AM2R
-            (modLoaded, modLocation) = SelectFile("Please select your custom AM2R .zip", "zip", "zip files (*.zip)|*.zip");
+            (isModLoaded, modPath) = SelectFile("Please select your custom AM2R .zip", "zip", "zip files (*.zip)|*.zip");
 
-            ModLabel.Visible = modLoaded;
+            ModLabel.Visible = isModLoaded;
 
             UpdateCreateButton();
         }
@@ -115,8 +115,8 @@ namespace AM2R_ModPacker
             }
 
             // Extract 1.1 and modded AM2R to their own directories in temp work
-            ZipFile.ExtractToDirectory(originalLocation, tempOriginal);
-            ZipFile.ExtractToDirectory(modLocation, tempMod);
+            ZipFile.ExtractToDirectory(originalPath, tempOriginal);
+            ZipFile.ExtractToDirectory(modPath, tempMod);
 
             // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
             try
@@ -168,7 +168,7 @@ namespace AM2R_ModPacker
                 {
                     FileName = "cmd.exe",
                     WorkingDirectory = tempAndroid,
-                    Arguments = "/C java -jar \"" + localPath + "\\utilities\\android\\apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + androidLocation + "\"",
+                    Arguments = "/C java -jar \"" + localPath + "\\utilities\\android\\apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + apkPath + "\"",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -283,19 +283,19 @@ namespace AM2R_ModPacker
             CreateLabel.Text = "Mod package created!";
         }
 
-        private void APKButton_Click(object sender, EventArgs e)
+        private void ApkButton_Click(object sender, EventArgs e)
         {
             // Open window to select modded AM2R APK
-            (androidLoaded, androidLocation) = SelectFile("Please select your custom AM2R .apk", "apk", "android application packages (*.apk)|*.apk");
+            (isApkLoaded, apkPath) = SelectFile("Please select your custom AM2R .apk", "apk", "android application packages (*.apk)|*.apk");
 
-            APKLabel.Visible = androidLoaded;
+            ApkLabel.Visible = isApkLoaded;
 
             UpdateCreateButton();
         }
 
         private void AndroidCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            APKButton.Enabled = AndroidCheckBox.Checked;
+            ApkButton.Enabled = AndroidCheckBox.Checked;
             UpdateCreateButton();
         }
 
@@ -321,18 +321,18 @@ namespace AM2R_ModPacker
         private void AbortPatch()
         {
             // Unload files
-            originalLoaded = false;
-            modLoaded = false;
-            androidLoaded = false;
-            originalLocation = "";
-            modLocation = "";
-            androidLocation = "";
+            isOriginalLoaded = false;
+            isModLoaded = false;
+            isApkLoaded = false;
+            originalPath = "";
+            modPath = "";
+            apkPath = "";
 
             // Set labels
             CreateLabel.Text = "Mod packaging aborted!";
             OriginalLabel.Visible = false;
             ModLabel.Visible = false;
-            APKLabel.Visible = false;
+            ApkLabel.Visible = false;
 
             // Remove temp directory
             if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
@@ -360,7 +360,7 @@ namespace AM2R_ModPacker
 
         private void UpdateCreateButton()
         {
-            if (originalLoaded && modLoaded && (!AndroidCheckBox.Checked || androidLoaded))
+            if (isOriginalLoaded && isModLoaded && (!AndroidCheckBox.Checked || isApkLoaded))
             {
                 CreateButton.Enabled = true;
             }

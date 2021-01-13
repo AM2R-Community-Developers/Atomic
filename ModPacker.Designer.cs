@@ -42,8 +42,8 @@
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.APKLabel = new System.Windows.Forms.Label();
-            this.APKButton = new System.Windows.Forms.Button();
+            this.ApkLabel = new System.Windows.Forms.Label();
+            this.ApkButton = new System.Windows.Forms.Button();
             this.AndroidCheckBox = new System.Windows.Forms.CheckBox();
             this.YYCCheckBox = new System.Windows.Forms.CheckBox();
             this.SaveCheckBox = new System.Windows.Forms.CheckBox();
@@ -175,8 +175,8 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.APKLabel);
-            this.panel3.Controls.Add(this.APKButton);
+            this.panel3.Controls.Add(this.ApkLabel);
+            this.panel3.Controls.Add(this.ApkButton);
             this.panel3.Controls.Add(this.AndroidCheckBox);
             this.panel3.Controls.Add(this.YYCCheckBox);
             this.panel3.Controls.Add(this.SaveCheckBox);
@@ -186,26 +186,26 @@
             this.panel3.Size = new System.Drawing.Size(291, 111);
             this.panel3.TabIndex = 2;
             // 
-            // APKLabel
+            // ApkLabel
             // 
-            this.APKLabel.AutoSize = true;
-            this.APKLabel.Location = new System.Drawing.Point(176, 90);
-            this.APKLabel.Name = "APKLabel";
-            this.APKLabel.Size = new System.Drawing.Size(112, 13);
-            this.APKLabel.TabIndex = 7;
-            this.APKLabel.Text = "Modded APK Loaded!";
-            this.APKLabel.Visible = false;
+            this.ApkLabel.AutoSize = true;
+            this.ApkLabel.Location = new System.Drawing.Point(176, 90);
+            this.ApkLabel.Name = "ApkLabel";
+            this.ApkLabel.Size = new System.Drawing.Size(112, 13);
+            this.ApkLabel.TabIndex = 7;
+            this.ApkLabel.Text = "Modded APK Loaded!";
+            this.ApkLabel.Visible = false;
             // 
-            // APKButton
+            // ApkButton
             // 
-            this.APKButton.Enabled = false;
-            this.APKButton.Location = new System.Drawing.Point(3, 85);
-            this.APKButton.Name = "APKButton";
-            this.APKButton.Size = new System.Drawing.Size(143, 23);
-            this.APKButton.TabIndex = 6;
-            this.APKButton.Text = "Load modded Android APK";
-            this.APKButton.UseVisualStyleBackColor = true;
-            this.APKButton.Click += new System.EventHandler(this.APKButton_Click);
+            this.ApkButton.Enabled = false;
+            this.ApkButton.Location = new System.Drawing.Point(3, 85);
+            this.ApkButton.Name = "ApkButton";
+            this.ApkButton.Size = new System.Drawing.Size(143, 23);
+            this.ApkButton.TabIndex = 6;
+            this.ApkButton.Text = "Load modded Android APK";
+            this.ApkButton.UseVisualStyleBackColor = true;
+            this.ApkButton.Click += new System.EventHandler(this.ApkButton_Click);
             // 
             // AndroidCheckBox
             // 
@@ -289,12 +289,12 @@
         private System.Windows.Forms.TextBox NameTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button APKButton;
+        private System.Windows.Forms.Button ApkButton;
         private System.Windows.Forms.CheckBox AndroidCheckBox;
         private System.Windows.Forms.CheckBox YYCCheckBox;
         private System.Windows.Forms.CheckBox SaveCheckBox;
         private System.Windows.Forms.CheckBox MusicCheckBox;
-        private System.Windows.Forms.Label APKLabel;
+        private System.Windows.Forms.Label ApkLabel;
         private System.Windows.Forms.Label CreateLabel;
     }
 }
