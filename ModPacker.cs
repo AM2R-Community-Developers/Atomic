@@ -17,7 +17,7 @@ namespace AM2R_ModPacker
 {
     public partial class ModPacker : Form
     {
-        private static string originalMD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
+        private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
         private bool originalLoaded, modLoaded, androidLoaded;
         private string localPath, originalLocation, modLocation, androidLocation;
         private ModProfile profile;
@@ -131,7 +131,7 @@ namespace AM2R_ModPacker
             ZipFile.ExtractToDirectory(modLocation, tempMod);
 
             // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
-            if (CalculateMD5(tempOriginal + "\\data.win") != originalMD5)
+            if (CalculateMD5(tempOriginal + "\\data.win") != ORIGINAL_MD5)
             {
                 // Show error box
                 MessageBox.Show("1.1 data.win does not meet MD5 checksum! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
