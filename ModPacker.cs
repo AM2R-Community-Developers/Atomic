@@ -71,7 +71,7 @@ namespace AM2R_ModPacker
         private void OriginalButton_Click(object sender, EventArgs e)
         {
             // Open window to select AM2R 1.1
-            (originalLoaded, originalLocation) = SelectFile("Please select your custom AM2R .zip", "zip", "zip files (*.zip)|*.zip");
+            (originalLoaded, originalLocation) = SelectFile("Please select AM2R_11.zip", "zip", "zip files (*.zip)|*.zip");
 
             OriginalLabel.Visible = originalLoaded; 
 
@@ -81,7 +81,7 @@ namespace AM2R_ModPacker
         private void ModButton_Click(object sender, EventArgs e)
         {
             // Open window to select modded AM2R
-            (modLoaded, modLocation) = SelectFile("Please select AM2R_11.zip", "zip", "zip files (*.zip)|*.zip");
+            (modLoaded, modLocation) = SelectFile("Please select your custom AM2R .zip", "zip", "zip files (*.zip)|*.zip");
 
             ModLabel.Visible = modLoaded;
 
