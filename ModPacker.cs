@@ -92,18 +92,18 @@ namespace AM2R_ModPacker
             }
 
             // Create temp work folders
-            string tempFolder = "", 
-                   tempOriginal = "", 
-                   tempMod = "", 
-                   tempProfile = "";
+            string tempPath = "", 
+                   tempOriginalPath = "", 
+                   tempModPath = "", 
+                   tempProfilePath = "";
 
             // We might not have permission to access to the temp directory, so we need to catch the exception.
             try
             {
-                tempFolder = Directory.CreateDirectory(Path.GetTempPath() + "\\AM2RModPacker").FullName;
-                tempOriginal = Directory.CreateDirectory(tempFolder + "\\original").FullName;
-                tempMod = Directory.CreateDirectory(tempFolder + "\\mod").FullName;
-                tempProfile = Directory.CreateDirectory(tempFolder + "\\profile").FullName;
+                tempPath = Directory.CreateDirectory(Path.GetTempPath() + "\\AM2RModPacker").FullName;
+                tempOriginalPath = Directory.CreateDirectory(tempPath + "\\original").FullName;
+                tempModPath = Directory.CreateDirectory(tempPath + "\\mod").FullName;
+                tempProfilePath = Directory.CreateDirectory(tempPath + "\\profile").FullName;
             }
             catch (System.Security.SecurityException)
             {
@@ -115,13 +115,13 @@ namespace AM2R_ModPacker
             }
 
             // Extract 1.1 and modded AM2R to their own directories in temp work
-            ZipFile.ExtractToDirectory(originalPath, tempOriginal);
-            ZipFile.ExtractToDirectory(modPath, tempMod);
+            ZipFile.ExtractToDirectory(originalPath, tempOriginalPath);
+            ZipFile.ExtractToDirectory(modPath, tempModPath);
 
             // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
             try
             {
-                string newMD5 = CalculateMD5(tempOriginal + "\\data.win");
+                string newMD5 = CalculateMD5(tempOriginalPath + "\\data.win");
 
                 if (newMD5 != ORIGINAL_MD5)
                 {
@@ -146,19 +146,19 @@ namespace AM2R_ModPacker
             // Create AM2R.exe and data.win patches
             if (profile.usesYYC)
             {
-                CreatePatch(tempOriginal + "\\data.win", tempMod + "\\AM2R.exe", tempProfile + "\\AM2R.xdelta");
+                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
             }
             else
             {
-                CreatePatch(tempOriginal + "\\data.win", tempMod + "\\data.win", tempProfile + "\\data.xdelta");
+                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\data.win", tempProfilePath + "\\data.xdelta");
 
-                CreatePatch(tempOriginal + "\\AM2R.exe", tempMod + "\\AM2R.exe", tempProfile + "\\AM2R.xdelta");
+                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
             }
 
             // Create game.droid patch and wrapper if Android is supported
             if (profile.android)
             {
-                string tempAndroid = Directory.CreateDirectory(tempFolder + "\\android").FullName;
+                string tempAndroid = Directory.CreateDirectory(tempPath + "\\android").FullName;
 
                 // Extract APK 
                 // - java -jar apktool.jar d "%~dp0AM2RWrapper_old.apk"
@@ -182,7 +182,7 @@ namespace AM2R_ModPacker
                 }
 
                 // Create game.droid patch
-                CreatePatch(tempOriginal + "\\data.win", tempAndroid + "\\assets\\game.droid", tempProfile + "\\droid.xdelta");
+                CreatePatch(tempOriginalPath + "\\data.win", tempAndroid + "\\assets\\game.droid", tempProfilePath + "\\droid.xdelta");
 
                 // Delete excess files in APK
 
@@ -200,12 +200,12 @@ namespace AM2R_ModPacker
                 {
                     if (file.Name.EndsWith(".ini") && file.Name != "modifiers.ini")
                     {
-                        if (File.Exists(tempProfile + "\\AM2R.ini"))
+                        if (File.Exists(tempProfilePath + "\\AM2R.ini"))
                         {
                             // This shouldn't be a problem... normally...
-                            File.Delete(tempProfile + "\\AM2R.ini");
+                            File.Delete(tempProfilePath + "\\AM2R.ini");
                         }
-                        File.Copy(file.FullName, tempProfile + "\\AM2R.ini");
+                        File.Copy(file.FullName, tempProfilePath + "\\AM2R.ini");
                     }
 
                     if (!whitelist.Contains(file.Name))
@@ -227,7 +227,7 @@ namespace AM2R_ModPacker
                 {
                     FileName = "cmd.exe",
                     WorkingDirectory = tempAndroid,
-                    Arguments = "/C java -jar \"" + localPath + "\\utilities\\android\\apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfile + "\\AM2RWrapper.apk\"",
+                    Arguments = "/C java -jar \"" + localPath + "\\utilities\\android\\apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfilePath + "\\AM2RWrapper.apk\"",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -244,30 +244,30 @@ namespace AM2R_ModPacker
 
             // Copy datafiles (exclude .ogg if custom music is not selected)
 
-            DirectoryInfo dinfo = new DirectoryInfo(tempMod);
+            DirectoryInfo dinfo = new DirectoryInfo(tempModPath);
 
-            Directory.CreateDirectory(tempProfile + "\\files_to_copy");
+            Directory.CreateDirectory(tempProfilePath + "\\files_to_copy");
 
             if (profile.usesCustomMusic)
             {
                 // Copy files, excluding the blacklist
-                CopyFilesRecursive(dinfo, DATAFILES_BLACKLIST, tempProfile + "\\files_to_copy");
+                CopyFilesRecursive(dinfo, DATAFILES_BLACKLIST, tempProfilePath + "\\files_to_copy");
             }
             else
             {
                 // Get list of 1.1's music files
-                string[] musFiles = Directory.GetFiles(tempOriginal, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
+                string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
 
                 // Combine musFiles with the known datafiles for a blacklist
                 string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
                 // Copy files, excluding the blacklist
-                CopyFilesRecursive(dinfo, blacklist, tempProfile + "\\files_to_copy");
+                CopyFilesRecursive(dinfo, blacklist, tempProfilePath + "\\files_to_copy");
             }            
 
             // Export profile as JSON
             string jsonOutput = JsonConvert.SerializeObject(profile);
-            File.WriteAllText(tempProfile + "\\modmeta.json", jsonOutput);
+            File.WriteAllText(tempProfilePath + "\\modmeta.json", jsonOutput);
 
             // Compress temp folder to .zip
             if (File.Exists(output))
@@ -275,10 +275,10 @@ namespace AM2R_ModPacker
                 File.Delete(output);
             }
 
-            ZipFile.CreateFromDirectory(tempProfile, output);
+            ZipFile.CreateFromDirectory(tempProfilePath, output);
 
             // Delete temp folder
-            Directory.Delete(tempFolder, true);
+            Directory.Delete(tempPath, true);
 
             CreateLabel.Text = "Mod package created!";
         }
