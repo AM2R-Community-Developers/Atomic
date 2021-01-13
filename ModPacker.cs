@@ -92,11 +92,27 @@ namespace AM2R_ModPacker
             }
 
             // Create temp work folders
-            // string tempFolder = Directory.CreateDirectory(localPath + "\\temp").FullName;
-            string tempFolder = Directory.CreateDirectory(Path.GetTempPath() + "\\AM2RModPacker").FullName;
-            string tempOriginal = Directory.CreateDirectory(tempFolder + "\\original").FullName;
-            string tempMod = Directory.CreateDirectory(tempFolder + "\\mod").FullName;
-            string tempProfile = Directory.CreateDirectory(tempFolder + "\\profile").FullName;
+            string tempFolder = "", 
+                   tempOriginal = "", 
+                   tempMod = "", 
+                   tempProfile = "";
+
+            // We might not have permission to access to the temp directory, so we need to catch the exception.
+            try
+            {
+                tempFolder = Directory.CreateDirectory(Path.GetTempPath() + "\\AM2RModPacker").FullName;
+                tempOriginal = Directory.CreateDirectory(tempFolder + "\\original").FullName;
+                tempMod = Directory.CreateDirectory(tempFolder + "\\mod").FullName;
+                tempProfile = Directory.CreateDirectory(tempFolder + "\\profile").FullName;
+            }
+            catch (System.Security.SecurityException)
+            {
+                MessageBox.Show("Could not create temp directory! Please run the application with administrator rights.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                AbortPatch();
+
+                return;
+            }
 
             // Extract 1.1 and modded AM2R to their own directories in temp work
             ZipFile.ExtractToDirectory(originalLocation, tempOriginal);

@@ -261,6 +261,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(331, 297);
+            this.MinimumSize = new System.Drawing.Size(331, 297);
             this.Name = "ModPacker";
             this.Text = "AM2R ModPacker";
             this.panel1.ResumeLayout(false);
