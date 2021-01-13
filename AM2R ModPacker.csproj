@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModProfile.cs" />
     <Compile Include="ModPacker.cs">
       <SubType>Form</SubType>
     </Compile>

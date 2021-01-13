@@ -20,6 +20,7 @@ namespace AM2R_ModPacker
         private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
         private bool originalLoaded, modLoaded, androidLoaded;
         private string localPath, originalLocation, modLocation, androidLocation;
+        private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll" };
         private ModProfile profile;
         public ModPacker()
         {
@@ -35,38 +36,6 @@ namespace AM2R_ModPacker
         }
 
         #region WinForms events
-
-        private void NameTextBox_TextChanged(object sender, EventArgs e)
-        {
-            profile.name = NameTextBox.Text;
-        }
-
-        private void AuthorTextBox_TextChanged(object sender, EventArgs e)
-        {
-            profile.author = AuthorTextBox.Text;
-        }
-
-        private void MusicCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            profile.usesCustomMusic = MusicCheckBox.Checked;
-        }
-
-        private void SaveCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (SaveCheckBox.Checked)
-            {
-                profile.saveLocation = "custom";
-            }
-            else
-            {
-                profile.saveLocation = "default";
-            }
-        }
-
-        private void YYCCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            profile.usesYYC = YYCCheckBox.Checked;
-        }
 
         private void OriginalButton_Click(object sender, EventArgs e)
         {
@@ -90,6 +59,8 @@ namespace AM2R_ModPacker
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
+            LoadProfileParameters();
+
             string output;
 
             if (profile.name == "" || profile.author == "")
@@ -115,13 +86,14 @@ namespace AM2R_ModPacker
             }
 
             // Cleanup in case of previous errors
-            if (Directory.Exists(localPath + "\\temp"))
+            if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
             {
-                Directory.Delete(localPath + "\\temp", true);
+                Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
             }
 
             // Create temp work folders
-            string tempFolder = Directory.CreateDirectory(localPath + "\\temp").FullName;
+            // string tempFolder = Directory.CreateDirectory(localPath + "\\temp").FullName;
+            string tempFolder = Directory.CreateDirectory(Path.GetTempPath() + "\\AM2RModPacker").FullName;
             string tempOriginal = Directory.CreateDirectory(tempFolder + "\\original").FullName;
             string tempMod = Directory.CreateDirectory(tempFolder + "\\mod").FullName;
             string tempProfile = Directory.CreateDirectory(tempFolder + "\\profile").FullName;
@@ -131,18 +103,30 @@ namespace AM2R_ModPacker
             ZipFile.ExtractToDirectory(modLocation, tempMod);
 
             // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
-            if (CalculateMD5(tempOriginal + "\\data.win") != ORIGINAL_MD5)
+            try
             {
-                // Show error box
-                MessageBox.Show("1.1 data.win does not meet MD5 checksum! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string newMD5 = CalculateMD5(tempOriginal + "\\data.win");
 
-                // Cleanup 
-                Directory.Delete(tempFolder, true);
+                if (newMD5 != ORIGINAL_MD5)
+                {
+                    // Show error box
+                    MessageBox.Show("1.1 data.win does not meet MD5 checksum! Mod packaging aborted.\n1.1 MD5: " + ORIGINAL_MD5 + "\nYour MD5: " + newMD5, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                // Exit function
+                    AbortPatch();
+
+                    return;
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                // Show error message
+                MessageBox.Show("data.win not found! Are you sure you selected AM2R 1.1? Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                AbortPatch();
+
                 return;
             }
-            
+
             // Create AM2R.exe and data.win patches
             if (profile.usesYYC)
             {
@@ -250,26 +234,18 @@ namespace AM2R_ModPacker
 
             if (profile.usesCustomMusic)
             {
-                string[] blacklist = { "data.win", "AM2R.exe", "D3DX9_43.dll" };
-
-                CopyFilesRecursive(dinfo, blacklist, tempProfile + "\\files_to_copy");
+                // Copy files, excluding the blacklist
+                CopyFilesRecursive(dinfo, DATAFILES_BLACKLIST, tempProfile + "\\files_to_copy");
             }
             else
             {
-                string[] musFiles = new string[Directory.GetFiles(tempOriginal, "*.ogg").Length];
+                // Get list of 1.1's music files
+                string[] musFiles = Directory.GetFiles(tempOriginal, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
 
-                int i = 0;
+                // Combine musFiles with the known datafiles for a blacklist
+                string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
-                foreach (FileInfo file in new DirectoryInfo(tempOriginal).GetFiles("*.ogg"))
-                {
-                    musFiles[i] = file.Name;
-                    i++;
-                }
-                // "musAlphaFight.ogg", "musAncientGuardian.ogg", "musArachnus.ogg", "musArea1A.ogg", "musArea1B.ogg", "musArea2A.ogg", "musArea2B.ogg", "musArea3A.ogg", "musArea4A.ogg", "musArea4B.ogg", "musArea5A.ogg", "musArea5B.ogg", "musArea6A.ogg", "musArea7A.ogg", "musArea7B.ogg", "musArea7C.ogg", "musArea7D.ogg", "musArea8.ogg", "musCaveAmbience.ogg", "musCaveAmbienceA4.ogg", "musCredits.ogg", "musEris.ogg", "musFanfare.ogg", "musGammaFight.ogg", "musGenesis.ogg", "musHatchling.ogg"
-                string[] dataFiles = { "data.win", "AM2R.exe", "D3DX9_43.dll" };
-
-                string[] blacklist = musFiles.Concat(dataFiles).ToArray();
-
+                // Copy files, excluding the blacklist
                 CopyFilesRecursive(dinfo, blacklist, tempProfile + "\\files_to_copy");
             }            
 
@@ -289,9 +265,6 @@ namespace AM2R_ModPacker
             Directory.Delete(tempFolder, true);
 
             CreateLabel.Text = "Mod package created!";
-
-            // Open file explorer window with .zip selected
-            Process.Start("explorer.exe", "/select, \"" + output + "\"");
         }
 
         private void APKButton_Click(object sender, EventArgs e)
@@ -306,12 +279,51 @@ namespace AM2R_ModPacker
 
         private void AndroidCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            profile.android = AndroidCheckBox.Checked;
             APKButton.Enabled = AndroidCheckBox.Checked;
             UpdateCreateButton();
         }
 
         #endregion
+
+        private void LoadProfileParameters()
+        {
+            profile.name = NameTextBox.Text;
+            profile.author = AuthorTextBox.Text;
+            profile.usesCustomMusic = MusicCheckBox.Checked;            
+            profile.usesYYC = YYCCheckBox.Checked;
+            profile.android = AndroidCheckBox.Checked;
+            if (SaveCheckBox.Checked)
+            {
+                profile.saveLocation = "custom";
+            }
+            else
+            {
+                profile.saveLocation = "default";
+            }
+        }
+
+        private void AbortPatch()
+        {
+            // Unload files
+            originalLoaded = false;
+            modLoaded = false;
+            androidLoaded = false;
+            originalLocation = "";
+            modLocation = "";
+            androidLocation = "";
+
+            // Set labels
+            CreateLabel.Text = "Mod packaging aborted!";
+            OriginalLabel.Visible = false;
+            ModLabel.Visible = false;
+            APKLabel.Visible = false;
+
+            // Remove temp directory
+            if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
+            {
+                Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
+            }
+        }
 
         private void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
         {
@@ -320,10 +332,6 @@ namespace AM2R_ModPacker
                 if (!blacklist.Contains(file.Name))
                 {
                     file.CopyTo(destination + "\\" + file.Name);
-                    /*if (!file.Name.EndsWith(".ogg") || profile.usesCustomMusic)
-                    {
-                        file.CopyTo(destination + "\\" + file.Name);
-                    }*/
                 }
             }
 

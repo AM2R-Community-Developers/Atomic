@@ -142,10 +142,10 @@
             // AuthorTextBox
             // 
             this.AuthorTextBox.Location = new System.Drawing.Point(63, 28);
+            this.AuthorTextBox.MaxLength = 30;
             this.AuthorTextBox.Name = "AuthorTextBox";
             this.AuthorTextBox.Size = new System.Drawing.Size(225, 20);
             this.AuthorTextBox.TabIndex = 10;
-            this.AuthorTextBox.TextChanged += new System.EventHandler(this.AuthorTextBox_TextChanged);
             // 
             // label2
             // 
@@ -159,10 +159,10 @@
             // NameTextBox
             // 
             this.NameTextBox.Location = new System.Drawing.Point(63, 6);
+            this.NameTextBox.MaxLength = 30;
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.Size = new System.Drawing.Size(225, 20);
             this.NameTextBox.TabIndex = 8;
-            this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
             // 
             // label1
             // 
@@ -228,7 +228,6 @@
             this.YYCCheckBox.TabIndex = 4;
             this.YYCCheckBox.Text = "Uses the YoYo Compiler";
             this.YYCCheckBox.UseVisualStyleBackColor = true;
-            this.YYCCheckBox.CheckedChanged += new System.EventHandler(this.YYCCheckBox_CheckedChanged);
             // 
             // SaveCheckBox
             // 
@@ -239,7 +238,6 @@
             this.SaveCheckBox.TabIndex = 3;
             this.SaveCheckBox.Text = "Uses custom savedata folder";
             this.SaveCheckBox.UseVisualStyleBackColor = true;
-            this.SaveCheckBox.CheckedChanged += new System.EventHandler(this.SaveCheckBox_CheckedChanged);
             // 
             // MusicCheckBox
             // 
@@ -251,7 +249,6 @@
             this.MusicCheckBox.TabIndex = 2;
             this.MusicCheckBox.Text = "Uses custom music";
             this.MusicCheckBox.UseVisualStyleBackColor = true;
-            this.MusicCheckBox.CheckedChanged += new System.EventHandler(this.MusicCheckBox_CheckedChanged);
             // 
             // ModPacker
             // 
