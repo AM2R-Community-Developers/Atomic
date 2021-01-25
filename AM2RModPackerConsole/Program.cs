@@ -21,7 +21,7 @@ namespace AM2RModPackerConsole
             mod
         }
 
-        static string[] viableParameters = { "-n", "--name", "-a", "--author", "-o", "--original", "-m", "--mod", "-c", "--custommusic", "-s", "--savedata", "-y", "-yoyo" };
+        static string[] viableParameters = { "-n", "--name", "-a", "--author", "-o", "--original", "-m", "--mod", "-c", "--custommusic", "-s", "--savedata", "-y", "-yoyo", "-v", "--verbose" };
         static string[] helpParameter = { "-h", "--help", "?" };
         static string[] verboseParameter = { "-v", "--verbose" };
         static ModProfile profile = new ModProfile(1, "", "", false, "default", false, false);
@@ -104,7 +104,7 @@ namespace AM2RModPackerConsole
                 //parse Parameter, if the parameter is not invalid, that means that the next parameter will be one outside of the viable parameter range
                 lastParameter = ReturnParameterValue(argument);
 
-                if (isVerboseOn)
+                if (isVerboseOn && lastParameter != parameterValues.invalid)
                     Console.WriteLine($"DEBUG: Recgonized current argument as {lastParameter}");
 
                 //this is a stupid hack, and would probably break if this would be further expanded, but at the moment it works.
@@ -138,7 +138,7 @@ namespace AM2RModPackerConsole
             {
                 Console.WriteLine("Not all necessary parameters were filled out! Please refer to the \"--help\" command for further information.");
                 if (isVerboseOn)
-                    Console.WriteLine($"DEBUG: name is currently \"{profile.name}\", author is currently \"{profile.author}\", original path is currently \"{originalPath}\", mod path is currently \"{modPath}\"");
+                    Console.WriteLine($"DEBUG: name is currently {profile.name}, author is currently {profile.author}, original path is currently {originalPath}, mod path is currently {modPath}");
                 return;
             }
 
@@ -232,6 +232,7 @@ namespace AM2RModPackerConsole
             if (patchResult == -1)
             {
                 AbortPatch();
+                Console.WriteLine("Mod packaging aborted!");
                 return;
             }
 
@@ -460,7 +461,7 @@ namespace AM2RModPackerConsole
             if (isVerboseOn)
             {
                 Console.WriteLine($"DEBUG: IsCurrentOSWindows? -> {isCurrentOSWindows}");
-                Console.WriteLine($"DEBUG: Trying to execute \"{parameters.FileName}\" with arguments \"{parameters.Arguments}\"");
+                Console.WriteLine($"DEBUG: Trying to execute \"{parameters.FileName} {parameters.Arguments}\"");
             }
 
             //we only check for this on windows, since on other platforms, we just call xdelta via command.
@@ -477,6 +478,7 @@ namespace AM2RModPackerConsole
                 try
                 {
                     proc.Start();
+
                 }
                 catch (Exception e)
                 {
