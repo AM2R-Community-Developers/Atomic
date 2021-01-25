@@ -148,7 +148,8 @@ namespace AM2RModPackerConsole
             //the actual patching begins here
             //atm it's just mostly copypasted from the winforms project, would be better, if we could put this into a file that both projects could access
             Console.WriteLine("Patching begins...");
-            string output = localPath + Path.DirectorySeparatorChar + profile.name + ".zip";
+            string output = localPath + sep + profile.name + ".zip";
+
             // Cleanup in case of previous errors
             if (Directory.Exists(Path.GetTempPath() + $"{sep}AM2RModPacker"))
             {
@@ -363,13 +364,23 @@ namespace AM2RModPackerConsole
                 File.Delete(output);
 
                 if (isVerboseOn)
-                    Console.WriteLine($"DEBUG: {output} existed, deletion successfull");
+                    Console.WriteLine($"DEBUG: {output} existed already, deletion successfull");
             }
 
-            ZipFile.CreateFromDirectory(tempProfilePath, output);
+            //try catch this. It could be that the path is read-only, that the path is too long, io error occured or something else
+            try
+            {
+                ZipFile.CreateFromDirectory(tempProfilePath, output);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                AbortPatch();
+                return;
+            }
 
             if (isVerboseOn)
-                Console.WriteLine("DEBUG: Zipping successfull");
+                Console.WriteLine($"DEBUG: Zipping to {output} successfull");
 
             // Delete temp folder
             Directory.Delete(tempPath, true);
@@ -478,7 +489,6 @@ namespace AM2RModPackerConsole
                 try
                 {
                     proc.Start();
-
                 }
                 catch (Exception e)
                 {
