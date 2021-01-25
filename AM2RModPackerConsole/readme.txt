@@ -27,3 +27,6 @@ Description:
 
 -h, --help
 	Displays this help and exit
+
+-v, --verbose
+	Uses verbose mode

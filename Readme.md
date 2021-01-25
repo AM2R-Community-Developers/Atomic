@@ -12,26 +12,29 @@ General usage is the following:
 AM2RModPackerConsole --name NAME --author AUTHOR --original ORIGINALPATH --mod MODPATH [--custommusic] [--savedata] [--yoyo]
 
 Description:
--n, --name
+-n, --name<br>
 	The name of the mod
 
--a, --author
+-a, --author<br>
 	The name of the author
 
--o, --original
+-o, --original<br>
 	The path to the AM2R_11.zip file
 
--m, --mod
+-m, --mod<br>
 	The path to your custom AM2R.zip
 
--c, --custommusic
+-c, --custommusic<br>
 	Specify if your mod uses custom music
 
--s, --savedata
+-s, --savedata<br>
 	Specify if your mod uses a custom savedata folder
 
--y, --yoyo
+-y, --yoyo<br>
 	Specify if your mod uses the YoYo compiler instead of the normal one
 
--h, --help
+-h, --help<br>
 	Displays this help and exit
+
+-v, --verbose<br>
+	Uses verbose mode
