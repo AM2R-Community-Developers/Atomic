@@ -5,7 +5,7 @@ AM2RModPackerConsole --name NAME --author AUTHOR --original ORIGINALPATH --mod M
 
 Description:
 -n, --name
-	The name of the Mod
+	The name of the mod
 
 -a, --author
 	The name of the author
@@ -23,7 +23,7 @@ Description:
 	Specify if your mod uses a custom savedata folder
 
 -y, --yoyo
-	Use the YoYo compiler instead of the normal one
+	Specify if your mod uses the YoYo compiler instead of the normal one
 
 -h, --help
 	Displays this help and exit
