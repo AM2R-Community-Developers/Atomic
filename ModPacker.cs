@@ -11,7 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Newtonsoft.Json;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Text.RegularExpressions;
 
 namespace AM2R_ModPacker
 {
@@ -20,12 +21,13 @@ namespace AM2R_ModPacker
         private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
         private bool isOriginalLoaded, isModLoaded, isApkLoaded;
         private string localPath, originalPath, modPath, apkPath;
-        private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll" };
-        private ModProfile profile;
+        private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx" };
+        private static string saveFilePath = null;
+        private ModProfileXML profile;
         public ModPacker()
         {
             InitializeComponent();
-            profile = new ModProfile(1, "", "", false, "default", false, false);
+            profile = new ModProfileXML(1, "", "", false, "default", false, false, "path"); // (1, "", "", false, "default", false, false);
             isOriginalLoaded = false;
             isModLoaded = false;
             isApkLoaded = false;
@@ -63,7 +65,7 @@ namespace AM2R_ModPacker
 
             string output;
 
-            if (profile.name == "" || profile.author == "")
+            if (profile.Name == "" || profile.Author == "")
             {
                 MessageBox.Show("Text field missing! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -144,19 +146,27 @@ namespace AM2R_ModPacker
             }
 
             // Create AM2R.exe and data.win patches
-            if (profile.usesYYC)
+            if (profile.OperatingSystem == "Windows")
             {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
-            }
-            else
-            {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\data.win", tempProfilePath + "\\data.xdelta");
+                if (profile.UsesYYC)
+                {
+                    CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                }
+                else
+                {
+                    CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\data.win", tempProfilePath + "\\data.xdelta");
 
-                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                    CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                }
+            }
+            else if (profile.OperatingSystem == "Linux")
+            {
+                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
+                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R", tempProfilePath + "\\AM2R.xdelta");
             }
 
             // Create game.droid patch and wrapper if Android is supported
-            if (profile.android)
+            if (profile.Android)
             {
                 string tempAndroid = Directory.CreateDirectory(tempPath + "\\android").FullName;
 
@@ -245,10 +255,12 @@ namespace AM2R_ModPacker
             // Copy datafiles (exclude .ogg if custom music is not selected)
 
             DirectoryInfo dinfo = new DirectoryInfo(tempModPath);
+            if (profile.OperatingSystem == "Linux")
+                dinfo = new DirectoryInfo(tempModPath + "\\assets");
 
             Directory.CreateDirectory(tempProfilePath + "\\files_to_copy");
 
-            if (profile.usesCustomMusic)
+            if (profile.UsesCustomMusic)
             {
                 // Copy files, excluding the blacklist
                 CopyFilesRecursive(dinfo, DATAFILES_BLACKLIST, tempProfilePath + "\\files_to_copy");
@@ -258,16 +270,20 @@ namespace AM2R_ModPacker
                 // Get list of 1.1's music files
                 string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
 
+                if (profile.OperatingSystem == "Linux")
+                    musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file).ToLower()).ToArray();
+
+
                 // Combine musFiles with the known datafiles for a blacklist
                 string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
                 // Copy files, excluding the blacklist
                 CopyFilesRecursive(dinfo, blacklist, tempProfilePath + "\\files_to_copy");
-            }            
+            }
 
             // Export profile as JSON
-            string jsonOutput = JsonConvert.SerializeObject(profile);
-            File.WriteAllText(tempProfilePath + "\\modmeta.json", jsonOutput);
+            string xmlOutput = Serializer.Serialize<ModProfileXML>(profile); ;// JsonConvert.SerializeObject(profile);
+            File.WriteAllText(tempProfilePath + "\\profile.xml", xmlOutput);
 
             // Compress temp folder to .zip
             if (File.Exists(output))
@@ -299,22 +315,38 @@ namespace AM2R_ModPacker
             UpdateCreateButton();
         }
 
+        private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            LinuxCheckBox.Checked = !WindowsCheckBox.Checked;
+        }
+
+        private void LinuxCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            WindowsCheckBox.Checked = !LinuxCheckBox.Checked;
+        }
+
+        private void SaveCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            CustomSaveDataButton.Enabled = SaveCheckBox.Checked;
+        }
+
         #endregion
 
         private void LoadProfileParameters()
         {
-            profile.name = NameTextBox.Text;
-            profile.author = AuthorTextBox.Text;
-            profile.usesCustomMusic = MusicCheckBox.Checked;            
-            profile.usesYYC = YYCCheckBox.Checked;
-            profile.android = AndroidCheckBox.Checked;
-            if (SaveCheckBox.Checked)
+            profile.Name = NameTextBox.Text;
+            profile.Author = AuthorTextBox.Text;
+            profile.UsesCustomMusic = MusicCheckBox.Checked;            
+            profile.UsesYYC = YYCCheckBox.Checked;
+            profile.Android = AndroidCheckBox.Checked;
+            profile.OperatingSystem = WindowsCheckBox.Checked ? "Windows" : "Linux";
+            if (SaveCheckBox.Checked && saveFilePath != null)
             {
-                profile.saveLocation = "custom";
+                profile.SaveLocation = saveFilePath;
             }
             else
             {
-                profile.saveLocation = "default";
+                profile.SaveLocation = "default";
             }
         }
 
@@ -327,18 +359,52 @@ namespace AM2R_ModPacker
             originalPath = "";
             modPath = "";
             apkPath = "";
+            saveFilePath = null;
 
             // Set labels
             CreateLabel.Text = "Mod packaging aborted!";
             OriginalLabel.Visible = false;
             ModLabel.Visible = false;
             ApkLabel.Visible = false;
+            SaveDirectoryLabel.Visible = false;
 
             // Remove temp directory
             if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
             {
                 Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
             }
+        }
+
+        private void CustomSaveDataButton_Click(object sender, EventArgs e)
+        {
+            bool wasSuccessfull = false;
+            Regex saveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\");     //this is to ensure, that the save directory is valid. so far, this is only important for windows
+
+            // we either use this nuget package. Or we choose a very bad native solution. Went for nuget instead.
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = Environment.GetEnvironmentVariable("LocalAppData");
+            dialog.IsFolderPicker = true;
+            while (!wasSuccessfull)
+            {
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    Match match = saveRegex.Match(dialog.FileName);
+                    if (match.Success == false)
+                        MessageBox.Show("Invalid Save Directory! Please choose one in %LocalAppData%");
+                    else
+                    {
+                        wasSuccessfull = true;
+                        saveFilePath = dialog.FileName.Replace(match.Value, "%LOCALAPPDATA%");
+                    }
+                }
+                else
+                {
+                    wasSuccessfull = true;
+                    saveFilePath = null;
+                }
+            }
+            SaveDirectoryLabel.Visible = wasSuccessfull;
+            SaveDirectoryLabel.Text = saveFilePath;
         }
 
         private void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
