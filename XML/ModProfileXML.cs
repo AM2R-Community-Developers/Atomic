@@ -10,8 +10,16 @@ namespace AM2R_ModPacker
     [XmlRoot("message")]
     public class ModProfileXML
     {
+        [XmlAttribute("OperatingSystem")]
+        public string OperatingSystem
+        { get; set; }
+
+        [XmlAttribute("XMLVersion")]
+        public int XMLVersion
+        { get; set; }
+
         [XmlAttribute("Version")]
-        public decimal Version
+        public string Version
         { get; set; }
 
         [XmlAttribute("Name")]
@@ -38,15 +46,13 @@ namespace AM2R_ModPacker
         public bool UsesYYC
         { get; set; }
 
-        [XmlAttribute("OperatingSystem")]
-        public string OperatingSystem
-        { get; set; }
-
         public ModProfileXML()
         { }
 
-        public ModProfileXML(decimal version, string name, string author, bool usesCustomMusic, string saveLocation, bool android, bool usesYYC, string operatingSystem)
+        public ModProfileXML(string operatingSystem, int xmlVersion, string version, string name, string author, bool usesCustomMusic, string saveLocation, bool android, bool usesYYC)
         {
+            OperatingSystem = operatingSystem;
+            XMLVersion = xmlVersion;
             Version = version;
             Name = name;
             Author = author;
@@ -54,7 +60,6 @@ namespace AM2R_ModPacker
             SaveLocation = saveLocation;
             Android = android;
             UsesYYC = usesYYC;
-            OperatingSystem = operatingSystem;
         }
     }
 }

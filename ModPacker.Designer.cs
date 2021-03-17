@@ -42,16 +42,19 @@
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.LinuxCheckBox = new System.Windows.Forms.CheckBox();
-            this.WindowsCheckBox = new System.Windows.Forms.CheckBox();
+            this.winSaveButton = new System.Windows.Forms.Button();
             this.ApkLabel = new System.Windows.Forms.Label();
             this.ApkButton = new System.Windows.Forms.Button();
             this.AndroidCheckBox = new System.Windows.Forms.CheckBox();
             this.YYCCheckBox = new System.Windows.Forms.CheckBox();
             this.SaveCheckBox = new System.Windows.Forms.CheckBox();
             this.MusicCheckBox = new System.Windows.Forms.CheckBox();
-            this.CustomSaveDataButton = new System.Windows.Forms.Button();
-            this.SaveDirectoryLabel = new System.Windows.Forms.Label();
+            this.linuxCheckBox = new System.Windows.Forms.CheckBox();
+            this.saveTextBox = new System.Windows.Forms.TextBox();
+            this.linuxButton = new System.Windows.Forms.Button();
+            this.linuxLabel = new System.Windows.Forms.Label();
+            this.versionLabel = new System.Windows.Forms.Label();
+            this.versionTextBox = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -65,7 +68,7 @@
             this.panel1.Controls.Add(this.ModButton);
             this.panel1.Controls.Add(this.OriginalLabel);
             this.panel1.Controls.Add(this.OriginalButton);
-            this.panel1.Location = new System.Drawing.Point(12, 166);
+            this.panel1.Location = new System.Drawing.Point(12, 264);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(291, 86);
             this.panel1.TabIndex = 0;
@@ -88,7 +91,7 @@
             this.CreateButton.Name = "CreateButton";
             this.CreateButton.Size = new System.Drawing.Size(285, 23);
             this.CreateButton.TabIndex = 5;
-            this.CreateButton.Text = "Create mod package";
+            this.CreateButton.Text = "Create mod package(s)";
             this.CreateButton.UseVisualStyleBackColor = true;
             this.CreateButton.Click += new System.EventHandler(this.CreateButton_Click);
             // 
@@ -134,13 +137,15 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.versionTextBox);
+            this.panel2.Controls.Add(this.versionLabel);
             this.panel2.Controls.Add(this.AuthorTextBox);
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.NameTextBox);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Location = new System.Drawing.Point(12, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(291, 51);
+            this.panel2.Size = new System.Drawing.Size(291, 77);
             this.panel2.TabIndex = 1;
             // 
             // AuthorTextBox
@@ -179,59 +184,47 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.SaveDirectoryLabel);
-            this.panel3.Controls.Add(this.CustomSaveDataButton);
-            this.panel3.Controls.Add(this.LinuxCheckBox);
-            this.panel3.Controls.Add(this.WindowsCheckBox);
+            this.panel3.Controls.Add(this.linuxLabel);
+            this.panel3.Controls.Add(this.linuxButton);
+            this.panel3.Controls.Add(this.saveTextBox);
+            this.panel3.Controls.Add(this.linuxCheckBox);
+            this.panel3.Controls.Add(this.winSaveButton);
             this.panel3.Controls.Add(this.ApkLabel);
             this.panel3.Controls.Add(this.ApkButton);
             this.panel3.Controls.Add(this.AndroidCheckBox);
             this.panel3.Controls.Add(this.YYCCheckBox);
             this.panel3.Controls.Add(this.SaveCheckBox);
             this.panel3.Controls.Add(this.MusicCheckBox);
-            this.panel3.Location = new System.Drawing.Point(12, 57);
+            this.panel3.Location = new System.Drawing.Point(12, 79);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(291, 111);
+            this.panel3.Size = new System.Drawing.Size(291, 182);
             this.panel3.TabIndex = 2;
             // 
-            // LinuxCheckBox
+            // winSaveButton
             // 
-            this.LinuxCheckBox.AutoSize = true;
-            this.LinuxCheckBox.Location = new System.Drawing.Point(194, 66);
-            this.LinuxCheckBox.Name = "LinuxCheckBox";
-            this.LinuxCheckBox.Size = new System.Drawing.Size(51, 17);
-            this.LinuxCheckBox.TabIndex = 9;
-            this.LinuxCheckBox.Text = "Linux";
-            this.LinuxCheckBox.UseVisualStyleBackColor = true;
-            this.LinuxCheckBox.CheckedChanged += new System.EventHandler(this.LinuxCheckBox_CheckedChanged);
-            // 
-            // WindowsCheckBox
-            // 
-            this.WindowsCheckBox.AutoSize = true;
-            this.WindowsCheckBox.Checked = true;
-            this.WindowsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.WindowsCheckBox.Location = new System.Drawing.Point(194, 45);
-            this.WindowsCheckBox.Name = "WindowsCheckBox";
-            this.WindowsCheckBox.Size = new System.Drawing.Size(70, 17);
-            this.WindowsCheckBox.TabIndex = 8;
-            this.WindowsCheckBox.Text = "Windows";
-            this.WindowsCheckBox.UseVisualStyleBackColor = true;
-            this.WindowsCheckBox.CheckedChanged += new System.EventHandler(this.WindowsCheckBox_CheckedChanged);
+            this.winSaveButton.Enabled = false;
+            this.winSaveButton.Location = new System.Drawing.Point(177, 2);
+            this.winSaveButton.Name = "winSaveButton";
+            this.winSaveButton.Size = new System.Drawing.Size(111, 19);
+            this.winSaveButton.TabIndex = 10;
+            this.winSaveButton.Text = "Select folder";
+            this.winSaveButton.UseVisualStyleBackColor = true;
+            this.winSaveButton.Click += new System.EventHandler(this.CustomSaveDataButton_Click);
             // 
             // ApkLabel
             // 
             this.ApkLabel.AutoSize = true;
-            this.ApkLabel.Location = new System.Drawing.Point(176, 90);
+            this.ApkLabel.Location = new System.Drawing.Point(180, 117);
             this.ApkLabel.Name = "ApkLabel";
-            this.ApkLabel.Size = new System.Drawing.Size(112, 13);
+            this.ApkLabel.Size = new System.Drawing.Size(108, 13);
             this.ApkLabel.TabIndex = 7;
-            this.ApkLabel.Text = "Modded APK Loaded!";
+            this.ApkLabel.Text = "Modded APK loaded!";
             this.ApkLabel.Visible = false;
             // 
             // ApkButton
             // 
             this.ApkButton.Enabled = false;
-            this.ApkButton.Location = new System.Drawing.Point(3, 85);
+            this.ApkButton.Location = new System.Drawing.Point(3, 112);
             this.ApkButton.Name = "ApkButton";
             this.ApkButton.Size = new System.Drawing.Size(143, 23);
             this.ApkButton.TabIndex = 6;
@@ -242,7 +235,7 @@
             // AndroidCheckBox
             // 
             this.AndroidCheckBox.AutoSize = true;
-            this.AndroidCheckBox.Location = new System.Drawing.Point(4, 66);
+            this.AndroidCheckBox.Location = new System.Drawing.Point(4, 93);
             this.AndroidCheckBox.Name = "AndroidCheckBox";
             this.AndroidCheckBox.Size = new System.Drawing.Size(107, 17);
             this.AndroidCheckBox.TabIndex = 5;
@@ -253,7 +246,7 @@
             // YYCCheckBox
             // 
             this.YYCCheckBox.AutoSize = true;
-            this.YYCCheckBox.Location = new System.Drawing.Point(4, 45);
+            this.YYCCheckBox.Location = new System.Drawing.Point(4, 72);
             this.YYCCheckBox.Name = "YYCCheckBox";
             this.YYCCheckBox.Size = new System.Drawing.Size(140, 17);
             this.YYCCheckBox.TabIndex = 4;
@@ -265,16 +258,16 @@
             this.SaveCheckBox.AutoSize = true;
             this.SaveCheckBox.Location = new System.Drawing.Point(4, 3);
             this.SaveCheckBox.Name = "SaveCheckBox";
-            this.SaveCheckBox.Size = new System.Drawing.Size(163, 17);
+            this.SaveCheckBox.Size = new System.Drawing.Size(156, 17);
             this.SaveCheckBox.TabIndex = 3;
-            this.SaveCheckBox.Text = "Uses custom savedata folder";
+            this.SaveCheckBox.Text = "Uses custom save directory";
             this.SaveCheckBox.UseVisualStyleBackColor = true;
             this.SaveCheckBox.CheckedChanged += new System.EventHandler(this.SaveCheckBox_CheckedChanged);
             // 
             // MusicCheckBox
             // 
             this.MusicCheckBox.AutoSize = true;
-            this.MusicCheckBox.Location = new System.Drawing.Point(4, 24);
+            this.MusicCheckBox.Location = new System.Drawing.Point(4, 51);
             this.MusicCheckBox.Margin = new System.Windows.Forms.Padding(2, 3, 3, 3);
             this.MusicCheckBox.Name = "MusicCheckBox";
             this.MusicCheckBox.Size = new System.Drawing.Size(117, 17);
@@ -282,41 +275,75 @@
             this.MusicCheckBox.Text = "Uses custom music";
             this.MusicCheckBox.UseVisualStyleBackColor = true;
             // 
-            // CustomSaveDataButton
+            // linuxCheckBox
             // 
-            this.CustomSaveDataButton.Enabled = false;
-            this.CustomSaveDataButton.Location = new System.Drawing.Point(194, 3);
-            this.CustomSaveDataButton.Name = "CustomSaveDataButton";
-            this.CustomSaveDataButton.Size = new System.Drawing.Size(77, 19);
-            this.CustomSaveDataButton.TabIndex = 10;
-            this.CustomSaveDataButton.Text = "Select folder";
-            this.CustomSaveDataButton.UseVisualStyleBackColor = true;
-            this.CustomSaveDataButton.Click += new System.EventHandler(this.CustomSaveDataButton_Click);
+            this.linuxCheckBox.AutoSize = true;
+            this.linuxCheckBox.Location = new System.Drawing.Point(4, 138);
+            this.linuxCheckBox.Name = "linuxCheckBox";
+            this.linuxCheckBox.Size = new System.Drawing.Size(96, 17);
+            this.linuxCheckBox.TabIndex = 12;
+            this.linuxCheckBox.Text = "Supports Linux";
+            this.linuxCheckBox.UseVisualStyleBackColor = true;
+            this.linuxCheckBox.CheckedChanged += new System.EventHandler(this.linuxCheckBox_CheckedChanged);
             // 
-            // SaveDirectoryLabel
+            // saveTextBox
             // 
-            this.SaveDirectoryLabel.AutoSize = true;
-            this.SaveDirectoryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveDirectoryLabel.Location = new System.Drawing.Point(118, 25);
-            this.SaveDirectoryLabel.Name = "SaveDirectoryLabel";
-            this.SaveDirectoryLabel.Size = new System.Drawing.Size(87, 13);
-            this.SaveDirectoryLabel.TabIndex = 11;
-            this.SaveDirectoryLabel.Text = "SaveDirectory";
-            this.SaveDirectoryLabel.Visible = false;
+            this.saveTextBox.Enabled = false;
+            this.saveTextBox.Location = new System.Drawing.Point(4, 25);
+            this.saveTextBox.Name = "saveTextBox";
+            this.saveTextBox.Size = new System.Drawing.Size(284, 20);
+            this.saveTextBox.TabIndex = 15;
+            // 
+            // linuxButton
+            // 
+            this.linuxButton.Enabled = false;
+            this.linuxButton.Location = new System.Drawing.Point(3, 156);
+            this.linuxButton.Name = "linuxButton";
+            this.linuxButton.Size = new System.Drawing.Size(143, 23);
+            this.linuxButton.TabIndex = 17;
+            this.linuxButton.Text = "Load modded Linux .zip";
+            this.linuxButton.UseVisualStyleBackColor = true;
+            this.linuxButton.Click += new System.EventHandler(this.linuxButton_Click);
+            // 
+            // linuxLabel
+            // 
+            this.linuxLabel.AutoSize = true;
+            this.linuxLabel.Location = new System.Drawing.Point(147, 161);
+            this.linuxLabel.Name = "linuxLabel";
+            this.linuxLabel.Size = new System.Drawing.Size(141, 13);
+            this.linuxLabel.TabIndex = 18;
+            this.linuxLabel.Text = "Modded Linux game loaded!";
+            this.linuxLabel.Visible = false;
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Location = new System.Drawing.Point(2, 53);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(45, 13);
+            this.versionLabel.TabIndex = 11;
+            this.versionLabel.Text = "Version:";
+            // 
+            // versionTextBox
+            // 
+            this.versionTextBox.Location = new System.Drawing.Point(63, 50);
+            this.versionTextBox.Name = "versionTextBox";
+            this.versionTextBox.Size = new System.Drawing.Size(224, 20);
+            this.versionTextBox.TabIndex = 12;
             // 
             // ModPacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 258);
+            this.ClientSize = new System.Drawing.Size(315, 376);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(331, 297);
-            this.MinimumSize = new System.Drawing.Size(331, 297);
+            this.MaximumSize = new System.Drawing.Size(331, 415);
+            this.MinimumSize = new System.Drawing.Size(331, 415);
             this.Name = "ModPacker";
             this.Text = "AM2R ModPacker";
             this.panel1.ResumeLayout(false);
@@ -350,10 +377,13 @@
         private System.Windows.Forms.CheckBox MusicCheckBox;
         private System.Windows.Forms.Label ApkLabel;
         private System.Windows.Forms.Label CreateLabel;
-        private System.Windows.Forms.CheckBox LinuxCheckBox;
-        private System.Windows.Forms.CheckBox WindowsCheckBox;
-        private System.Windows.Forms.Button CustomSaveDataButton;
-        private System.Windows.Forms.Label SaveDirectoryLabel;
+        private System.Windows.Forms.Button winSaveButton;
+        private System.Windows.Forms.TextBox saveTextBox;
+        private System.Windows.Forms.CheckBox linuxCheckBox;
+        private System.Windows.Forms.Button linuxButton;
+        private System.Windows.Forms.Label linuxLabel;
+        private System.Windows.Forms.TextBox versionTextBox;
+        private System.Windows.Forms.Label versionLabel;
     }
 }
 
