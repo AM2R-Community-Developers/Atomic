@@ -42,12 +42,16 @@
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.LinuxCheckBox = new System.Windows.Forms.CheckBox();
+            this.WindowsCheckBox = new System.Windows.Forms.CheckBox();
             this.ApkLabel = new System.Windows.Forms.Label();
             this.ApkButton = new System.Windows.Forms.Button();
             this.AndroidCheckBox = new System.Windows.Forms.CheckBox();
             this.YYCCheckBox = new System.Windows.Forms.CheckBox();
             this.SaveCheckBox = new System.Windows.Forms.CheckBox();
             this.MusicCheckBox = new System.Windows.Forms.CheckBox();
+            this.CustomSaveDataButton = new System.Windows.Forms.Button();
+            this.SaveDirectoryLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -175,6 +179,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.SaveDirectoryLabel);
+            this.panel3.Controls.Add(this.CustomSaveDataButton);
+            this.panel3.Controls.Add(this.LinuxCheckBox);
+            this.panel3.Controls.Add(this.WindowsCheckBox);
             this.panel3.Controls.Add(this.ApkLabel);
             this.panel3.Controls.Add(this.ApkButton);
             this.panel3.Controls.Add(this.AndroidCheckBox);
@@ -185,6 +193,30 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(291, 111);
             this.panel3.TabIndex = 2;
+            // 
+            // LinuxCheckBox
+            // 
+            this.LinuxCheckBox.AutoSize = true;
+            this.LinuxCheckBox.Location = new System.Drawing.Point(194, 66);
+            this.LinuxCheckBox.Name = "LinuxCheckBox";
+            this.LinuxCheckBox.Size = new System.Drawing.Size(51, 17);
+            this.LinuxCheckBox.TabIndex = 9;
+            this.LinuxCheckBox.Text = "Linux";
+            this.LinuxCheckBox.UseVisualStyleBackColor = true;
+            this.LinuxCheckBox.CheckedChanged += new System.EventHandler(this.LinuxCheckBox_CheckedChanged);
+            // 
+            // WindowsCheckBox
+            // 
+            this.WindowsCheckBox.AutoSize = true;
+            this.WindowsCheckBox.Checked = true;
+            this.WindowsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.WindowsCheckBox.Location = new System.Drawing.Point(194, 45);
+            this.WindowsCheckBox.Name = "WindowsCheckBox";
+            this.WindowsCheckBox.Size = new System.Drawing.Size(70, 17);
+            this.WindowsCheckBox.TabIndex = 8;
+            this.WindowsCheckBox.Text = "Windows";
+            this.WindowsCheckBox.UseVisualStyleBackColor = true;
+            this.WindowsCheckBox.CheckedChanged += new System.EventHandler(this.WindowsCheckBox_CheckedChanged);
             // 
             // ApkLabel
             // 
@@ -210,7 +242,6 @@
             // AndroidCheckBox
             // 
             this.AndroidCheckBox.AutoSize = true;
-            this.AndroidCheckBox.Enabled = false;
             this.AndroidCheckBox.Location = new System.Drawing.Point(4, 66);
             this.AndroidCheckBox.Name = "AndroidCheckBox";
             this.AndroidCheckBox.Size = new System.Drawing.Size(107, 17);
@@ -232,23 +263,46 @@
             // SaveCheckBox
             // 
             this.SaveCheckBox.AutoSize = true;
-            this.SaveCheckBox.Location = new System.Drawing.Point(4, 24);
+            this.SaveCheckBox.Location = new System.Drawing.Point(4, 3);
             this.SaveCheckBox.Name = "SaveCheckBox";
             this.SaveCheckBox.Size = new System.Drawing.Size(163, 17);
             this.SaveCheckBox.TabIndex = 3;
             this.SaveCheckBox.Text = "Uses custom savedata folder";
             this.SaveCheckBox.UseVisualStyleBackColor = true;
+            this.SaveCheckBox.CheckedChanged += new System.EventHandler(this.SaveCheckBox_CheckedChanged);
             // 
             // MusicCheckBox
             // 
             this.MusicCheckBox.AutoSize = true;
-            this.MusicCheckBox.Location = new System.Drawing.Point(4, 3);
+            this.MusicCheckBox.Location = new System.Drawing.Point(4, 24);
             this.MusicCheckBox.Margin = new System.Windows.Forms.Padding(2, 3, 3, 3);
             this.MusicCheckBox.Name = "MusicCheckBox";
             this.MusicCheckBox.Size = new System.Drawing.Size(117, 17);
             this.MusicCheckBox.TabIndex = 2;
             this.MusicCheckBox.Text = "Uses custom music";
             this.MusicCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // CustomSaveDataButton
+            // 
+            this.CustomSaveDataButton.Enabled = false;
+            this.CustomSaveDataButton.Location = new System.Drawing.Point(194, 3);
+            this.CustomSaveDataButton.Name = "CustomSaveDataButton";
+            this.CustomSaveDataButton.Size = new System.Drawing.Size(77, 19);
+            this.CustomSaveDataButton.TabIndex = 10;
+            this.CustomSaveDataButton.Text = "Select folder";
+            this.CustomSaveDataButton.UseVisualStyleBackColor = true;
+            this.CustomSaveDataButton.Click += new System.EventHandler(this.CustomSaveDataButton_Click);
+            // 
+            // SaveDirectoryLabel
+            // 
+            this.SaveDirectoryLabel.AutoSize = true;
+            this.SaveDirectoryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SaveDirectoryLabel.Location = new System.Drawing.Point(118, 25);
+            this.SaveDirectoryLabel.Name = "SaveDirectoryLabel";
+            this.SaveDirectoryLabel.Size = new System.Drawing.Size(87, 13);
+            this.SaveDirectoryLabel.TabIndex = 11;
+            this.SaveDirectoryLabel.Text = "SaveDirectory";
+            this.SaveDirectoryLabel.Visible = false;
             // 
             // ModPacker
             // 
@@ -296,6 +350,10 @@
         private System.Windows.Forms.CheckBox MusicCheckBox;
         private System.Windows.Forms.Label ApkLabel;
         private System.Windows.Forms.Label CreateLabel;
+        private System.Windows.Forms.CheckBox LinuxCheckBox;
+        private System.Windows.Forms.CheckBox WindowsCheckBox;
+        private System.Windows.Forms.Button CustomSaveDataButton;
+        private System.Windows.Forms.Label SaveDirectoryLabel;
     }
 }
 
