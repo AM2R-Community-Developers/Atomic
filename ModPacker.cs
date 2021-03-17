@@ -253,9 +253,9 @@ namespace AM2R_ModPacker
                 string tempAndroidProfilePath = tempProfilePath + "\\android";
                 Directory.CreateDirectory(tempAndroidProfilePath);
 
-                File.Copy(tempProfilePath + "\\AM2RWrapper.apk", tempAndroidProfilePath + "\\AM2RWrapper.apk");
-                File.Copy(tempProfilePath + "\\AM2R.ini", tempAndroidProfilePath + "AM2R.ini");
-                File.Copy(localPath + "\\utilities\\android\\apktool.yml", tempAndroidProfilePath + "\\apktool.yml");
+                File.Move(tempProfilePath + "\\AM2RWrapper.apk", tempAndroidProfilePath + "\\AM2RWrapper.apk");
+                File.Move(tempProfilePath + "\\AM2R.ini", tempAndroidProfilePath + "\\AM2R.ini");
+                File.Move(localPath + "\\utilities\\android\\apktool.yml", tempAndroidProfilePath + "\\apktool.yml");
             }
 
             // Copy datafiles (exclude .ogg if custom music is not selected)
