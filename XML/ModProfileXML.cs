@@ -46,10 +46,14 @@ namespace AM2R_ModPacker
         public bool UsesYYC
         { get; set; }
 
+        [XmlAttribute("Installable")]
+        public bool Installable
+        { get; set; }
+
         public ModProfileXML()
         { }
 
-        public ModProfileXML(string operatingSystem, int xmlVersion, string version, string name, string author, bool usesCustomMusic, string saveLocation, bool android, bool usesYYC)
+        public ModProfileXML(string operatingSystem, int xmlVersion, string version, string name, string author, bool usesCustomMusic, string saveLocation, bool android, bool usesYYC, bool installable = true)
         {
             OperatingSystem = operatingSystem;
             XMLVersion = xmlVersion;
@@ -60,6 +64,7 @@ namespace AM2R_ModPacker
             SaveLocation = saveLocation;
             Android = android;
             UsesYYC = usesYYC;
+            Installable = installable;
         }
     }
 }
