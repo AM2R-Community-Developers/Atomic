@@ -50,10 +50,15 @@ namespace AM2R_ModPacker
         public bool Installable
         { get; set; }
 
+        /// <summary>Indicates any notes that the mod author deemed worthy to share about his mod.</summary>
+        [XmlAttribute("ProfileNotes")]
+        public string ProfileNotes
+        { get; set; }
+
         public ModProfileXML()
         { }
 
-        public ModProfileXML(string operatingSystem, int xmlVersion, string version, string name, string author, bool usesCustomMusic, string saveLocation, bool android, bool usesYYC, bool installable = true)
+        public ModProfileXML(string operatingSystem, int xmlVersion, string version, string name, string author, bool usesCustomMusic, string saveLocation, bool android, bool usesYYC, string profileNotes, bool installable = true)
         {
             OperatingSystem = operatingSystem;
             XMLVersion = xmlVersion;
@@ -64,6 +69,7 @@ namespace AM2R_ModPacker
             SaveLocation = saveLocation;
             Android = android;
             UsesYYC = usesYYC;
+            ProfileNotes = profileNotes;
             Installable = installable;
         }
     }

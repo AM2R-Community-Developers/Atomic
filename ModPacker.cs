@@ -27,7 +27,7 @@ namespace AM2R_ModPacker
         public ModPacker()
         {
             InitializeComponent();
-            profile = new ModProfileXML("", 1, "", "", "", false, "", false, false); // (1, "", "", false, "default", false, false);
+            profile = new ModProfileXML("", 1, "", "", "", false, "", false, false, ""); // (1, "", "", false, "default", false, false);
             isOriginalLoaded = false;
             isModLoaded = false;
             isApkLoaded = false;
@@ -365,6 +365,7 @@ namespace AM2R_ModPacker
             profile.UsesYYC = YYCCheckBox.Checked;
             profile.Android = AndroidCheckBox.Checked;
             // profile.OperatingSystem = WindowsCheckBox.Checked ? "Windows" : "Linux";
+            profile.ProfileNotes = modNotesTextBox.Text;
             profile.OperatingSystem = operatingSystem;
             if (SaveCheckBox.Checked && saveTextBox.Text != "")
             {
