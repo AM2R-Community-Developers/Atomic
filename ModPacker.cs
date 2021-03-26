@@ -11,28 +11,34 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Newtonsoft.Json;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Text.RegularExpressions;
 
 namespace AM2R_ModPacker
 {
     public partial class ModPacker : Form
     {
         private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
-        private bool isOriginalLoaded, isModLoaded, isApkLoaded;
-        private string localPath, originalPath, modPath, apkPath;
-        private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll" };
-        private ModProfile profile;
+        private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded;
+        private string localPath, originalPath, modPath, apkPath, linuxPath;
+        private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx" };
+        private static string saveFilePath = null;
+        private ModProfileXML profile;
         public ModPacker()
         {
             InitializeComponent();
-            profile = new ModProfile(1, "", "", false, "default", false, false);
+            profile = new ModProfileXML("", 1, "", "", "", false, "", false, false, ""); // (1, "", "", false, "default", false, false);
             isOriginalLoaded = false;
             isModLoaded = false;
             isApkLoaded = false;
+            isLinuxLoaded = false;
 
             localPath = Directory.GetCurrentDirectory();
             originalPath = "";
             modPath = "";
+            linuxPath = "";
+            apkPath = "";
+
         }
 
         #region WinForms events
@@ -59,22 +65,20 @@ namespace AM2R_ModPacker
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
-            LoadProfileParameters();
-
-            string output;
-
-            if (profile.name == "" || profile.author == "")
+            if (NameTextBox.Text == "" || AuthorTextBox.Text == "" || versionTextBox.Text == "")
             {
                 MessageBox.Show("Text field missing! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             CreateLabel.Visible = true;
-            CreateLabel.Text = "Packaging mod... This could take a while!";
+            CreateLabel.Text = "Packaging mod(s)... This could take a while!";
 
-            using (SaveFileDialog saveFile = new SaveFileDialog { InitialDirectory = localPath, Title = "Save mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
+            string output;
+
+            using (SaveFileDialog saveFile = new SaveFileDialog { InitialDirectory = localPath, Title = "Save Windows mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
             {
-                if(saveFile.ShowDialog() == DialogResult.OK)
+                if (saveFile.ShowDialog() == DialogResult.OK)
                 {
                     output = saveFile.FileName;
                 }
@@ -85,6 +89,33 @@ namespace AM2R_ModPacker
                 }
             }
 
+            CreateModPack("Windows", modPath, output);
+
+            if (linuxCheckBox.Checked)
+            {
+                using (SaveFileDialog saveFile = new SaveFileDialog { InitialDirectory = localPath, Title = "Save Linux mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
+                {
+                    if (saveFile.ShowDialog() == DialogResult.OK)
+                    {
+                        output = saveFile.FileName;
+                    }
+                    else
+                    {
+                        CreateLabel.Text = "Mod packaging aborted!";
+                        return;
+                    }
+                }
+
+                CreateModPack("Linux", linuxPath, output);
+            }
+
+            CreateLabel.Text = "Mod package(s) created!";
+        }
+
+        private void CreateModPack(string operatingSystem, string input, string output)
+        {
+            LoadProfileParameters(operatingSystem);
+
             // Cleanup in case of previous errors
             if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
             {
@@ -92,9 +123,9 @@ namespace AM2R_ModPacker
             }
 
             // Create temp work folders
-            string tempPath = "", 
-                   tempOriginalPath = "", 
-                   tempModPath = "", 
+            string tempPath = "",
+                   tempOriginalPath = "",
+                   tempModPath = "",
                    tempProfilePath = "";
 
             // We might not have permission to access to the temp directory, so we need to catch the exception.
@@ -116,7 +147,7 @@ namespace AM2R_ModPacker
 
             // Extract 1.1 and modded AM2R to their own directories in temp work
             ZipFile.ExtractToDirectory(originalPath, tempOriginalPath);
-            ZipFile.ExtractToDirectory(modPath, tempModPath);
+            ZipFile.ExtractToDirectory(input, tempModPath);
 
             // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
             try
@@ -144,19 +175,27 @@ namespace AM2R_ModPacker
             }
 
             // Create AM2R.exe and data.win patches
-            if (profile.usesYYC)
+            if (profile.OperatingSystem == "Windows")
             {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
-            }
-            else
-            {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\data.win", tempProfilePath + "\\data.xdelta");
+                if (profile.UsesYYC)
+                {
+                    CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                }
+                else
+                {
+                    CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\data.win", tempProfilePath + "\\data.xdelta");
 
-                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                    CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                }
+            }
+            else if (profile.OperatingSystem == "Linux")
+            {
+                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
+                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R", tempProfilePath + "\\AM2R.xdelta");
             }
 
             // Create game.droid patch and wrapper if Android is supported
-            if (profile.android)
+            if (profile.Android)
             {
                 string tempAndroid = Directory.CreateDirectory(tempPath + "\\android").FullName;
 
@@ -187,12 +226,12 @@ namespace AM2R_ModPacker
                 // Delete excess files in APK
 
                 // Create whitelist
-                string[] whitelist = { "splash.png", "portrait_splash.png"};
+                string[] whitelist = { "splash.png", "portrait_splash.png" };
 
                 // Get directory
                 DirectoryInfo androidAssets = new DirectoryInfo(tempAndroid + "\\assets");
 
-                // Copy *.ini to profile, rename to AM2R.profile
+                
 
 
                 // Delete files
@@ -240,15 +279,22 @@ namespace AM2R_ModPacker
                     proc.WaitForExit();
                 }
 
+                string tempAndroidProfilePath = tempProfilePath + "\\android";
+                Directory.CreateDirectory(tempAndroidProfilePath);
+
+                File.Move(tempProfilePath + "\\AM2RWrapper.apk", tempAndroidProfilePath + "\\AM2RWrapper.apk");
+                File.Move(tempProfilePath + "\\AM2R.ini", tempAndroidProfilePath + "\\AM2R.ini");
             }
 
             // Copy datafiles (exclude .ogg if custom music is not selected)
 
             DirectoryInfo dinfo = new DirectoryInfo(tempModPath);
+            if (profile.OperatingSystem == "Linux")
+                dinfo = new DirectoryInfo(tempModPath + "\\assets");
 
             Directory.CreateDirectory(tempProfilePath + "\\files_to_copy");
 
-            if (profile.usesCustomMusic)
+            if (profile.UsesCustomMusic)
             {
                 // Copy files, excluding the blacklist
                 CopyFilesRecursive(dinfo, DATAFILES_BLACKLIST, tempProfilePath + "\\files_to_copy");
@@ -258,16 +304,20 @@ namespace AM2R_ModPacker
                 // Get list of 1.1's music files
                 string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
 
+                if (profile.OperatingSystem == "Linux")
+                    musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file).ToLower()).ToArray();
+
+
                 // Combine musFiles with the known datafiles for a blacklist
                 string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
                 // Copy files, excluding the blacklist
                 CopyFilesRecursive(dinfo, blacklist, tempProfilePath + "\\files_to_copy");
-            }            
+            }
 
-            // Export profile as JSON
-            string jsonOutput = JsonConvert.SerializeObject(profile);
-            File.WriteAllText(tempProfilePath + "\\modmeta.json", jsonOutput);
+            // Export profile as XML
+            string xmlOutput = Serializer.Serialize<ModProfileXML>(profile);
+            File.WriteAllText(tempProfilePath + "\\profile.xml", xmlOutput);
 
             // Compress temp folder to .zip
             if (File.Exists(output))
@@ -279,8 +329,6 @@ namespace AM2R_ModPacker
 
             // Delete temp folder
             Directory.Delete(tempPath, true);
-
-            CreateLabel.Text = "Mod package created!";
         }
 
         private void ApkButton_Click(object sender, EventArgs e)
@@ -299,22 +347,36 @@ namespace AM2R_ModPacker
             UpdateCreateButton();
         }
 
+        private void SaveCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            winSaveButton.Enabled = SaveCheckBox.Checked;
+            saveTextBox.Enabled = SaveCheckBox.Checked;
+            UpdateCreateButton();
+        }
+
         #endregion
 
-        private void LoadProfileParameters()
+        private void LoadProfileParameters(string operatingSystem)
         {
-            profile.name = NameTextBox.Text;
-            profile.author = AuthorTextBox.Text;
-            profile.usesCustomMusic = MusicCheckBox.Checked;            
-            profile.usesYYC = YYCCheckBox.Checked;
-            profile.android = AndroidCheckBox.Checked;
-            if (SaveCheckBox.Checked)
+            profile.Name = NameTextBox.Text;
+            profile.Author = AuthorTextBox.Text;
+            profile.Version = versionTextBox.Text;
+            profile.UsesCustomMusic = MusicCheckBox.Checked;            
+            profile.UsesYYC = YYCCheckBox.Checked;
+            profile.Android = AndroidCheckBox.Checked;
+            profile.ProfileNotes = modNotesTextBox.Text;
+            profile.OperatingSystem = operatingSystem;
+            if (SaveCheckBox.Checked && saveTextBox.Text != "")
             {
-                profile.saveLocation = "custom";
+                profile.SaveLocation = saveTextBox.Text;
             }
             else
             {
-                profile.saveLocation = "default";
+                profile.SaveLocation = "%localappdata%/AM2R";
+            }
+            if (operatingSystem == "Linux")
+            {
+                profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
             }
         }
 
@@ -324,21 +386,72 @@ namespace AM2R_ModPacker
             isOriginalLoaded = false;
             isModLoaded = false;
             isApkLoaded = false;
+            isLinuxLoaded = false;
             originalPath = "";
             modPath = "";
             apkPath = "";
+            linuxPath = "";
+            saveFilePath = null;
 
             // Set labels
             CreateLabel.Text = "Mod packaging aborted!";
             OriginalLabel.Visible = false;
             ModLabel.Visible = false;
             ApkLabel.Visible = false;
+            linuxLabel.Visible = false;
 
             // Remove temp directory
             if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
             {
                 Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
             }
+        }
+
+        private void linuxCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            linuxButton.Enabled = linuxCheckBox.Checked;
+            UpdateCreateButton();
+        }
+
+        private void linuxButton_Click(object sender, EventArgs e)
+        {
+            // Open window to select modded Linux .zip
+            (isLinuxLoaded, linuxPath) = SelectFile("Please select your custom Linux AM2R .zip", "zip", "zip archives (*.zip)|*.zip");
+
+            linuxLabel.Visible = isLinuxLoaded;
+
+            UpdateCreateButton();
+        }
+
+        private void CustomSaveDataButton_Click(object sender, EventArgs e)
+        {
+            bool wasSuccessfull = false;
+            Regex saveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\");     //this is to ensure, that the save directory is valid. so far, this is only important for windows
+
+            // we either use this nuget package. Or we choose a very bad native solution. Went for nuget instead.
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = Environment.GetEnvironmentVariable("LocalAppData");
+            dialog.IsFolderPicker = true;
+            while (!wasSuccessfull)
+            {
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    Match match = saveRegex.Match(dialog.FileName);
+                    if (match.Success == false)
+                        MessageBox.Show("Invalid Save Directory! Please choose one in %LocalAppData%");
+                    else
+                    {
+                        wasSuccessfull = true;
+                        saveFilePath = dialog.FileName.Replace(match.Value, "%LOCALAPPDATA%");
+                    }
+                }
+                else
+                {
+                    wasSuccessfull = true;
+                    saveFilePath = null;
+                }
+            }
+            saveTextBox.Text = saveFilePath;
         }
 
         private void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
@@ -360,7 +473,11 @@ namespace AM2R_ModPacker
 
         private void UpdateCreateButton()
         {
-            if (isOriginalLoaded && isModLoaded && (!AndroidCheckBox.Checked || isApkLoaded))
+            if (isOriginalLoaded && 
+                isModLoaded && 
+                (!AndroidCheckBox.Checked || isApkLoaded) && 
+                (!linuxCheckBox.Checked || isLinuxLoaded) && 
+                (!SaveCheckBox.Checked || saveTextBox.Text != ""))
             {
                 CreateButton.Enabled = true;
             }

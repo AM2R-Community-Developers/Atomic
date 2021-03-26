@@ -37,20 +37,31 @@
             this.OriginalLabel = new System.Windows.Forms.Label();
             this.OriginalButton = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.versionTextBox = new System.Windows.Forms.TextBox();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.AuthorTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.linuxLabel = new System.Windows.Forms.Label();
+            this.linuxButton = new System.Windows.Forms.Button();
+            this.saveTextBox = new System.Windows.Forms.TextBox();
+            this.linuxCheckBox = new System.Windows.Forms.CheckBox();
+            this.winSaveButton = new System.Windows.Forms.Button();
             this.ApkLabel = new System.Windows.Forms.Label();
             this.ApkButton = new System.Windows.Forms.Button();
             this.AndroidCheckBox = new System.Windows.Forms.CheckBox();
             this.YYCCheckBox = new System.Windows.Forms.CheckBox();
             this.SaveCheckBox = new System.Windows.Forms.CheckBox();
             this.MusicCheckBox = new System.Windows.Forms.CheckBox();
+            this.modNotesTextBox = new System.Windows.Forms.TextBox();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.modNotesLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -61,7 +72,7 @@
             this.panel1.Controls.Add(this.ModButton);
             this.panel1.Controls.Add(this.OriginalLabel);
             this.panel1.Controls.Add(this.OriginalButton);
-            this.panel1.Location = new System.Drawing.Point(12, 166);
+            this.panel1.Location = new System.Drawing.Point(309, 210);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(291, 86);
             this.panel1.TabIndex = 0;
@@ -84,7 +95,7 @@
             this.CreateButton.Name = "CreateButton";
             this.CreateButton.Size = new System.Drawing.Size(285, 23);
             this.CreateButton.TabIndex = 5;
-            this.CreateButton.Text = "Create mod package";
+            this.CreateButton.Text = "Create mod package(s)";
             this.CreateButton.UseVisualStyleBackColor = true;
             this.CreateButton.Click += new System.EventHandler(this.CreateButton_Click);
             // 
@@ -130,14 +141,32 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.versionTextBox);
+            this.panel2.Controls.Add(this.versionLabel);
             this.panel2.Controls.Add(this.AuthorTextBox);
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.NameTextBox);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Location = new System.Drawing.Point(12, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(291, 51);
+            this.panel2.Size = new System.Drawing.Size(291, 77);
             this.panel2.TabIndex = 1;
+            // 
+            // versionTextBox
+            // 
+            this.versionTextBox.Location = new System.Drawing.Point(63, 50);
+            this.versionTextBox.Name = "versionTextBox";
+            this.versionTextBox.Size = new System.Drawing.Size(225, 20);
+            this.versionTextBox.TabIndex = 12;
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Location = new System.Drawing.Point(2, 53);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(45, 13);
+            this.versionLabel.TabIndex = 11;
+            this.versionLabel.Text = "Version:";
             // 
             // AuthorTextBox
             // 
@@ -175,31 +204,87 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.linuxLabel);
+            this.panel3.Controls.Add(this.linuxButton);
+            this.panel3.Controls.Add(this.saveTextBox);
+            this.panel3.Controls.Add(this.linuxCheckBox);
+            this.panel3.Controls.Add(this.winSaveButton);
             this.panel3.Controls.Add(this.ApkLabel);
             this.panel3.Controls.Add(this.ApkButton);
             this.panel3.Controls.Add(this.AndroidCheckBox);
             this.panel3.Controls.Add(this.YYCCheckBox);
             this.panel3.Controls.Add(this.SaveCheckBox);
             this.panel3.Controls.Add(this.MusicCheckBox);
-            this.panel3.Location = new System.Drawing.Point(12, 57);
+            this.panel3.Location = new System.Drawing.Point(309, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(291, 111);
+            this.panel3.Size = new System.Drawing.Size(291, 201);
             this.panel3.TabIndex = 2;
+            // 
+            // linuxLabel
+            // 
+            this.linuxLabel.AutoSize = true;
+            this.linuxLabel.Location = new System.Drawing.Point(147, 164);
+            this.linuxLabel.Name = "linuxLabel";
+            this.linuxLabel.Size = new System.Drawing.Size(141, 13);
+            this.linuxLabel.TabIndex = 18;
+            this.linuxLabel.Text = "Modded Linux game loaded!";
+            this.linuxLabel.Visible = false;
+            // 
+            // linuxButton
+            // 
+            this.linuxButton.Enabled = false;
+            this.linuxButton.Location = new System.Drawing.Point(3, 159);
+            this.linuxButton.Name = "linuxButton";
+            this.linuxButton.Size = new System.Drawing.Size(143, 23);
+            this.linuxButton.TabIndex = 17;
+            this.linuxButton.Text = "Load modded Linux .zip";
+            this.linuxButton.UseVisualStyleBackColor = true;
+            this.linuxButton.Click += new System.EventHandler(this.linuxButton_Click);
+            // 
+            // saveTextBox
+            // 
+            this.saveTextBox.Enabled = false;
+            this.saveTextBox.Location = new System.Drawing.Point(4, 28);
+            this.saveTextBox.Name = "saveTextBox";
+            this.saveTextBox.Size = new System.Drawing.Size(283, 20);
+            this.saveTextBox.TabIndex = 15;
+            // 
+            // linuxCheckBox
+            // 
+            this.linuxCheckBox.AutoSize = true;
+            this.linuxCheckBox.Location = new System.Drawing.Point(4, 141);
+            this.linuxCheckBox.Name = "linuxCheckBox";
+            this.linuxCheckBox.Size = new System.Drawing.Size(96, 17);
+            this.linuxCheckBox.TabIndex = 12;
+            this.linuxCheckBox.Text = "Supports Linux";
+            this.linuxCheckBox.UseVisualStyleBackColor = true;
+            this.linuxCheckBox.CheckedChanged += new System.EventHandler(this.linuxCheckBox_CheckedChanged);
+            // 
+            // winSaveButton
+            // 
+            this.winSaveButton.Enabled = false;
+            this.winSaveButton.Location = new System.Drawing.Point(177, 7);
+            this.winSaveButton.Name = "winSaveButton";
+            this.winSaveButton.Size = new System.Drawing.Size(111, 19);
+            this.winSaveButton.TabIndex = 10;
+            this.winSaveButton.Text = "Select folder";
+            this.winSaveButton.UseVisualStyleBackColor = true;
+            this.winSaveButton.Click += new System.EventHandler(this.CustomSaveDataButton_Click);
             // 
             // ApkLabel
             // 
             this.ApkLabel.AutoSize = true;
-            this.ApkLabel.Location = new System.Drawing.Point(176, 90);
+            this.ApkLabel.Location = new System.Drawing.Point(180, 120);
             this.ApkLabel.Name = "ApkLabel";
-            this.ApkLabel.Size = new System.Drawing.Size(112, 13);
+            this.ApkLabel.Size = new System.Drawing.Size(108, 13);
             this.ApkLabel.TabIndex = 7;
-            this.ApkLabel.Text = "Modded APK Loaded!";
+            this.ApkLabel.Text = "Modded APK loaded!";
             this.ApkLabel.Visible = false;
             // 
             // ApkButton
             // 
             this.ApkButton.Enabled = false;
-            this.ApkButton.Location = new System.Drawing.Point(3, 85);
+            this.ApkButton.Location = new System.Drawing.Point(3, 115);
             this.ApkButton.Name = "ApkButton";
             this.ApkButton.Size = new System.Drawing.Size(143, 23);
             this.ApkButton.TabIndex = 6;
@@ -210,8 +295,7 @@
             // AndroidCheckBox
             // 
             this.AndroidCheckBox.AutoSize = true;
-            this.AndroidCheckBox.Enabled = false;
-            this.AndroidCheckBox.Location = new System.Drawing.Point(4, 66);
+            this.AndroidCheckBox.Location = new System.Drawing.Point(4, 95);
             this.AndroidCheckBox.Name = "AndroidCheckBox";
             this.AndroidCheckBox.Size = new System.Drawing.Size(107, 17);
             this.AndroidCheckBox.TabIndex = 5;
@@ -222,7 +306,7 @@
             // YYCCheckBox
             // 
             this.YYCCheckBox.AutoSize = true;
-            this.YYCCheckBox.Location = new System.Drawing.Point(4, 45);
+            this.YYCCheckBox.Location = new System.Drawing.Point(4, 74);
             this.YYCCheckBox.Name = "YYCCheckBox";
             this.YYCCheckBox.Size = new System.Drawing.Size(140, 17);
             this.YYCCheckBox.TabIndex = 4;
@@ -232,17 +316,18 @@
             // SaveCheckBox
             // 
             this.SaveCheckBox.AutoSize = true;
-            this.SaveCheckBox.Location = new System.Drawing.Point(4, 24);
+            this.SaveCheckBox.Location = new System.Drawing.Point(4, 8);
             this.SaveCheckBox.Name = "SaveCheckBox";
-            this.SaveCheckBox.Size = new System.Drawing.Size(163, 17);
+            this.SaveCheckBox.Size = new System.Drawing.Size(156, 17);
             this.SaveCheckBox.TabIndex = 3;
-            this.SaveCheckBox.Text = "Uses custom savedata folder";
+            this.SaveCheckBox.Text = "Uses custom save directory";
             this.SaveCheckBox.UseVisualStyleBackColor = true;
+            this.SaveCheckBox.CheckedChanged += new System.EventHandler(this.SaveCheckBox_CheckedChanged);
             // 
             // MusicCheckBox
             // 
             this.MusicCheckBox.AutoSize = true;
-            this.MusicCheckBox.Location = new System.Drawing.Point(4, 3);
+            this.MusicCheckBox.Location = new System.Drawing.Point(4, 52);
             this.MusicCheckBox.Margin = new System.Windows.Forms.Padding(2, 3, 3, 3);
             this.MusicCheckBox.Name = "MusicCheckBox";
             this.MusicCheckBox.Size = new System.Drawing.Size(117, 17);
@@ -250,19 +335,47 @@
             this.MusicCheckBox.Text = "Uses custom music";
             this.MusicCheckBox.UseVisualStyleBackColor = true;
             // 
+            // modNotesTextBox
+            // 
+            this.modNotesTextBox.Location = new System.Drawing.Point(3, 16);
+            this.modNotesTextBox.Multiline = true;
+            this.modNotesTextBox.Name = "modNotesTextBox";
+            this.modNotesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.modNotesTextBox.Size = new System.Drawing.Size(284, 198);
+            this.modNotesTextBox.TabIndex = 3;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.modNotesLabel);
+            this.panel4.Controls.Add(this.modNotesTextBox);
+            this.panel4.Location = new System.Drawing.Point(12, 80);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(291, 216);
+            this.panel4.TabIndex = 4;
+            // 
+            // modNotesLabel
+            // 
+            this.modNotesLabel.AutoSize = true;
+            this.modNotesLabel.Location = new System.Drawing.Point(2, 0);
+            this.modNotesLabel.Name = "modNotesLabel";
+            this.modNotesLabel.Size = new System.Drawing.Size(60, 13);
+            this.modNotesLabel.TabIndex = 4;
+            this.modNotesLabel.Text = "Mod notes:";
+            // 
             // ModPacker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 258);
+            this.ClientSize = new System.Drawing.Size(615, 309);
+            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(331, 297);
-            this.MinimumSize = new System.Drawing.Size(331, 297);
+            this.MaximumSize = new System.Drawing.Size(631, 348);
+            this.MinimumSize = new System.Drawing.Size(631, 348);
             this.Name = "ModPacker";
             this.Text = "AM2R ModPacker";
             this.panel1.ResumeLayout(false);
@@ -271,6 +384,8 @@
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -296,6 +411,16 @@
         private System.Windows.Forms.CheckBox MusicCheckBox;
         private System.Windows.Forms.Label ApkLabel;
         private System.Windows.Forms.Label CreateLabel;
+        private System.Windows.Forms.Button winSaveButton;
+        private System.Windows.Forms.TextBox saveTextBox;
+        private System.Windows.Forms.CheckBox linuxCheckBox;
+        private System.Windows.Forms.Button linuxButton;
+        private System.Windows.Forms.Label linuxLabel;
+        private System.Windows.Forms.TextBox versionTextBox;
+        private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.TextBox modNotesTextBox;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Label modNotesLabel;
     }
 }
 
