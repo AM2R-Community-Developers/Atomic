@@ -364,7 +364,6 @@ namespace AM2R_ModPacker
             profile.UsesCustomMusic = MusicCheckBox.Checked;            
             profile.UsesYYC = YYCCheckBox.Checked;
             profile.Android = AndroidCheckBox.Checked;
-            // profile.OperatingSystem = WindowsCheckBox.Checked ? "Windows" : "Linux";
             profile.ProfileNotes = modNotesTextBox.Text;
             profile.OperatingSystem = operatingSystem;
             if (SaveCheckBox.Checked && saveTextBox.Text != "")
@@ -374,6 +373,10 @@ namespace AM2R_ModPacker
             else
             {
                 profile.SaveLocation = "%localappdata%/AM2R";
+            }
+            if (operatingSystem == "Linux")
+            {
+                profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
             }
         }
 
