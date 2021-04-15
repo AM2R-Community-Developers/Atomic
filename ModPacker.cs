@@ -193,7 +193,7 @@ namespace AM2R_ModPacker
             }
             else if (profile.OperatingSystem == "Linux")
             {
-                    string runnerName = profile.UsesYYC ? "AM2R" : "runner";
+                    string runnerName = File.Exists(tempModPath + "\\" + "AM2R") ? "AM2R" : "runner";
 
                     CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
                     CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\" + runnerName, tempProfilePath + "\\AM2R.xdelta");
