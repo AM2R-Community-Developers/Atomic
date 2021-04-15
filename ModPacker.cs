@@ -149,6 +149,9 @@ namespace AM2R_ModPacker
             ZipFile.ExtractToDirectory(originalPath, tempOriginalPath);
             ZipFile.ExtractToDirectory(input, tempModPath);
 
+            if (Directory.Exists(tempModPath + "\\AM2R"))
+                tempModPath += "\\AM2R";
+
             // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
             try
             {
@@ -190,8 +193,10 @@ namespace AM2R_ModPacker
             }
             else if (profile.OperatingSystem == "Linux")
             {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
-                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R", tempProfilePath + "\\AM2R.xdelta");
+                    string runnerName = profile.UsesYYC ? "AM2R" : "runner";
+
+                    CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
+                    CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\" + runnerName, tempProfilePath + "\\AM2R.xdelta");
             }
 
             // Create game.droid patch and wrapper if Android is supported
