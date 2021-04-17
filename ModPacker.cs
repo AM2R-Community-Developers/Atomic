@@ -18,6 +18,7 @@ namespace AM2R_ModPacker
 {
     public partial class ModPacker : Form
     {
+        private static readonly string VERSION = "2.0.2";
         private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
         private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded;
         private string localPath, originalPath, modPath, apkPath, linuxPath;
@@ -39,6 +40,7 @@ namespace AM2R_ModPacker
             linuxPath = "";
             apkPath = "";
 
+            Text = "AM2R ModPacker " + VERSION;
         }
 
         #region WinForms events
