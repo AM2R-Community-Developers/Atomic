@@ -450,7 +450,7 @@ namespace AM2R_ModPacker
                     else
                     {
                         wasSuccessfull = true;
-                        saveFilePath = dialog.FileName.Replace(match.Value, "%LOCALAPPDATA%");
+                        saveFilePath = dialog.FileName.Replace(match.Value, "%localappdata%");
                     }
                 }
                 else
