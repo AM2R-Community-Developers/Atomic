@@ -451,7 +451,7 @@ namespace AM2R_ModPacker
                     {
                         wasSuccessfull = true;
                         saveFilePath = dialog.FileName.Replace(match.Value, "%localappdata%/");
-                        saveFilePath = saveFilePath.Replace("\", "/");            // if we don't do this, custom save locations are going to fail on Linux
+                        saveFilePath = saveFilePath.Replace("\\", "/");            // if we don't do this, custom save locations are going to fail on Linux
                     }
                 }
                 else
