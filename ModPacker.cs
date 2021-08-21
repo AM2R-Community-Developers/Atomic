@@ -182,6 +182,13 @@ namespace AM2R_ModPacker
             // Create AM2R.exe and data.win patches
             if (profile.OperatingSystem == "Windows")
             {
+                if (!File.Exists(tempModPath + "/AM2R.exe"))
+                {
+                    var result = MessageBox.Show("Modded game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result != DialogResult.Yes)
+                        AbortPatch();
+                }
+
                 if (profile.UsesYYC)
                 {
                     CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
@@ -195,10 +202,17 @@ namespace AM2R_ModPacker
             }
             else if (profile.OperatingSystem == "Linux")
             {
-                    string runnerName = File.Exists(tempModPath + "\\" + "AM2R") ? "AM2R" : "runner";
+                string runnerName = File.Exists(tempModPath + "\\" + "AM2R") ? "AM2R" : "runner";
 
-                    CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
-                    CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\" + runnerName, tempProfilePath + "\\AM2R.xdelta");
+                if (!File.Exists(tempModPath + "/" + runnerName))
+                {
+                    var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result != DialogResult.Yes)
+                        AbortPatch();
+                }
+
+                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
+                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\" + runnerName, tempProfilePath + "\\AM2R.xdelta");
             }
 
             // Create game.droid patch and wrapper if Android is supported
