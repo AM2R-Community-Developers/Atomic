@@ -189,6 +189,13 @@ namespace AM2R_ModPacker
                         AbortPatch();
                 }
 
+                if (File.Exists(tempModPath + "profile.xml"))
+                {
+                    var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result != DialogResult.Yes)
+                        AbortPatch();
+                }
+
                 if (profile.UsesYYC)
                 {
                     CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
@@ -207,6 +214,13 @@ namespace AM2R_ModPacker
                 if (!File.Exists(tempModPath + "/" + runnerName))
                 {
                     var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result != DialogResult.Yes)
+                        AbortPatch();
+                }
+
+                if (File.Exists(tempModPath + "profile.xml"))
+                {
+                    var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result != DialogResult.Yes)
                         AbortPatch();
                 }
