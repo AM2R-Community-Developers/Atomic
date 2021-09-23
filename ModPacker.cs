@@ -73,6 +73,12 @@ namespace AM2R_ModPacker
                 return;
             }
 
+            if (Path.GetInvalidFileNameChars().Any(NameTextBox.Text.Contains))
+            {
+                MessageBox.Show("Name contains invalid characters! These characters are not allowed:\n" + string.Join("\n", Path.GetInvalidFileNameChars()));
+                return;
+            }
+
             CreateLabel.Visible = true;
             CreateLabel.Text = "Packaging mod(s)... This could take a while!";
 
