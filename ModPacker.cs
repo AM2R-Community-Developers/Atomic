@@ -84,7 +84,7 @@ namespace AM2R_ModPacker
 
             string output;
 
-            using (SaveFileDialog saveFile = new SaveFileDialog { InitialDirectory = localPath, Title = "Save Windows mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
+            using (SaveFileDialog saveFile = new SaveFileDialog { RestoreDirectory = true, Title = "Save Windows mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
             {
                 if (saveFile.ShowDialog() == DialogResult.OK)
                 {
@@ -101,7 +101,7 @@ namespace AM2R_ModPacker
 
             if (linuxCheckBox.Checked)
             {
-                using (SaveFileDialog saveFile = new SaveFileDialog { InitialDirectory = localPath, Title = "Save Linux mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
+                using (SaveFileDialog saveFile = new SaveFileDialog { RestoreDirectory = true, Title = "Save Linux mod profile", Filter = "zip files (*.zip)|*.zip", AddExtension = true })
                 {
                     if (saveFile.ShowDialog() == DialogResult.OK)
                     {
@@ -568,7 +568,7 @@ namespace AM2R_ModPacker
         {
             using (OpenFileDialog fileFinder = new OpenFileDialog())
             {
-                fileFinder.InitialDirectory = localPath;
+                fileFinder.RestoreDirectory = true;
                 fileFinder.Title = title;
                 fileFinder.DefaultExt = extension;
                 fileFinder.Filter = filter;
