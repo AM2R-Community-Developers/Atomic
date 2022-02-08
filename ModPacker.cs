@@ -486,6 +486,11 @@ namespace AM2R_ModPacker
                         wasSuccessfull = true;
                         saveFilePath = dialog.FileName.Replace(match.Value, "%localappdata%/");
                         saveFilePath = saveFilePath.Replace("\\", "/");            // if we don't do this, custom save locations are going to fail on Linux
+                        // if someone has a custom save path inside of am2r and creates these whithin game maker, they will always be lower case
+                        // we need to adjust them here to lowercase as well, as otherwise launcher gets problems on nix systems
+                        string vanillaPrefix = "%localappdata%/AM2R/";
+                        if (saveFilePath.Contains(vanillaPrefix))
+                            saveFilePath = vanillaPrefix + saveFilePath.Substring(vanillaPrefix.Length).ToLower();
                     }
                 }
                 else
