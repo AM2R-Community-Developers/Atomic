@@ -514,7 +514,8 @@ namespace AM2R_ModPacker
 
             foreach (DirectoryInfo dir in source.GetDirectories())
             {
-                string newDir = Directory.CreateDirectory(destination + "\\" + dir.Name).FullName;
+                // Folders need to be lowercase, because GM only reads from lowercase names on *nix systems. Windows is case-insensitive so doesnt matter for them
+                string newDir = Directory.CreateDirectory(destination + "\\" + dir.Name.ToLower()).FullName;
                 CopyFilesRecursive(dir, blacklist, newDir);
             }
         }
