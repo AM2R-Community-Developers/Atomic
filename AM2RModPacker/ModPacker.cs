@@ -32,6 +32,47 @@ public partial class ModPacker : Form
         customSaveTextBox.Enabled = customSaveCheckBox.Checked.Value;
         UpdateCreateButton();
     }
+    
+    //TODO: go through this method
+    private void CustomSaveDataButton_Click(object sender, EventArgs e)
+    {
+        bool wasSuccessful = false;
+        // TODO: make sure that the validation works on other platforms too
+        var saveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid. so far, this is only important for windows
+
+
+        var dialog = new SelectFolderDialog();
+        // currently not implemented in eto
+        //dialog.InitialDirectory = Environment.GetEnvironmentVariable("LocalAppData");
+        while (!wasSuccessful)
+        {
+            if (dialog.ShowDialog(this) == DialogResult.Ok)
+            {
+                var match = saveRegex.Match(dialog.Directory);
+                if (match.Success == false)
+                {
+                    MessageBox.Show("Invalid Save Directory! Please choose one in %LocalAppData%");
+                }
+                else
+                {
+                    wasSuccessful = true;
+                    saveFilePath = dialog.Directory.Replace(match.Value, "%localappdata%/");
+                    saveFilePath = saveFilePath.Replace("\\", "/"); // if we don't do this, custom save locations are going to fail on Linux
+                    // if someone has a custom save path inside of am2r and creates these whithin game maker, they will always be lower case
+                    // we need to adjust them here to lowercase as well, as otherwise launcher gets problems on nix systems
+                    const string vanillaPrefix = "%localappdata%/AM2R/";
+                    if (saveFilePath.Contains(vanillaPrefix))
+                        saveFilePath = vanillaPrefix + saveFilePath.Substring(vanillaPrefix.Length).ToLower();
+                }
+            }
+            else
+            {
+                wasSuccessful = true;
+                saveFilePath = null;
+            }
+        }
+        customSaveTextBox.Text = saveFilePath;
+    }
 
     private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
     {
@@ -76,7 +117,7 @@ public partial class ModPacker : Form
         modZipLabel.Visible = isModLoaded;
         UpdateCreateButton();
     }
-
+    
     private void CreateButton_Click(object sender, EventArgs e)
     {
         if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
@@ -93,41 +134,37 @@ public partial class ModPacker : Form
 
         createLabel.Visible = true;
         createLabel.Text = "Packaging mod(s)... This could take a while!";
-
-        // TODO: move most of this into seperate method?
+        
         string output;
 
+        // TODO: make windows optional
         using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
         {
             if (saveFile.ShowDialog(this) == DialogResult.Ok)
-            {
                 output = saveFile.FileName;
-            }
             else
             {
                 createLabel.Text = "Mod packaging aborted!";
                 return;
             }
         }
-
-        CreateModPack("Windows", modPath, output);
+        LoadProfileParameters(ProfileOperatingSystems.Windows);
+        CreateModPack(profile, modPath, output);
 
         if (linuxCheckBox.Checked.Value)
         {
             using (var saveFile = new SaveFileDialog { Title = "Save Linux mod profile", Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
-                {
                     output = saveFile.FileName;
-                }
                 else
                 {
                     createLabel.Text = "Mod packaging aborted!";
                     return;
                 }
             }
-
-            CreateModPack("Linux", linuxPath, output);
+            LoadProfileParameters(ProfileOperatingSystems.Linux);
+            CreateModPack(profile, linuxPath, output);
         }
         //TODO: mac
 
@@ -135,11 +172,9 @@ public partial class ModPacker : Form
     }
     #endregion
 
-    private void CreateModPack(string operatingSystem, string input, string output)
+    // TODO: go over thhis
+    private void CreateModPack( ModProfileXML profile, string input, string output)
     {
-        // TODO: go over thhis
-        LoadProfileParameters(operatingSystem);
-
         // Cleanup in case of previous errors
         if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
             Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
@@ -161,9 +196,7 @@ public partial class ModPacker : Form
         catch (System.Security.SecurityException)
         {
             MessageBox.Show("Could not create temp directory! Please run the application with administrator rights.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-
             AbortPatch();
-
             return;
         }
 
@@ -184,9 +217,7 @@ public partial class ModPacker : Form
             {
                 // Show error box
                 MessageBox.Show("1.1 data.win does not meet MD5 checksum! Mod packaging aborted.\n1.1 MD5: " + originalMD5 + "\nYour MD5: " + newMD5, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-
                 AbortPatch();
-
                 return;
             }
         }
@@ -194,9 +225,7 @@ public partial class ModPacker : Form
         {
             // Show error message
             MessageBox.Show("data.win not found! Are you sure you selected AM2R 1.1? Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-
             AbortPatch();
-
             return;
         }
 
@@ -224,7 +253,6 @@ public partial class ModPacker : Form
             else
             {
                 Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
-
                 Core.CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
         }
@@ -249,6 +277,7 @@ public partial class ModPacker : Form
             Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
             Core.CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
         }
+        // todo: mac
 
         // Create game.droid patch and wrapper if Android is supported
         if (profile.Android)
@@ -259,6 +288,7 @@ public partial class ModPacker : Form
             // - java -jar apktool.jar d "%~dp0AM2RWrapper_old.apk"
 
             // Process startInfo
+            // TODO: cross platform
             var procStartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
@@ -272,7 +302,6 @@ public partial class ModPacker : Form
             using (var proc = new Process { StartInfo = procStartInfo })
             {
                 proc.Start();
-
                 proc.WaitForExit();
             }
 
@@ -323,7 +352,6 @@ public partial class ModPacker : Form
             using (var proc = new Process { StartInfo = procStartInfo2 })
             {
                 proc.Start();
-
                 proc.WaitForExit();
             }
 
@@ -378,7 +406,7 @@ public partial class ModPacker : Form
         Directory.Delete(tempPath, true);
     }
 
-    private void LoadProfileParameters(string operatingSystem)
+    private void LoadProfileParameters(ProfileOperatingSystems operatingSystem)
     {
         profile.Name = nameTextBox.Text;
         profile.Author = authorTextBox.Text;
@@ -387,12 +415,12 @@ public partial class ModPacker : Form
         profile.UsesYYC = yycCheckBox.Checked.Value;
         profile.Android = apkCheckBox.Checked.Value;
         profile.ProfileNotes = modNotesTextBox.Text;
-        profile.OperatingSystem = operatingSystem;
+        profile.OperatingSystem = operatingSystem.ToString();
         if (customSaveCheckBox.Checked.Value && customSaveTextBox.Text != "")
             profile.SaveLocation = customSaveTextBox.Text;
         else
             profile.SaveLocation = "%localappdata%/AM2R";
-        if (operatingSystem == "Linux")
+        if (operatingSystem == ProfileOperatingSystems.Linux)
             profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
     }
 
@@ -421,53 +449,15 @@ public partial class ModPacker : Form
             Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
     }
 
-    private void CustomSaveDataButton_Click(object sender, EventArgs e)
-    {
-        bool wasSuccessful = false;
-        // TODO: make sure that the validation works on other platforms too
-        var saveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid. so far, this is only important for windows
 
-
-        var dialog = new SelectFolderDialog();
-        // currently not implemented in eto
-        //dialog.InitialDirectory = Environment.GetEnvironmentVariable("LocalAppData");
-        while (!wasSuccessful)
-        {
-            if (dialog.ShowDialog(this) == DialogResult.Ok)
-            {
-                var match = saveRegex.Match(dialog.Directory);
-                if (match.Success == false)
-                {
-                    MessageBox.Show("Invalid Save Directory! Please choose one in %LocalAppData%");
-                }
-                else
-                {
-                    wasSuccessful = true;
-                    saveFilePath = dialog.Directory.Replace(match.Value, "%localappdata%/");
-                    saveFilePath = saveFilePath.Replace("\\", "/"); // if we don't do this, custom save locations are going to fail on Linux
-                    // if someone has a custom save path inside of am2r and creates these whithin game maker, they will always be lower case
-                    // we need to adjust them here to lowercase as well, as otherwise launcher gets problems on nix systems
-                    const string vanillaPrefix = "%localappdata%/AM2R/";
-                    if (saveFilePath.Contains(vanillaPrefix))
-                        saveFilePath = vanillaPrefix + saveFilePath.Substring(vanillaPrefix.Length).ToLower();
-                }
-            }
-            else
-            {
-                wasSuccessful = true;
-                saveFilePath = null;
-            }
-        }
-        customSaveTextBox.Text = saveFilePath;
-    }
 
     private void UpdateCreateButton()
     {
-        if (isOriginalLoaded &&
-            isModLoaded &&
-            (!apkCheckBox.Checked.Value || isApkLoaded) &&
-            (!linuxCheckBox.Checked.Value || isLinuxLoaded) &&
-            (!customSaveCheckBox.Checked.Value || customSaveTextBox.Text != ""))
+        if (isOriginalLoaded &&                                                  // AM2R_11 zip must be provided
+            isModLoaded &&                                                       // Modded zip must be provided
+            (!apkCheckBox.Checked.Value || isApkLoaded) &&                       // either APK is disabled OR APK is provided
+            (!linuxCheckBox.Checked.Value || isLinuxLoaded) &&                   // either Linux is disabled OR linux is provided
+            (!customSaveCheckBox.Checked.Value || customSaveTextBox.Text != "")) // either custom saves are disabled OR custom save is provided
             createButton.Enabled = true;
         else
             createButton.Enabled = false;

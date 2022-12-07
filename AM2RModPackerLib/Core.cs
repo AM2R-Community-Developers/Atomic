@@ -4,7 +4,12 @@ using System.Security.Cryptography;
 
 namespace AM2RModPackerLib;
 
-
+public enum ProfileOperatingSystems
+{
+    Windows,
+    Linux,
+    Mac
+}
 
 public static class Core
 {
