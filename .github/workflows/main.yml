@@ -1,0 +1,54 @@
+name: Build and Upload
+
+on:
+  push:
+    paths-ignore: 
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        configuration: [Release]
+        include:
+          - os: ubuntu-latest
+            COMMAND: AM2RModPacker -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest
+            ARTIFACT: AM2RModPacker/builds/ubuntu-latest
+            POSTBUILD: echo "No post build to do!"
+          - os: macOS-latest
+            COMMAND: AM2RModPacker -r osx-x64 --no-self-contained -o builds/macOS-latest
+            ARTIFACT: AM2RModPacker/builds/macOS-latest
+            POSTBUILD: echo "No post build to do!"
+          - os: windows-latest
+            COMMAND: AM2RModPacker -r win-x86 
+            ARTIFACT: AM2RModPacker\bin\Release\net6\win-x86\
+            # This is very ugly, *please* tell me a better way to do this
+            #POSTBUILD: mv AM2RLauncher\AM2RLauncher.Wpf\bin\Release\net48\win-x86\AM2RLauncher.Wpf.exe AM2RLauncher\AM2RLauncher.Wpf\bin\Release\net48\win-x86\AM2RLauncher.exe && mv AM2RLauncher\AM2RLauncher.Wpf\bin\Release\net48\win-x86\AM2RLauncher.Wpf.exe.config AM2RLauncher\AM2RLauncher.Wpf\bin\Release\net48\win-x86\AM2RLauncher.exe.config && rmdir AM2RLauncher\AM2RLauncher.Wpf\bin\Release\net48\win-x86\publish -Recurse
+    runs-on: ${{ matrix.os }}
+    
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet publish ${{ matrix.COMMAND }} -c "${{ matrix.configuration }}"
+    - name: Post-Build
+      run: | 
+          cp ./LICENSE ./${{ matrix.ARTIFACT }}/
+          ${{ matrix.POSTBUILD }}
+    # Steps for uploading artifacts.
+    - name: Zip to Archive
+      run: 7z a -tzip ${{ matrix.os }}.zip ./${{ matrix.ARTIFACT }}
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ${{ matrix.os }}
+        path: ${{ matrix.os }}.zip
