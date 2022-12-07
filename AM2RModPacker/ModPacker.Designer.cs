@@ -27,13 +27,9 @@ public partial class ModPacker : Form
 
         MinimumSize = new Size(550, 430);
 
-        var mainContent = new DynamicLayout()
-        {
-            Padding = 15,
-            Spacing = new Size(15, 15)
-        };
-        var leftSide = new DynamicLayout() { Spacing = new Size(5, 5) };
-        var rightSide = new DynamicLayout() { Spacing = new Size(5, 5) };
+        var mainContent = new DynamicLayout() { Spacing = new Size(15, 15) };
+        var leftSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5) };
+        var rightSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5) };
 
         // Left side
         var modInfoPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
@@ -81,7 +77,14 @@ public partial class ModPacker : Form
         rightSide.AddRow(resultPanel);
         
         // Combine all into main panel and assign
-        mainContent.AddRow(null, leftSide, null, rightSide, null);
+        Splitter splitter = new Splitter() {};
+        splitter.Panel1 = leftSide;
+        splitter.Panel2 = rightSide;
+        splitter.Panel1MinimumSize = 180;
+        splitter.Panel2MinimumSize = 320;
+        splitter.Orientation = Orientation.Horizontal;
+        
+        mainContent.Add(splitter);
         Content = mainContent;
 
         // Assign events
