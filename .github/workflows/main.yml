@@ -15,7 +15,7 @@ jobs:
         configuration: [Release]
         include:
           - os: ubuntu-latest
-            COMMAND: AM2RModPacker -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest
+            COMMAND: AM2RModPacker -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
             ARTIFACT: builds/ubuntu-latest
             POSTBUILD: echo "No post build to do!"
           - os: macOS-latest
