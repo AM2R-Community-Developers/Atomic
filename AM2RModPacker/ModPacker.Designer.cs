@@ -118,17 +118,17 @@ public partial class ModPacker : Form
 
     private CheckBox AndroidCheckBox = new CheckBox() { Text = "Supports Android" };
     private Button ApkButton = new Button() { Text = "Load modded Android APK", Enabled = false };
-    private Label ApkLabel = new Label();
+    private Label ApkLabel = new Label() { Text = "Modded APK loaded!", Visible = false };
 
     private CheckBox linuxCheckBox = new CheckBox() { Text = "Supports Linux" };
     private Button linuxButton = new Button() { Text = "Load modded Linux .zip", Enabled = false };
-    private Label linuxLabel = new Label();
+    private Label linuxLabel = new Label() { Text = "Modded Linux game loaded!", Visible = false };
 
     private Button OriginalButton = new Button() { Text = "Load 1.1" };
-    private Label OriginalLabel = new Label();
+    private Label OriginalLabel = new Label() { Text = "1.1 loaded!", Visible = false};
     private Button ModButton = new Button() { Text = "Load modded game" };
-    private Label ModLabel = new Label();
+    private Label ModLabel = new Label() { Text = "Mod loaded!", Visible = false };
     private Button CreateButton = new Button() { Text = "Create mod package(s)", Enabled = false };
-    private Label CreateLabel = new Label();
+    private Label CreateLabel = new Label() { Text = "Mod package created!", Visible = false};
     #endregion
 }
