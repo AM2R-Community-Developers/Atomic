@@ -10,16 +10,7 @@ public partial class ModPacker : Form
     public ModPacker()
     {
         profile = new ModProfileXML("", 1, "", "", "", false, "", false, false, ""); // (1, "", "", false, "default", false, false);
-        isOriginalLoaded = false;
-        isModLoaded = false;
-        isApkLoaded = false;
-        isLinuxLoaded = false;
-
-        localPath = Directory.GetCurrentDirectory();
-        originalPath = "";
-        modPath = "";
-        linuxPath = "";
-        apkPath = "";
+        localPath = 
 
         Title = "AM2R ModPacker " + VERSION;
         // Currently broken as I don't know how to do this from Rider
@@ -33,8 +24,8 @@ public partial class ModPacker : Form
 
         // Left side
         var modInfoPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
-        modInfoPanel.AddRow(nameLabel, NameTextBox);
-        modInfoPanel.AddRow(authorLabel, AuthorTextBox);
+        modInfoPanel.AddRow(nameLabel, nameTextBox);
+        modInfoPanel.AddRow(authorLabel, authorTextBox);
         modInfoPanel.AddRow(versionLabel, versionTextBox);
         modInfoPanel.AddRow(modNotesLabel);
 
@@ -47,26 +38,26 @@ public partial class ModPacker : Form
 
         // Right Side
         var savePanel = new DynamicLayout();
-        savePanel.AddRow(SaveCheckBox, null, winSaveButton);
+        savePanel.AddRow(customSaveCheckBox, null, customSaveButton);
 
         var saveTextPanel = new DynamicLayout();
-        saveTextPanel.AddRow(saveTextBox);
+        saveTextPanel.AddRow(customSaveTextBox);
 
         var miscOptionsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
-        miscOptionsPanel.AddRow(MusicCheckBox);
-        miscOptionsPanel.AddRow(YYCCheckBox);
-        miscOptionsPanel.AddRow(AndroidCheckBox);
-        miscOptionsPanel.AddRow(ApkButton, ApkLabel);
+        miscOptionsPanel.AddRow(musicCheckBox);
+        miscOptionsPanel.AddRow(yycCheckBox);
+        miscOptionsPanel.AddRow(apkCheckBox);
+        miscOptionsPanel.AddRow(apkButton, apkLabel);
         miscOptionsPanel.AddRow(linuxCheckBox);
         miscOptionsPanel.AddRow(linuxButton, linuxLabel);
 
         var loadZipsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
-        loadZipsPanel.AddRow(OriginalButton, null, ModButton);
-        loadZipsPanel.AddRow(OriginalLabel, null, ModLabel);
+        loadZipsPanel.AddRow(originalZipButton, null, modZipButton);
+        loadZipsPanel.AddRow(originalZipLabel, null, modZipLabel);
 
         var resultPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
-        resultPanel.AddRow(CreateButton);
-        resultPanel.AddRow(CreateLabel);
+        resultPanel.AddRow(createButton);
+        resultPanel.AddRow(createLabel);
 
         // Combine together
         rightSide.AddRow(savePanel);
@@ -88,47 +79,47 @@ public partial class ModPacker : Form
         Content = mainContent;
 
         // Assign events
-        OriginalButton.Click += OriginalButton_Click;
-        ModButton.Click += ModButton_Click;
-        CreateButton.Click += CreateButton_Click;
-        ApkButton.Click += ApkButton_Click;
-        AndroidCheckBox.CheckedChanged += AndroidCheckBox_CheckedChanged;
-        SaveCheckBox.CheckedChanged += SaveCheckBox_CheckedChanged;
-        linuxCheckBox.CheckedChanged += linuxCheckBox_CheckedChanged;
-        linuxButton.Click += linuxButton_Click;
-        winSaveButton.Click += CustomSaveDataButton_Click;
+        originalZipButton.Click += OriginalZipButton_Click;
+        modZipButton.Click += ModZipButton_Click;
+        createButton.Click += CreateButton_Click;
+        apkButton.Click += ApkButton_Click;
+        apkCheckBox.CheckedChanged += ApkCheckBoxCheckedChanged;
+        customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
+        linuxCheckBox.CheckedChanged += LinuxCheckBox_CheckedChanged;
+        linuxButton.Click += LinuxButton_Click;
+        customSaveButton.Click += CustomSaveDataButton_Click;
     }
 
     #region Design Elements
     private Label nameLabel = new Label() { Text = "Mod name:" };
-    private TextBox NameTextBox = new TextBox();
+    private TextBox nameTextBox = new TextBox();
     private Label authorLabel = new Label() { Text = "Author:" };
-    private TextBox AuthorTextBox = new TextBox();
+    private TextBox authorTextBox = new TextBox();
     private Label versionLabel = new Label() { Text = "Version:" };
     private TextBox versionTextBox = new TextBox();
     private Label modNotesLabel = new Label() { Text = "Mod notes:" };
     private TextArea modNotesTextBox = new TextArea() { };
 
-    private CheckBox SaveCheckBox = new CheckBox() { Text = "Uses custom save directory" };
-    private Button winSaveButton = new Button() { Text = "Select folder", Enabled = false };
-    private TextBox saveTextBox = new TextBox();
-    private CheckBox MusicCheckBox = new CheckBox() { Text = "Uses custom music" };
+    private CheckBox customSaveCheckBox = new CheckBox() { Text = "Uses custom save directory" };
+    private Button customSaveButton = new Button() { Text = "Select folder", Enabled = false };
+    private TextBox customSaveTextBox = new TextBox();
+    private CheckBox musicCheckBox = new CheckBox() { Text = "Uses custom music" };
 
-    private CheckBox YYCCheckBox = new CheckBox() { Text = "Uses the YoYo Compiler" };
+    private CheckBox yycCheckBox = new CheckBox() { Text = "Uses the YoYo Compiler" };
 
-    private CheckBox AndroidCheckBox = new CheckBox() { Text = "Supports Android" };
-    private Button ApkButton = new Button() { Text = "Load modded Android APK", Enabled = false };
-    private Label ApkLabel = new Label() { Text = "Modded APK loaded!", Visible = false };
+    private CheckBox apkCheckBox = new CheckBox() { Text = "Supports Android" };
+    private Button apkButton = new Button() { Text = "Load modded Android APK", Enabled = false };
+    private Label apkLabel = new Label() { Text = "Modded APK loaded!", Visible = false };
 
     private CheckBox linuxCheckBox = new CheckBox() { Text = "Supports Linux" };
     private Button linuxButton = new Button() { Text = "Load modded Linux .zip", Enabled = false };
     private Label linuxLabel = new Label() { Text = "Modded Linux game loaded!", Visible = false };
 
-    private Button OriginalButton = new Button() { Text = "Load 1.1" };
-    private Label OriginalLabel = new Label() { Text = "1.1 loaded!", Visible = false};
-    private Button ModButton = new Button() { Text = "Load modded game" };
-    private Label ModLabel = new Label() { Text = "Mod loaded!", Visible = false };
-    private Button CreateButton = new Button() { Text = "Create mod package(s)", Enabled = false };
-    private Label CreateLabel = new Label() { Text = "Mod package created!", Visible = false};
+    private Button originalZipButton = new Button() { Text = "Load 1.1" };
+    private Label originalZipLabel = new Label() { Text = "1.1 loaded!", Visible = false};
+    private Button modZipButton = new Button() { Text = "Load modded game" };
+    private Label modZipLabel = new Label() { Text = "Mod loaded!", Visible = false };
+    private Button createButton = new Button() { Text = "Create mod package(s)", Enabled = false };
+    private Label createLabel = new Label() { Text = "Mod package created!", Visible = false};
     #endregion
 }
