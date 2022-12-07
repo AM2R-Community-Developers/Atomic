@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace AM2RModPacker.XML;
+namespace AM2RModPackerLib.XML;
 
 /// <summary>
 /// The <c>Serializer</c> class, that serializes to and deserializes from XML files.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace AM2RModPacker.XML;
+namespace AM2RModPackerLib.XML;
 
 //TODO: sync this with the launcher xml, a bunch more comments are in there.
 /// <summary>

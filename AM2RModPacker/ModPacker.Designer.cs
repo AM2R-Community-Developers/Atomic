@@ -12,7 +12,7 @@ public partial class ModPacker : Form
         profile = new ModProfileXML("", 1, "", "", "", false, "", false, false, ""); // (1, "", "", false, "default", false, false);
         localPath = 
 
-        Title = "AM2R ModPacker " + VERSION;
+        Title = "AM2R ModPacker " + version;
         // Currently broken as I don't know how to do this from Rider
         //Icon = Icon.FromResource("icon64.ico");
 

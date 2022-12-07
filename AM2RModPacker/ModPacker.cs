@@ -3,17 +3,17 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using AM2RModPacker.XML;
+using AM2RModPackerLib;
+using AM2RModPackerLib.XML;
 using Eto.Forms;
 
 namespace AM2RModPacker;
 
 public partial class ModPacker : Form
 {
-    private const string VERSION = "2.0.3";
-    private const string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
+    private static readonly string version = Core.Version;
+    private const string originalMD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
     private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded;
     // TODO: do not get current directory, wont end well
     private readonly string localPath = Directory.GetCurrentDirectory();
@@ -23,6 +23,7 @@ public partial class ModPacker : Form
     private readonly ModProfileXML profile;
 
     private readonly FileFilter zipFileFilter = new FileFilter("zip archives (*.zip)", ".zip");
+    private readonly FileFilter apkFileFilter = new FileFilter("Android application packages (*.apk)", ".apk");
 
     #region Eto events
     private void CustomSaveCheckBoxChecked_Changed(object sender, EventArgs e)
@@ -32,19 +33,17 @@ public partial class ModPacker : Form
         UpdateCreateButton();
     }
 
-    private void ApkButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded AM2R APK
-        (isApkLoaded, apkPath) = SelectFile("Please select your custom AM2R .apk", "android application packages (*.apk)|*.apk");
-
-        apkLabel.Visible = isApkLoaded;
-
-        UpdateCreateButton();
-    }
-
     private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
     {
         apkButton.Enabled = apkCheckBox.Checked.Value;
+        UpdateCreateButton();
+    }
+    
+    private void ApkButton_Click(object sender, EventArgs e)
+    {
+        // Open window to select modded AM2R APK
+        (isApkLoaded, apkPath) = SelectFile("Please select your custom AM2R .apk", apkFileFilter);
+        apkLabel.Visible = isApkLoaded;
         UpdateCreateButton();
     }
 
@@ -58,9 +57,7 @@ public partial class ModPacker : Form
     {
         // Open window to select modded Linux .zip
         (isLinuxLoaded, linuxPath) = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
-
         linuxLabel.Visible = isLinuxLoaded;
-
         UpdateCreateButton();
     }
 
@@ -68,9 +65,7 @@ public partial class ModPacker : Form
     {
         // Open window to select AM2R 1.1
         (isOriginalLoaded, originalPath) = SelectFile("Please select AM2R_11.zip", zipFileFilter);
-
         originalZipLabel.Visible = isOriginalLoaded;
-
         UpdateCreateButton();
     }
 
@@ -78,9 +73,7 @@ public partial class ModPacker : Form
     {
         // Open window to select modded AM2R
         (isModLoaded, modPath) = SelectFile("Please select your custom AM2R .zip", zipFileFilter);
-
         modZipLabel.Visible = isModLoaded;
-
         UpdateCreateButton();
     }
 
@@ -101,6 +94,7 @@ public partial class ModPacker : Form
         createLabel.Visible = true;
         createLabel.Text = "Packaging mod(s)... This could take a while!";
 
+        // TODO: move most of this into seperate method?
         string output;
 
         using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
@@ -135,6 +129,7 @@ public partial class ModPacker : Form
 
             CreateModPack("Linux", linuxPath, output);
         }
+        //TODO: mac
 
         createLabel.Text = "Mod package(s) created!";
     }
@@ -142,6 +137,7 @@ public partial class ModPacker : Form
 
     private void CreateModPack(string operatingSystem, string input, string output)
     {
+        // TODO: go over thhis
         LoadProfileParameters(operatingSystem);
 
         // Cleanup in case of previous errors
@@ -181,12 +177,13 @@ public partial class ModPacker : Form
         // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
         try
         {
-            string newMD5 = CalculateMD5(tempOriginalPath + "/data.win");
+            // TODO: dont. do what launcher does
+            string newMD5 = Core.CalculateMD5(tempOriginalPath + "/data.win");
 
-            if (newMD5 != ORIGINAL_MD5)
+            if (newMD5 != originalMD5)
             {
                 // Show error box
-                MessageBox.Show("1.1 data.win does not meet MD5 checksum! Mod packaging aborted.\n1.1 MD5: " + ORIGINAL_MD5 + "\nYour MD5: " + newMD5, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                MessageBox.Show("1.1 data.win does not meet MD5 checksum! Mod packaging aborted.\n1.1 MD5: " + originalMD5 + "\nYour MD5: " + newMD5, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
 
                 AbortPatch();
 
@@ -222,13 +219,13 @@ public partial class ModPacker : Form
 
             if (profile.UsesYYC)
             {
-                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
             else
             {
-                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
+                Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
 
-                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                Core.CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
         }
         else if (profile.OperatingSystem == "Linux")
@@ -249,8 +246,8 @@ public partial class ModPacker : Form
                     AbortPatch();
             }
 
-            CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
-            CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
+            Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
+            Core.CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
         }
 
         // Create game.droid patch and wrapper if Android is supported
@@ -280,7 +277,7 @@ public partial class ModPacker : Form
             }
 
             // Create game.droid patch
-            CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
+            Core.CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
 
             // Delete excess files in APK
 
@@ -349,7 +346,7 @@ public partial class ModPacker : Form
         if (profile.UsesCustomMusic)
         {
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
+            Core.CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
         }
         else
         {
@@ -364,7 +361,7 @@ public partial class ModPacker : Form
             string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "/files_to_copy");
+            Core.CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "/files_to_copy");
         }
 
         // Export profile as XML
@@ -464,22 +461,6 @@ public partial class ModPacker : Form
         customSaveTextBox.Text = saveFilePath;
     }
 
-    private static void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
-    {
-        foreach (var file in source.GetFiles())
-        {
-            if (!blacklist.Contains(file.Name))
-                file.CopyTo(destination + "/" + file.Name);
-        }
-
-        foreach (var dir in source.GetDirectories())
-        {
-            // Folders need to be lowercase, because GM only reads from lowercase names on *nix systems. Windows is case-insensitive so doesnt matter for them
-            string newDir = Directory.CreateDirectory(destination + "/" + dir.Name.ToLower()).FullName;
-            CopyFilesRecursive(dir, blacklist, newDir);
-        }
-    }
-
     private void UpdateCreateButton()
     {
         if (isOriginalLoaded &&
@@ -491,34 +472,8 @@ public partial class ModPacker : Form
         else
             createButton.Enabled = false;
     }
-
-    // Thanks, stackoverflow: https://stackoverflow.com/questions/10520048/calculate-md5-checksum-for-a-file
-    private static string CalculateMD5(string filename)
-    {
-        using var stream = File.OpenRead(filename);
-        using var md5 = MD5.Create();
-        byte[] hash = md5.ComputeHash(stream);
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-    }
-
-    private void CreatePatch(string original, string modified, string output)
-    {
-        // Specify process start info
-        var parameters = new ProcessStartInfo
-        {
-            FileName = localPath + "/utilities/xdelta/xdelta3.exe",
-            WorkingDirectory = localPath,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            Arguments = "-f -e -s \"" + original + "\" \"" + modified + "\" \"" + output + "\""
-        };
-
-        // Launch process and wait for exit. using statement automatically disposes the object for us!
-        using var proc = new Process { StartInfo = parameters };
-        proc.Start();
-        proc.WaitForExit();
-    }
-
+    
+    //todo: make this part of interface
     private (bool, string) SelectFile(string title, FileFilter filter)
     {
         using var fileFinder = new OpenFileDialog { Filters = { filter } };
