@@ -145,8 +145,8 @@ public partial class ModPacker : Form
         LoadProfileParameters(operatingSystem);
 
         // Cleanup in case of previous errors
-        if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
-            Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
+        if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
+            Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
 
         // Create temp work folders
         string tempPath,
@@ -157,10 +157,10 @@ public partial class ModPacker : Form
         // We might not have permission to access to the temp directory, so we need to catch the exception.
         try
         {
-            tempPath = Directory.CreateDirectory(Path.GetTempPath() + "\\AM2RModPacker").FullName;
-            tempOriginalPath = Directory.CreateDirectory(tempPath + "\\original").FullName;
-            tempModPath = Directory.CreateDirectory(tempPath + "\\mod").FullName;
-            tempProfilePath = Directory.CreateDirectory(tempPath + "\\profile").FullName;
+            tempPath = Directory.CreateDirectory(Path.GetTempPath() + "/AM2RModPacker").FullName;
+            tempOriginalPath = Directory.CreateDirectory(tempPath + "/original").FullName;
+            tempModPath = Directory.CreateDirectory(tempPath + "/mod").FullName;
+            tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
         }
         catch (System.Security.SecurityException)
         {
@@ -175,13 +175,13 @@ public partial class ModPacker : Form
         ZipFile.ExtractToDirectory(originalPath, tempOriginalPath);
         ZipFile.ExtractToDirectory(input, tempModPath);
 
-        if (Directory.Exists(tempModPath + "\\AM2R"))
-            tempModPath += "\\AM2R";
+        if (Directory.Exists(tempModPath + "/AM2R"))
+            tempModPath += "/AM2R";
 
         // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
         try
         {
-            string newMD5 = CalculateMD5(tempOriginalPath + "\\data.win");
+            string newMD5 = CalculateMD5(tempOriginalPath + "/data.win");
 
             if (newMD5 != ORIGINAL_MD5)
             {
@@ -222,18 +222,18 @@ public partial class ModPacker : Form
 
             if (profile.UsesYYC)
             {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
             else
             {
-                CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\data.win", tempProfilePath + "\\data.xdelta");
+                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
 
-                CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\AM2R.exe", tempProfilePath + "\\AM2R.xdelta");
+                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
         }
         else if (profile.OperatingSystem == "Linux")
         {
-            string runnerName = File.Exists(tempModPath + "\\" + "AM2R") ? "AM2R" : "runner";
+            string runnerName = File.Exists(tempModPath + "/" + "AM2R") ? "AM2R" : "runner";
 
             if (!File.Exists(tempModPath + "/" + runnerName))
             {
@@ -249,14 +249,14 @@ public partial class ModPacker : Form
                     AbortPatch();
             }
 
-            CreatePatch(tempOriginalPath + "\\data.win", tempModPath + "\\assets\\game.unx", tempProfilePath + "\\game.xdelta");
-            CreatePatch(tempOriginalPath + "\\AM2R.exe", tempModPath + "\\" + runnerName, tempProfilePath + "\\AM2R.xdelta");
+            CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
+            CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
         }
 
         // Create game.droid patch and wrapper if Android is supported
         if (profile.Android)
         {
-            string tempAndroid = Directory.CreateDirectory(tempPath + "\\android").FullName;
+            string tempAndroid = Directory.CreateDirectory(tempPath + "/android").FullName;
 
             // Extract APK 
             // - java -jar apktool.jar d "%~dp0AM2RWrapper_old.apk"
@@ -266,7 +266,7 @@ public partial class ModPacker : Form
             {
                 FileName = "cmd.exe",
                 WorkingDirectory = tempAndroid,
-                Arguments = "/C java -jar \"" + localPath + "\\utilities\\android\\apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + apkPath + "\"",
+                Arguments = "/C java -jar \"" + localPath + "/utilities/android/apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + apkPath + "\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -280,7 +280,7 @@ public partial class ModPacker : Form
             }
 
             // Create game.droid patch
-            CreatePatch(tempOriginalPath + "\\data.win", tempAndroid + "\\assets\\game.droid", tempProfilePath + "\\droid.xdelta");
+            CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
 
             // Delete excess files in APK
 
@@ -288,7 +288,7 @@ public partial class ModPacker : Form
             string[] whitelist = { "splash.png", "portrait_splash.png" };
 
             // Get directory
-            var androidAssets = new DirectoryInfo(tempAndroid + "\\assets");
+            var androidAssets = new DirectoryInfo(tempAndroid + "/assets");
 
 
             // Delete files
@@ -296,10 +296,10 @@ public partial class ModPacker : Form
             {
                 if (file.Name.EndsWith(".ini") && file.Name != "modifiers.ini")
                 {
-                    if (File.Exists(tempProfilePath + "\\AM2R.ini"))
+                    if (File.Exists(tempProfilePath + "/AM2R.ini"))
                         // This shouldn't be a problem... normally...
-                        File.Delete(tempProfilePath + "\\AM2R.ini");
-                    File.Copy(file.FullName, tempProfilePath + "\\AM2R.ini");
+                        File.Delete(tempProfilePath + "/AM2R.ini");
+                    File.Copy(file.FullName, tempProfilePath + "/AM2R.ini");
                 }
 
                 if (!whitelist.Contains(file.Name))
@@ -317,7 +317,7 @@ public partial class ModPacker : Form
             {
                 FileName = "cmd.exe",
                 WorkingDirectory = tempAndroid,
-                Arguments = "/C java -jar \"" + localPath + "\\utilities\\android\\apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfilePath + "\\AM2RWrapper.apk\"",
+                Arguments = "/C java -jar \"" + localPath + "/utilities/android/apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfilePath + "/AM2RWrapper.apk\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -330,26 +330,26 @@ public partial class ModPacker : Form
                 proc.WaitForExit();
             }
 
-            string tempAndroidProfilePath = tempProfilePath + "\\android";
+            string tempAndroidProfilePath = tempProfilePath + "/android";
             Directory.CreateDirectory(tempAndroidProfilePath);
 
-            File.Move(tempProfilePath + "\\AM2RWrapper.apk", tempAndroidProfilePath + "\\AM2RWrapper.apk");
-            if (File.Exists(tempProfilePath + "\\AM2R.ini"))
-                File.Move(tempProfilePath + "\\AM2R.ini", tempAndroidProfilePath + "\\AM2R.ini");
+            File.Move(tempProfilePath + "/AM2RWrapper.apk", tempAndroidProfilePath + "/AM2RWrapper.apk");
+            if (File.Exists(tempProfilePath + "/AM2R.ini"))
+                File.Move(tempProfilePath + "/AM2R.ini", tempAndroidProfilePath + "/AM2R.ini");
         }
 
         // Copy datafiles (exclude .ogg if custom music is not selected)
 
         var dirInfo = new DirectoryInfo(tempModPath);
         if (profile.OperatingSystem == "Linux")
-            dirInfo = new DirectoryInfo(tempModPath + "\\assets");
+            dirInfo = new DirectoryInfo(tempModPath + "/assets");
 
-        Directory.CreateDirectory(tempProfilePath + "\\files_to_copy");
+        Directory.CreateDirectory(tempProfilePath + "/files_to_copy");
 
         if (profile.UsesCustomMusic)
         {
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "\\files_to_copy");
+            CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
         }
         else
         {
@@ -364,12 +364,12 @@ public partial class ModPacker : Form
             string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "\\files_to_copy");
+            CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "/files_to_copy");
         }
 
         // Export profile as XML
         string xmlOutput = Serializer.Serialize<ModProfileXML>(profile);
-        File.WriteAllText(tempProfilePath + "\\profile.xml", xmlOutput);
+        File.WriteAllText(tempProfilePath + "/profile.xml", xmlOutput);
 
         // Compress temp folder to .zip
         if (File.Exists(output))
@@ -420,8 +420,8 @@ public partial class ModPacker : Form
         linuxLabel.Visible = false;
 
         // Remove temp directory
-        if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
-            Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
+        if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
+            Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
     }
 
     private void CustomSaveDataButton_Click(object sender, EventArgs e)
@@ -469,13 +469,13 @@ public partial class ModPacker : Form
         foreach (var file in source.GetFiles())
         {
             if (!blacklist.Contains(file.Name))
-                file.CopyTo(destination + "\\" + file.Name);
+                file.CopyTo(destination + "/" + file.Name);
         }
 
         foreach (var dir in source.GetDirectories())
         {
             // Folders need to be lowercase, because GM only reads from lowercase names on *nix systems. Windows is case-insensitive so doesnt matter for them
-            string newDir = Directory.CreateDirectory(destination + "\\" + dir.Name.ToLower()).FullName;
+            string newDir = Directory.CreateDirectory(destination + "/" + dir.Name.ToLower()).FullName;
             CopyFilesRecursive(dir, blacklist, newDir);
         }
     }
@@ -506,7 +506,7 @@ public partial class ModPacker : Form
         // Specify process start info
         var parameters = new ProcessStartInfo
         {
-            FileName = localPath + "\\utilities\\xdelta\\xdelta3.exe",
+            FileName = localPath + "/utilities/xdelta/xdelta3.exe",
             WorkingDirectory = localPath,
             UseShellExecute = false,
             CreateNoWindow = true,

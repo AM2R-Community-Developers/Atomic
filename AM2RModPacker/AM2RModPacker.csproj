@@ -1,35 +1,14 @@
 ﻿<Project Sdk="Eto.Forms/2.7.2">
-
-  <!--
-    Set the BuildPlatform property to the Eto platform you wish to build for.
-    The default is the platform you are building on.
-    Valid values: Wpf, Windows, Mac64, XamMac2, Gtk, Direct2D
-  -->
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Update="utilities\android\apktool.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="utilities\android\LICENSE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="utilities\xdelta\LICENSE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+  
   <ItemGroup>
     <EmbeddedResource Include="icon64.ico" />
-    <Content Include="utilities\android\apktool.jar">
+    <Folder Include="utilities" />
+    <Content Include="utilities/**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="utilities\xdelta\xdelta3.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>
 
