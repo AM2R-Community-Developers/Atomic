@@ -12,58 +12,98 @@ namespace AM2RModPacker;
 
 public partial class ModPacker : Form
 {
-    private static readonly string VERSION = "2.0.3";
-    private static readonly string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
+    private const string VERSION = "2.0.3";
+    private const string ORIGINAL_MD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
     private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded;
-    private string localPath, originalPath, modPath, apkPath, linuxPath;
-    private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx" };
-    private static string saveFilePath = null;
-    private ModProfileXML profile;
+    // TODO: do not get current directory, wont end well
+    private readonly string localPath = Directory.GetCurrentDirectory();
+    private string originalPath, modPath, apkPath, linuxPath;
+    private readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx" };
+    private string saveFilePath;
+    private readonly ModProfileXML profile;
 
-    private FileFilter zipFileFilter = new FileFilter("zip archives (*.zip)", ".zip");
+    private readonly FileFilter zipFileFilter = new FileFilter("zip archives (*.zip)", ".zip");
 
     #region Eto events
-
-    private void OriginalButton_Click(object sender, EventArgs e)
+    private void CustomSaveCheckBoxChecked_Changed(object sender, EventArgs e)
     {
-        // Open window to select AM2R 1.1
-        (isOriginalLoaded, originalPath) = SelectFile("Please select AM2R_11.zip", zipFileFilter);
+        customSaveButton.Enabled = customSaveCheckBox.Checked.Value;
+        customSaveTextBox.Enabled = customSaveCheckBox.Checked.Value;
+        UpdateCreateButton();
+    }
 
-        OriginalLabel.Visible = isOriginalLoaded; 
+    private void ApkButton_Click(object sender, EventArgs e)
+    {
+        // Open window to select modded AM2R APK
+        (isApkLoaded, apkPath) = SelectFile("Please select your custom AM2R .apk", "android application packages (*.apk)|*.apk");
+
+        apkLabel.Visible = isApkLoaded;
 
         UpdateCreateButton();
     }
 
-    private void ModButton_Click(object sender, EventArgs e)
+    private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
+    {
+        apkButton.Enabled = apkCheckBox.Checked.Value;
+        UpdateCreateButton();
+    }
+
+    private void LinuxCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        linuxButton.Enabled = linuxCheckBox.Checked.Value;
+        UpdateCreateButton();
+    }
+
+    private void LinuxButton_Click(object sender, EventArgs e)
+    {
+        // Open window to select modded Linux .zip
+        (isLinuxLoaded, linuxPath) = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
+
+        linuxLabel.Visible = isLinuxLoaded;
+
+        UpdateCreateButton();
+    }
+
+    private void OriginalZipButton_Click(object sender, EventArgs e)
+    {
+        // Open window to select AM2R 1.1
+        (isOriginalLoaded, originalPath) = SelectFile("Please select AM2R_11.zip", zipFileFilter);
+
+        originalZipLabel.Visible = isOriginalLoaded;
+
+        UpdateCreateButton();
+    }
+
+    private void ModZipButton_Click(object sender, EventArgs e)
     {
         // Open window to select modded AM2R
         (isModLoaded, modPath) = SelectFile("Please select your custom AM2R .zip", zipFileFilter);
 
-        ModLabel.Visible = isModLoaded;
+        modZipLabel.Visible = isModLoaded;
 
         UpdateCreateButton();
     }
 
     private void CreateButton_Click(object sender, EventArgs e)
     {
-        if (NameTextBox.Text == "" || AuthorTextBox.Text == "" || versionTextBox.Text == "")
+        if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
         {
             MessageBox.Show("Text field missing! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
             return;
         }
 
-        if (Path.GetInvalidFileNameChars().Any(NameTextBox.Text.Contains))
+        if (Path.GetInvalidFileNameChars().Any(nameTextBox.Text.Contains))
         {
-            MessageBox.Show("Name contains invalid characters! These characters are not allowed:\n" + string.Join("\n", Path.GetInvalidFileNameChars()));
+            MessageBox.Show("Name contains invalid characters! These characters are not allowed:\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
             return;
         }
 
-        CreateLabel.Visible = true;
-        CreateLabel.Text = "Packaging mod(s)... This could take a while!";
+        createLabel.Visible = true;
+        createLabel.Text = "Packaging mod(s)... This could take a while!";
 
         string output;
 
-        using (SaveFileDialog saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = {zipFileFilter} })
+        using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
         {
             if (saveFile.ShowDialog(this) == DialogResult.Ok)
             {
@@ -71,7 +111,7 @@ public partial class ModPacker : Form
             }
             else
             {
-                CreateLabel.Text = "Mod packaging aborted!";
+                createLabel.Text = "Mod packaging aborted!";
                 return;
             }
         }
@@ -80,7 +120,7 @@ public partial class ModPacker : Form
 
         if (linuxCheckBox.Checked.Value)
         {
-            using (SaveFileDialog saveFile = new SaveFileDialog { Title = "Save Linux mod profile", Filters = {zipFileFilter} })
+            using (var saveFile = new SaveFileDialog { Title = "Save Linux mod profile", Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
                 {
@@ -88,7 +128,7 @@ public partial class ModPacker : Form
                 }
                 else
                 {
-                    CreateLabel.Text = "Mod packaging aborted!";
+                    createLabel.Text = "Mod packaging aborted!";
                     return;
                 }
             }
@@ -96,8 +136,9 @@ public partial class ModPacker : Form
             CreateModPack("Linux", linuxPath, output);
         }
 
-        CreateLabel.Text = "Mod package(s) created!";
+        createLabel.Text = "Mod package(s) created!";
     }
+    #endregion
 
     private void CreateModPack(string operatingSystem, string input, string output)
     {
@@ -105,15 +146,13 @@ public partial class ModPacker : Form
 
         // Cleanup in case of previous errors
         if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
-        {
             Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
-        }
 
         // Create temp work folders
-        string tempPath = "",
-               tempOriginalPath = "",
-               tempModPath = "",
-               tempProfilePath = "";
+        string tempPath,
+               tempOriginalPath,
+               tempModPath,
+               tempProfilePath;
 
         // We might not have permission to access to the temp directory, so we need to catch the exception.
         try
@@ -223,7 +262,7 @@ public partial class ModPacker : Form
             // - java -jar apktool.jar d "%~dp0AM2RWrapper_old.apk"
 
             // Process startInfo
-            ProcessStartInfo procStartInfo = new ProcessStartInfo
+            var procStartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 WorkingDirectory = tempAndroid,
@@ -233,7 +272,7 @@ public partial class ModPacker : Form
             };
 
             // Run process
-            using (Process proc = new Process { StartInfo = procStartInfo })
+            using (var proc = new Process { StartInfo = procStartInfo })
             {
                 proc.Start();
 
@@ -249,40 +288,32 @@ public partial class ModPacker : Form
             string[] whitelist = { "splash.png", "portrait_splash.png" };
 
             // Get directory
-            DirectoryInfo androidAssets = new DirectoryInfo(tempAndroid + "\\assets");
-
-            
+            var androidAssets = new DirectoryInfo(tempAndroid + "\\assets");
 
 
             // Delete files
-            foreach (FileInfo file in androidAssets.GetFiles())
+            foreach (var file in androidAssets.GetFiles())
             {
                 if (file.Name.EndsWith(".ini") && file.Name != "modifiers.ini")
                 {
                     if (File.Exists(tempProfilePath + "\\AM2R.ini"))
-                    {
                         // This shouldn't be a problem... normally...
                         File.Delete(tempProfilePath + "\\AM2R.ini");
-                    }
                     File.Copy(file.FullName, tempProfilePath + "\\AM2R.ini");
                 }
 
                 if (!whitelist.Contains(file.Name))
-                {
                     File.Delete(file.FullName);
-                }
             }
 
-            foreach (DirectoryInfo dir in androidAssets.GetDirectories())
-            {
+            foreach (var dir in androidAssets.GetDirectories())
                 Directory.Delete(dir.FullName, true);
-            }
 
             // Create wrapper
 
             // Process startInfo
             // - java -jar apktool.jar b "%~dp0AM2RWrapper_old" -o "%~dp0AM2RWrapper.apk"
-            ProcessStartInfo procStartInfo2 = new ProcessStartInfo
+            var procStartInfo2 = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 WorkingDirectory = tempAndroid,
@@ -292,7 +323,7 @@ public partial class ModPacker : Form
             };
 
             // Run process
-            using (Process proc = new Process { StartInfo = procStartInfo2 })
+            using (var proc = new Process { StartInfo = procStartInfo2 })
             {
                 proc.Start();
 
@@ -309,16 +340,16 @@ public partial class ModPacker : Form
 
         // Copy datafiles (exclude .ogg if custom music is not selected)
 
-        DirectoryInfo dinfo = new DirectoryInfo(tempModPath);
+        var dirInfo = new DirectoryInfo(tempModPath);
         if (profile.OperatingSystem == "Linux")
-            dinfo = new DirectoryInfo(tempModPath + "\\assets");
+            dirInfo = new DirectoryInfo(tempModPath + "\\assets");
 
         Directory.CreateDirectory(tempProfilePath + "\\files_to_copy");
 
         if (profile.UsesCustomMusic)
         {
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dinfo, DATAFILES_BLACKLIST, tempProfilePath + "\\files_to_copy");
+            CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "\\files_to_copy");
         }
         else
         {
@@ -333,7 +364,7 @@ public partial class ModPacker : Form
             string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dinfo, blacklist, tempProfilePath + "\\files_to_copy");
+            CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "\\files_to_copy");
         }
 
         // Export profile as XML
@@ -342,9 +373,7 @@ public partial class ModPacker : Form
 
         // Compress temp folder to .zip
         if (File.Exists(output))
-        {
             File.Delete(output);
-        }
 
         ZipFile.CreateFromDirectory(tempProfilePath, output);
 
@@ -352,53 +381,22 @@ public partial class ModPacker : Form
         Directory.Delete(tempPath, true);
     }
 
-    private void ApkButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded AM2R APK
-        (isApkLoaded, apkPath) = SelectFile("Please select your custom AM2R .apk", "android application packages (*.apk)|*.apk");
-
-        ApkLabel.Visible = isApkLoaded;
-
-        UpdateCreateButton();
-    }
-
-    private void AndroidCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-        ApkButton.Enabled = AndroidCheckBox.Checked.Value;
-        UpdateCreateButton();
-    }
-
-    private void SaveCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-        winSaveButton.Enabled = SaveCheckBox.Checked.Value;
-        saveTextBox.Enabled = SaveCheckBox.Checked.Value;
-        UpdateCreateButton();
-    }
-
-    #endregion
-
     private void LoadProfileParameters(string operatingSystem)
     {
-        profile.Name = NameTextBox.Text;
-        profile.Author = AuthorTextBox.Text;
+        profile.Name = nameTextBox.Text;
+        profile.Author = authorTextBox.Text;
         profile.Version = versionTextBox.Text;
-        profile.UsesCustomMusic = MusicCheckBox.Checked.Value;            
-        profile.UsesYYC = YYCCheckBox.Checked.Value;
-        profile.Android = AndroidCheckBox.Checked.Value;
+        profile.UsesCustomMusic = musicCheckBox.Checked.Value;
+        profile.UsesYYC = yycCheckBox.Checked.Value;
+        profile.Android = apkCheckBox.Checked.Value;
         profile.ProfileNotes = modNotesTextBox.Text;
         profile.OperatingSystem = operatingSystem;
-        if (SaveCheckBox.Checked.Value && saveTextBox.Text != "")
-        {
-            profile.SaveLocation = saveTextBox.Text;
-        }
+        if (customSaveCheckBox.Checked.Value && customSaveTextBox.Text != "")
+            profile.SaveLocation = customSaveTextBox.Text;
         else
-        {
             profile.SaveLocation = "%localappdata%/AM2R";
-        }
         if (operatingSystem == "Linux")
-        {
             profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
-        }
     }
 
     private void AbortPatch()
@@ -415,83 +413,66 @@ public partial class ModPacker : Form
         saveFilePath = null;
 
         // Set labels
-        CreateLabel.Text = "Mod packaging aborted!";
-        OriginalLabel.Visible = false;
-        ModLabel.Visible = false;
-        ApkLabel.Visible = false;
+        createLabel.Text = "Mod packaging aborted!";
+        originalZipLabel.Visible = false;
+        modZipLabel.Visible = false;
+        apkLabel.Visible = false;
         linuxLabel.Visible = false;
 
         // Remove temp directory
         if (Directory.Exists(Path.GetTempPath() + "\\AM2RModPacker"))
-        {
             Directory.Delete(Path.GetTempPath() + "\\AM2RModPacker", true);
-        }
-    }
-
-    private void linuxCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-        linuxButton.Enabled = linuxCheckBox.Checked.Value;
-        UpdateCreateButton();
-    }
-
-    private void linuxButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded Linux .zip
-        (isLinuxLoaded, linuxPath) = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
-
-        linuxLabel.Visible = isLinuxLoaded;
-
-        UpdateCreateButton();
     }
 
     private void CustomSaveDataButton_Click(object sender, EventArgs e)
     {
-        bool wasSuccessfull = false;
-        Regex saveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\");     //this is to ensure, that the save directory is valid. so far, this is only important for windows
+        bool wasSuccessful = false;
+        // TODO: make sure that the validation works on other platforms too
+        var saveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid. so far, this is only important for windows
 
-        
-        SelectFolderDialog dialog = new SelectFolderDialog();
+
+        var dialog = new SelectFolderDialog();
         // currently not implemented in eto
         //dialog.InitialDirectory = Environment.GetEnvironmentVariable("LocalAppData");
-        while (!wasSuccessfull)
+        while (!wasSuccessful)
         {
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
-                Match match = saveRegex.Match(dialog.Directory);
+                var match = saveRegex.Match(dialog.Directory);
                 if (match.Success == false)
+                {
                     MessageBox.Show("Invalid Save Directory! Please choose one in %LocalAppData%");
+                }
                 else
                 {
-                    wasSuccessfull = true;
+                    wasSuccessful = true;
                     saveFilePath = dialog.Directory.Replace(match.Value, "%localappdata%/");
-                    saveFilePath = saveFilePath.Replace("\\", "/");            // if we don't do this, custom save locations are going to fail on Linux
+                    saveFilePath = saveFilePath.Replace("\\", "/"); // if we don't do this, custom save locations are going to fail on Linux
                     // if someone has a custom save path inside of am2r and creates these whithin game maker, they will always be lower case
                     // we need to adjust them here to lowercase as well, as otherwise launcher gets problems on nix systems
-                    string vanillaPrefix = "%localappdata%/AM2R/";
+                    const string vanillaPrefix = "%localappdata%/AM2R/";
                     if (saveFilePath.Contains(vanillaPrefix))
                         saveFilePath = vanillaPrefix + saveFilePath.Substring(vanillaPrefix.Length).ToLower();
                 }
             }
             else
             {
-                wasSuccessfull = true;
+                wasSuccessful = true;
                 saveFilePath = null;
             }
         }
-        saveTextBox.Text = saveFilePath;
+        customSaveTextBox.Text = saveFilePath;
     }
 
-    private void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
+    private static void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
     {
-        foreach (FileInfo file in source.GetFiles())
+        foreach (var file in source.GetFiles())
         {
             if (!blacklist.Contains(file.Name))
-            {
                 file.CopyTo(destination + "\\" + file.Name);
-            }
         }
 
-        foreach (DirectoryInfo dir in source.GetDirectories())
+        foreach (var dir in source.GetDirectories())
         {
             // Folders need to be lowercase, because GM only reads from lowercase names on *nix systems. Windows is case-insensitive so doesnt matter for them
             string newDir = Directory.CreateDirectory(destination + "\\" + dir.Name.ToLower()).FullName;
@@ -501,37 +482,29 @@ public partial class ModPacker : Form
 
     private void UpdateCreateButton()
     {
-        if (isOriginalLoaded && 
-            isModLoaded && 
-            (!AndroidCheckBox.Checked.Value || isApkLoaded) && 
-            (!linuxCheckBox.Checked.Value || isLinuxLoaded) && 
-            (!SaveCheckBox.Checked.Value || saveTextBox.Text != ""))
-        {
-            CreateButton.Enabled = true;
-        }
+        if (isOriginalLoaded &&
+            isModLoaded &&
+            (!apkCheckBox.Checked.Value || isApkLoaded) &&
+            (!linuxCheckBox.Checked.Value || isLinuxLoaded) &&
+            (!customSaveCheckBox.Checked.Value || customSaveTextBox.Text != ""))
+            createButton.Enabled = true;
         else
-        {
-            CreateButton.Enabled = false;
-        }
+            createButton.Enabled = false;
     }
 
     // Thanks, stackoverflow: https://stackoverflow.com/questions/10520048/calculate-md5-checksum-for-a-file
-    private string CalculateMD5(string filename)
+    private static string CalculateMD5(string filename)
     {
-        using (var stream = File.OpenRead(filename))
-        {
-            using (var md5 = MD5.Create())
-            {
-                var hash = md5.ComputeHash(stream);
-                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-            }
-        }
+        using var stream = File.OpenRead(filename);
+        using var md5 = MD5.Create();
+        byte[] hash = md5.ComputeHash(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 
     private void CreatePatch(string original, string modified, string output)
     {
         // Specify process start info
-        ProcessStartInfo parameters = new ProcessStartInfo
+        var parameters = new ProcessStartInfo
         {
             FileName = localPath + "\\utilities\\xdelta\\xdelta3.exe",
             WorkingDirectory = localPath,
@@ -541,29 +514,22 @@ public partial class ModPacker : Form
         };
 
         // Launch process and wait for exit. using statement automatically disposes the object for us!
-        using (Process proc = new Process { StartInfo = parameters })
-        {
-            proc.Start();
-
-            proc.WaitForExit();
-        }
+        using var proc = new Process { StartInfo = parameters };
+        proc.Start();
+        proc.WaitForExit();
     }
 
     private (bool, string) SelectFile(string title, FileFilter filter)
     {
-        using (OpenFileDialog fileFinder = new OpenFileDialog() {Filters = { filter }})
-        {
-            fileFinder.Title = title;
-            fileFinder.CurrentFilter = fileFinder.Filters.First();
-            fileFinder.CheckFileExists = true;
+        using var fileFinder = new OpenFileDialog { Filters = { filter } };
+        fileFinder.Title = title;
+        fileFinder.CurrentFilter = fileFinder.Filters.First();
+        fileFinder.CheckFileExists = true;
 
-            if (fileFinder.ShowDialog(this) == DialogResult.Ok)
-            {
-                string location = fileFinder.FileName;
-                return (true, location);
+        if (fileFinder.ShowDialog(this) != DialogResult.Ok)
+            return (false, "");
 
-            }
-            else return (false, "");
-        }
+        string location = fileFinder.FileName;
+        return (true, location);
     }
 }
