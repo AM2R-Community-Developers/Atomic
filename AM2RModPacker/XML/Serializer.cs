@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Web;
 using System.Text;
 
-namespace AM2R_ModPacker
+namespace AM2RModPacker.XML
 {
     /// <summary>
     /// The <c>Serializer</c> class, that serializes to and deserializes from XML files.

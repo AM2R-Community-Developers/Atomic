@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace AM2R_ModPacker
+namespace AM2RModPacker.XML
 {
     /// <summary>
     /// Class that handles how the modmeta settings are saved as XML.
