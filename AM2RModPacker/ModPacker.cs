@@ -13,8 +13,8 @@ namespace AM2RModPacker;
 public partial class ModPacker : Form
 {
     private static readonly string version = Core.Version;
-    private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded;
-    private string originalPath, modPath, apkPath, linuxPath;
+    private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded, isMacLoaded;
+    private string originalPath, modPath, apkPath, linuxPath, macPath;
     private string saveFilePath;
     private readonly ModProfileXML profile;
 
@@ -72,6 +72,17 @@ public partial class ModPacker : Form
         }
         customSaveTextBox.Text = saveFilePath;
     }
+    
+    private void YYCCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        // Don't do anything if it's been disabled
+        if (!yycCheckBox.Checked.Value)
+            return;
+        macCheckBox.Checked = false;
+        macLabel.Visible = false;
+        macButton.Enabled = false;
+        macPath = "";
+    }
 
     private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
     {
@@ -98,6 +109,28 @@ public partial class ModPacker : Form
         // Open window to select modded Linux .zip
         (isLinuxLoaded, linuxPath) = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
         linuxLabel.Visible = isLinuxLoaded;
+        UpdateCreateButton();
+    }
+    
+    private void macCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        if (!yycCheckBox.Checked.Value)
+        {
+            macButton.Enabled = macCheckBox.Checked.Value;
+            UpdateCreateButton();
+        }
+        else if (macCheckBox.Checked.Value)
+        {
+            MessageBox.Show("YoYoCompiler isn't supported with Mac!", "Warning", MessageBoxButtons.OK, MessageBoxType.Warning);
+            macCheckBox.Checked = false;
+        }
+    }
+    
+    private void macButton_Click(object sender, EventArgs e)
+    {
+        // Open window to select modded Mac .zip
+        (isMacLoaded, macPath) = SelectFile("Please select your custom Mac AM2R .zip", zipFileFilter);
+        macLabel.Visible = isMacLoaded;
         UpdateCreateButton();
     }
 
@@ -177,7 +210,20 @@ public partial class ModPacker : Form
             }
         }
         //TODO: mac
-
+        if (macCheckBox.Checked.Value)
+        {
+            using (SaveFileDialog saveFile = new SaveFileDialog { Title = "Save Mac mod profile", Filters = { zipFileFilter } })
+            {
+                if (saveFile.ShowDialog(this) == DialogResult.Ok)
+                    output = saveFile.FileName;
+                else
+                {
+                    createLabel.Text = "Mod packaging aborted!";
+                    return;
+                }
+            }
+            Core.CreateModPack(profile, macPath, originalPath, apkPath, output);
+        }
         createLabel.Text = "Mod package(s) created!";
     }
     #endregion
@@ -198,7 +244,13 @@ public partial class ModPacker : Form
             profile.SaveLocation = "%localappdata%/AM2R";
         if (operatingSystem == ProfileOperatingSystems.Linux)
             profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
-        //todo: mac
+        else if (operatingSystem == ProfileOperatingSystems.Mac)
+        {
+            if (profile.SaveLocation.Contains("%localappdata%/AM2R"))
+                profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%/AM2R", "~/Library/Application Support/com.yoyogames.am2r");
+            else
+                profile.SaveLocation = "~/Library/Application Support/com.yoyogames." + new DirectoryInfo(profile.SaveLocation).Name.ToLower();
+        }
     }
 
     private void AbortPatch()
@@ -232,6 +284,7 @@ public partial class ModPacker : Form
             isModLoaded &&                                                       // Modded zip must be provided
             (!apkCheckBox.Checked.Value || isApkLoaded) &&                       // either APK is disabled OR APK is provided
             (!linuxCheckBox.Checked.Value || isLinuxLoaded) &&                   // either Linux is disabled OR linux is provided
+            (!macCheckBox.Checked.Value || isMacLoaded) &&                       // either Mac is disabled OR mac is provided
             (!customSaveCheckBox.Checked.Value || customSaveTextBox.Text != "")) // either custom saves are disabled OR custom save is provided
             createButton.Enabled = true;
         else

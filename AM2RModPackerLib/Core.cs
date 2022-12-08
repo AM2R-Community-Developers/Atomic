@@ -17,7 +17,7 @@ public static class Core
 {
     public static readonly string Version = "2.0.3";
     private const string originalMD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
-    private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx" };
+    private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx", "game.ios" };
     // todo: dont do this, cwd is unreliable
     private static readonly string localPath = Directory.GetCurrentDirectory();
     
@@ -135,7 +135,29 @@ public static class Core
             CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
         }
         // todo: mac
+        else if (profile.OperatingSystem == "Mac")
+        {
+            if (!File.Exists(tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner"))
+            {
+                /*var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result != DialogResult.Yes)
+                    AbortPatch();*/
+            }
 
+            if (File.Exists(tempModPath + "profile.xml"))
+            {
+                /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result != DialogResult.Yes)
+                    AbortPatch();*/
+            }
+
+            CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.app/Contents/Resources/game.ios", tempProfilePath + "/game.xdelta");
+            CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner", tempProfilePath + "/AM2R.xdelta");
+
+            // Copy plist over for custom title name
+            File.Copy(tempModPath + "/AM2R.app/Contents/Info.plist", tempProfilePath + "/Info.plist");
+        }
+        
         // Create game.droid patch and wrapper if Android is supported
         if (profile.Android)
         {
@@ -225,6 +247,8 @@ public static class Core
         var dirInfo = new DirectoryInfo(tempModPath);
         if (profile.OperatingSystem == "Linux")
             dirInfo = new DirectoryInfo(tempModPath + "/assets");
+        else if (profile.OperatingSystem == "Mac")
+            dirInfo = new DirectoryInfo(tempModPath + "/AM2R.app/Contents/Resources");
 
         Directory.CreateDirectory(tempProfilePath + "/files_to_copy");
 
@@ -238,7 +262,7 @@ public static class Core
             // Get list of 1.1's music files
             string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
 
-            if (profile.OperatingSystem == "Linux")
+            if (profile.OperatingSystem == "Linux" || profile.OperatingSystem == "Mac")
                 musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file).ToLower()).ToArray();
 
 

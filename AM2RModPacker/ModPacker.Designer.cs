@@ -49,6 +49,8 @@ public partial class ModPacker : Form
         miscOptionsPanel.AddRow(apkButton, apkLabel);
         miscOptionsPanel.AddRow(linuxCheckBox);
         miscOptionsPanel.AddRow(linuxButton, linuxLabel);
+        miscOptionsPanel.AddRow(macCheckBox);
+        miscOptionsPanel.AddRow(macButton, macLabel);
 
         var loadZipsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
         loadZipsPanel.AddRow(originalZipButton, null, modZipButton);
@@ -86,7 +88,10 @@ public partial class ModPacker : Form
         customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
         linuxCheckBox.CheckedChanged += LinuxCheckBox_CheckedChanged;
         linuxButton.Click += LinuxButton_Click;
+        macCheckBox.CheckedChanged += macCheckBox_CheckedChanged;
+        macButton.Click += macButton_Click;
         customSaveButton.Click += CustomSaveDataButton_Click;
+        yycCheckBox.CheckedChanged += YYCCheckBox_CheckedChanged;
     }
 
     #region Design Elements
@@ -113,6 +118,10 @@ public partial class ModPacker : Form
     private CheckBox linuxCheckBox = new CheckBox() { Text = "Supports Linux" };
     private Button linuxButton = new Button() { Text = "Load modded Linux .zip", Enabled = false };
     private Label linuxLabel = new Label() { Text = "Modded Linux game loaded!", Visible = false };
+    
+    private CheckBox macCheckBox = new CheckBox() { Text = "Supports Mac" };
+    private Button macButton = new Button() { Text = "Load modded Mac .zip", Enabled = false };
+    private Label macLabel = new Label() { Text = "Modded Mac game loaded!", Visible = false };
 
     private Button originalZipButton = new Button() { Text = "Load 1.1" };
     private Label originalZipLabel = new Label() { Text = "1.1 loaded!", Visible = false};
