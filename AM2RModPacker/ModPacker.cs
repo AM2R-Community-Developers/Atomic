@@ -39,6 +39,7 @@ public partial class ModPacker : Form
 
         var dialog = new SelectFolderDialog();
         // TODO: .config on linux
+        
         dialog.Directory = Environment.GetEnvironmentVariable("LocalAppData");
         while (!wasSuccessful)
         {
@@ -94,7 +95,6 @@ public partial class ModPacker : Form
             windowsLabel.Visible = false;
             windowsPath = "";
         }
-        
         UpdateCreateButton();
     }
     
@@ -203,25 +203,28 @@ public partial class ModPacker : Form
         createLabel.Text = "Packaging mod(s)... This could take a while!";
         
         string output;
+        bool successful;
+        string errorCode;
 
-        // TODO: make windows optional
-        using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
+        if (windowsCheckBox.Checked.Value)
         {
-            if (saveFile.ShowDialog(this) == DialogResult.Ok)
-                output = saveFile.FileName;
-            else
+            using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
             {
-                createLabel.Text = "Mod packaging aborted!";
-                return;
+                if (saveFile.ShowDialog(this) == DialogResult.Ok)
+                    output = saveFile.FileName;
+                else
+                {
+                    createLabel.Text = "Mod packaging aborted!";
+                    return;
+                }
             }
-        }
-        LoadProfileParameters(ProfileOperatingSystems.Windows);
-        
-        (bool successful, string errorcode) = Core.CreateModPack(profile, windowsPath,originalPath, apkPath, output);
-        if (!successful)
-        {
-            MessageBox.Show(errorcode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-            AbortPatch();
+            LoadProfileParameters(ProfileOperatingSystems.Windows);
+            (successful, errorCode) = Core.CreateModPack(profile, windowsPath, originalPath, apkPath, output);
+            if (!successful)
+            {
+                MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                AbortPatch();
+            }
         }
 
         if (linuxCheckBox.Checked.Value)
@@ -237,10 +240,10 @@ public partial class ModPacker : Form
                 }
             }
             LoadProfileParameters(ProfileOperatingSystems.Linux);
-            (successful, errorcode) = Core.CreateModPack(profile, linuxPath, originalPath, apkPath, output);
+            (successful, errorCode) = Core.CreateModPack(profile, linuxPath, originalPath, apkPath, output);
             if (!successful)
             {
-                MessageBox.Show(errorcode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
                 AbortPatch();
             }
         }

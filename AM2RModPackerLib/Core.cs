@@ -61,100 +61,104 @@ public static class Core
             string newMD5 = CalculateMD5(tempOriginalPath + "/data.win");
 
             if (newMD5 != originalMD5)
-            {
                 return (false, "1.1 data.win does not meet MD5 checksum! Mod packaging aborted.\n1.1 MD5: " + originalMD5 + "\nYour MD5: " + newMD5);
-            }
         }
         catch (FileNotFoundException)
         {
             return (false, "data.win not found! Are you sure you selected AM2R 1.1? Mod packaging aborted.");
         }
 
-        // Create AM2R.exe and data.win patches
-        if (profile.OperatingSystem == "Windows")
+        switch (profile.OperatingSystem)
         {
-            if (!File.Exists(tempModPath + "/AM2R.exe"))
-            { //TODO: put this onto the outer method
-                /*
+            // Create AM2R.exe and data.win patches
+            case "Windows":
+            {
+                if (!File.Exists(tempModPath + "/AM2R.exe"))
+                { //TODO: put this onto the outer method
+                    /*
                 var result = MessageBox.Show("Modded game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
                     return (false, "");
                 }*/
-            }
+                }
 
-            if (File.Exists(tempModPath + "profile.xml"))
-            {
-                //TODO: put this onto the outer method
-                /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                if (File.Exists(tempModPath + "profile.xml"))
+                {
+                    //TODO: put this onto the outer method
+                    /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
                 return (false, "");
                 }*/
-            }
+                }
 
-            if (profile.UsesYYC)
-            {
-                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                if (profile.UsesYYC)
+                {
+                    CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                }
+                else
+                {
+                    CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
+                    CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                }
+                break;
             }
-            else
+            case "Linux":
             {
-                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
-                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
-            }
-        }
-        else if (profile.OperatingSystem == "Linux")
-        {
-            string runnerName = File.Exists(tempModPath + "/" + "AM2R") ? "AM2R" : "runner";
+                string runnerName = File.Exists(tempModPath + "/" + "AM2R") ? "AM2R" : "runner";
 
-            if (!File.Exists(tempModPath + "/" + runnerName))
-            {//TODO: put this onto the outer method
-                /*
+                if (!File.Exists(tempModPath + "/" + runnerName))
+                { //TODO: put this onto the outer method
+                    /*
                 var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
                     return (false, "");
                 }*/
-            }
+                }
 
-            if (File.Exists(tempModPath + "profile.xml"))
-            {
-               //TODO: put this onto the outer method
-                /* var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                if (File.Exists(tempModPath + "profile.xml"))
+                {
+                    //TODO: put this onto the outer method
+                    /* var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
                     return (false, "");
                 }*/
-            }
+                }
 
-            CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
-            CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
-        }
-        else if (profile.OperatingSystem == "Mac")
-        {
-            if (!File.Exists(tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner"))
+                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
+                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
+                break;
+            }
+            case "Mac":
             {
-                /*var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (!File.Exists(tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner"))
+                {
+                    /*var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result != DialogResult.Yes)
                     AbortPatch();*/
-            }
+                }
 
-            if (File.Exists(tempModPath + "profile.xml"))
-            {
-                /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (File.Exists(tempModPath + "profile.xml"))
+                {
+                    /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result != DialogResult.Yes)
                     AbortPatch();*/
+                }
+
+                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.app/Contents/Resources/game.ios", tempProfilePath + "/game.xdelta");
+                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner", tempProfilePath + "/AM2R.xdelta");
+
+                // Copy plist over for custom title name
+                File.Copy(tempModPath + "/AM2R.app/Contents/Info.plist", tempProfilePath + "/Info.plist");
+                break;
             }
-
-            CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.app/Contents/Resources/game.ios", tempProfilePath + "/game.xdelta");
-            CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner", tempProfilePath + "/AM2R.xdelta");
-
-            // Copy plist over for custom title name
-            File.Copy(tempModPath + "/AM2R.app/Contents/Info.plist", tempProfilePath + "/Info.plist");
         }
         
         // Create game.droid patch and wrapper if Android is supported
