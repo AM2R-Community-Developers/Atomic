@@ -87,6 +87,14 @@ public partial class ModPacker : Form
     private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e)
     {
         windowsButton.Enabled = windowsCheckBox.Checked.Value;
+        // If it was disabled, clean the appropriate attributes
+        if (!windowsCheckBox.Checked.Value)
+        {
+            isWindowsLoaded = false;
+            windowsLabel.Visible = false;
+            windowsPath = "";
+        }
+        
         UpdateCreateButton();
     }
     
@@ -101,6 +109,13 @@ public partial class ModPacker : Form
     private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
     {
         apkButton.Enabled = apkCheckBox.Checked.Value;
+        // If it was disabled, clean the appropriate attributes
+        if (!apkCheckBox.Checked.Value)
+        {
+            isApkLoaded = false;
+            apkLabel.Visible = false;
+            apkPath = "";
+        }
         UpdateCreateButton();
     }
     
@@ -115,6 +130,13 @@ public partial class ModPacker : Form
     private void LinuxCheckBox_CheckedChanged(object sender, EventArgs e)
     {
         linuxButton.Enabled = linuxCheckBox.Checked.Value;
+        // If it was disabled, clean the appropriate attributes
+        if (!linuxCheckBox.Checked.Value)
+        {
+            isLinuxLoaded = false;
+            linuxLabel.Visible = false;
+            linuxPath = "";
+        }
         UpdateCreateButton();
     }
 
@@ -131,6 +153,13 @@ public partial class ModPacker : Form
         if (!yycCheckBox.Checked.Value)
         {
             macButton.Enabled = macCheckBox.Checked.Value;
+            // If it was disabled, clean the appropriate attributes
+            if (!macCheckBox.Checked.Value)
+            {
+                isMacLoaded = false;
+                macLabel.Visible = false;
+                macPath = "";
+            }
             UpdateCreateButton();
         }
         else if (macCheckBox.Checked.Value)
