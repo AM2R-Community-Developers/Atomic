@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
+using System.Security;
 using System.Security.Cryptography;
 using AM2RModPackerLib.XML;
 
@@ -41,7 +42,7 @@ public static class Core
             tempModPath = Directory.CreateDirectory(tempPath + "/mod").FullName;
             tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
         }
-        catch (System.Security.SecurityException)
+        catch (SecurityException)
         {
             return (false, "Could not create temp directory! Please run the application with administrator rights.");
         }
@@ -57,7 +58,7 @@ public static class Core
         try
         {
             // TODO: dont. do what launcher does
-            string newMD5 = Core.CalculateMD5(tempOriginalPath + "/data.win");
+            string newMD5 = CalculateMD5(tempOriginalPath + "/data.win");
 
             if (newMD5 != originalMD5)
             {
@@ -96,12 +97,12 @@ public static class Core
 
             if (profile.UsesYYC)
             {
-                Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
             else
             {
-                Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
-                Core.CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
+                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
             }
         }
         else if (profile.OperatingSystem == "Linux")
@@ -130,8 +131,8 @@ public static class Core
                 }*/
             }
 
-            Core.CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
-            Core.CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
+            CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
+            CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
         }
         // todo: mac
 
@@ -162,7 +163,7 @@ public static class Core
             }
 
             // Create game.droid patch
-            Core.CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
+            CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
 
             // Delete excess files in APK
 
@@ -230,7 +231,7 @@ public static class Core
         if (profile.UsesCustomMusic)
         {
             // Copy files, excluding the blacklist
-            Core.CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
+            CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
         }
         else
         {
@@ -245,7 +246,7 @@ public static class Core
             string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
 
             // Copy files, excluding the blacklist
-            Core.CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "/files_to_copy");
+            CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "/files_to_copy");
         }
 
         // Export profile as XML

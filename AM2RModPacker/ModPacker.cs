@@ -198,6 +198,7 @@ public partial class ModPacker : Form
             profile.SaveLocation = "%localappdata%/AM2R";
         if (operatingSystem == ProfileOperatingSystems.Linux)
             profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
+        //todo: mac
     }
 
     private void AbortPatch()
@@ -237,7 +238,6 @@ public partial class ModPacker : Form
             createButton.Enabled = false;
     }
     
-    //todo: make this part of interface
     private (bool, string) SelectFile(string title, FileFilter filter)
     {
         using var fileFinder = new OpenFileDialog { Filters = { filter } };
