@@ -1,6 +1,6 @@
 using Eto.Forms;
 using Eto.Drawing;
-using AM2RModPacker.XML;
+using AM2RModPackerLib.XML;
 using System.IO;
 
 namespace AM2RModPacker;
@@ -10,7 +10,6 @@ public partial class ModPacker : Form
     public ModPacker()
     {
         profile = new ModProfileXML("", 1, "", "", "", false, "", false, false, ""); // (1, "", "", false, "default", false, false);
-        localPath = 
 
         Title = "AM2R ModPacker " + version;
         // Currently broken as I don't know how to do this from Rider
