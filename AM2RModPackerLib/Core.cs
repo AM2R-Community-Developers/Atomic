@@ -17,6 +17,7 @@ public static class Core
     public static readonly string Version = "2.0.3";
     private const string originalMD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
     private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx" };
+    // todo: dont do this, cwd is unreliable
     private static readonly string localPath = Directory.GetCurrentDirectory();
     
     // TODO: go over thhis and clean

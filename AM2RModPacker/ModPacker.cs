@@ -14,8 +14,6 @@ public partial class ModPacker : Form
 {
     private static readonly string version = Core.Version;
     private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded;
-    // TODO: do not get current directory, wont end well
-    private readonly string localPath = Directory.GetCurrentDirectory();
     private string originalPath, modPath, apkPath, linuxPath;
     private string saveFilePath;
     private readonly ModProfileXML profile;
