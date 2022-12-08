@@ -134,7 +134,6 @@ public static class Core
             CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
             CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
         }
-        // todo: mac
         else if (profile.OperatingSystem == "Mac")
         {
             if (!File.Exists(tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner"))

@@ -209,7 +209,6 @@ public partial class ModPacker : Form
                 AbortPatch();
             }
         }
-        //TODO: mac
         if (macCheckBox.Checked.Value)
         {
             using (SaveFileDialog saveFile = new SaveFileDialog { Title = "Save Mac mod profile", Filters = { zipFileFilter } })
