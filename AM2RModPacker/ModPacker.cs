@@ -13,8 +13,8 @@ namespace AM2RModPacker;
 public partial class ModPacker : Form
 {
     private static readonly string version = Core.Version;
-    private bool isOriginalLoaded, isModLoaded, isApkLoaded, isLinuxLoaded, isMacLoaded;
-    private string originalPath, modPath, apkPath, linuxPath, macPath;
+    private bool isOriginalLoaded, isWindowsLoaded, isApkLoaded, isLinuxLoaded, isMacLoaded;
+    private string originalPath, windowsPath, apkPath, linuxPath, macPath;
     private string saveFilePath;
     private readonly ModProfileXML profile;
 
@@ -84,6 +84,20 @@ public partial class ModPacker : Form
         macPath = "";
     }
 
+    private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        windowsButton.Enabled = windowsCheckBox.Checked.Value;
+        UpdateCreateButton();
+    }
+    
+    private void WindowsButton_Click(object sender, EventArgs e)
+    {
+        // Open window to select modded Linux .zip
+        (isWindowsLoaded, windowsPath) = SelectFile("Please select your custom Windows AM2R .zip", zipFileFilter);
+        windowsLabel.Visible = isWindowsLoaded;
+        UpdateCreateButton();
+    }
+    
     private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
     {
         apkButton.Enabled = apkCheckBox.Checked.Value;
@@ -142,14 +156,6 @@ public partial class ModPacker : Form
         UpdateCreateButton();
     }
 
-    private void ModZipButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded AM2R
-        (isModLoaded, modPath) = SelectFile("Please select your custom AM2R .zip", zipFileFilter);
-        modZipLabel.Visible = isModLoaded;
-        UpdateCreateButton();
-    }
-    
     private void CreateButton_Click(object sender, EventArgs e)
     {
         if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
@@ -182,7 +188,7 @@ public partial class ModPacker : Form
         }
         LoadProfileParameters(ProfileOperatingSystems.Windows);
         
-        (bool successful, string errorcode) = Core.CreateModPack(profile, modPath,originalPath, apkPath, output);
+        (bool successful, string errorcode) = Core.CreateModPack(profile, windowsPath,originalPath, apkPath, output);
         if (!successful)
         {
             MessageBox.Show(errorcode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
@@ -256,11 +262,11 @@ public partial class ModPacker : Form
     {
         // Unload files
         isOriginalLoaded = false;
-        isModLoaded = false;
+        isWindowsLoaded = false;
         isApkLoaded = false;
         isLinuxLoaded = false;
         originalPath = "";
-        modPath = "";
+        windowsPath = "";
         apkPath = "";
         linuxPath = "";
         saveFilePath = null;
@@ -268,7 +274,6 @@ public partial class ModPacker : Form
         // Set labels
         createLabel.Text = "Mod packaging aborted!";
         originalZipLabel.Visible = false;
-        modZipLabel.Visible = false;
         apkLabel.Visible = false;
         linuxLabel.Visible = false;
 
@@ -280,10 +285,11 @@ public partial class ModPacker : Form
     private void UpdateCreateButton()
     {
         if (isOriginalLoaded &&                                                  // AM2R_11 zip must be provided
-            isModLoaded &&                                                       // Modded zip must be provided
+            (!windowsCheckBox.Checked.Value || isWindowsLoaded) &&               // either Windows is disabled OR windows is provided
             (!apkCheckBox.Checked.Value || isApkLoaded) &&                       // either APK is disabled OR APK is provided
             (!linuxCheckBox.Checked.Value || isLinuxLoaded) &&                   // either Linux is disabled OR linux is provided
             (!macCheckBox.Checked.Value || isMacLoaded) &&                       // either Mac is disabled OR mac is provided
+            (isWindowsLoaded || isLinuxLoaded || isMacLoaded) &&                 // one desktop OS has to be selected
             (!customSaveCheckBox.Checked.Value || customSaveTextBox.Text != "")) // either custom saves are disabled OR custom save is provided
             createButton.Enabled = true;
         else

@@ -45,6 +45,8 @@ public partial class ModPacker : Form
         var miscOptionsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
         miscOptionsPanel.AddRow(musicCheckBox);
         miscOptionsPanel.AddRow(yycCheckBox);
+        miscOptionsPanel.AddRow(windowsCheckBox);
+        miscOptionsPanel.AddRow(windowsButton, windowsLabel);
         miscOptionsPanel.AddRow(apkCheckBox);
         miscOptionsPanel.AddRow(apkButton, apkLabel);
         miscOptionsPanel.AddRow(linuxCheckBox);
@@ -53,8 +55,7 @@ public partial class ModPacker : Form
         miscOptionsPanel.AddRow(macButton, macLabel);
 
         var loadZipsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
-        loadZipsPanel.AddRow(originalZipButton, null, modZipButton);
-        loadZipsPanel.AddRow(originalZipLabel, null, modZipLabel);
+        loadZipsPanel.AddRow(originalZipButton, null, originalZipLabel);
 
         var resultPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
         resultPanel.AddRow(createButton);
@@ -81,8 +82,9 @@ public partial class ModPacker : Form
 
         // Assign events
         originalZipButton.Click += OriginalZipButton_Click;
-        modZipButton.Click += ModZipButton_Click;
         createButton.Click += CreateButton_Click;
+        windowsCheckBox.CheckedChanged += WindowsCheckBox_CheckedChanged;
+        windowsButton.Click += WindowsButton_Click;
         apkButton.Click += ApkButton_Click;
         apkCheckBox.CheckedChanged += ApkCheckBoxCheckedChanged;
         customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
@@ -111,6 +113,10 @@ public partial class ModPacker : Form
 
     private CheckBox yycCheckBox = new CheckBox() { Text = "Uses the YoYo Compiler" };
 
+    private CheckBox windowsCheckBox = new CheckBox() { Text = "Supports Windows" };
+    private Button windowsButton = new Button() { Text = "Load modded Windows .zip", Enabled = false };
+    private Label windowsLabel = new Label() { Text = "Modded Windows game loaded!", Visible = false };
+    
     private CheckBox apkCheckBox = new CheckBox() { Text = "Supports Android" };
     private Button apkButton = new Button() { Text = "Load modded Android APK", Enabled = false };
     private Label apkLabel = new Label() { Text = "Modded APK loaded!", Visible = false };
@@ -125,8 +131,6 @@ public partial class ModPacker : Form
 
     private Button originalZipButton = new Button() { Text = "Load 1.1" };
     private Label originalZipLabel = new Label() { Text = "1.1 loaded!", Visible = false};
-    private Button modZipButton = new Button() { Text = "Load modded game" };
-    private Label modZipLabel = new Label() { Text = "Mod loaded!", Visible = false };
     private Button createButton = new Button() { Text = "Create mod package(s)", Enabled = false };
     private Label createLabel = new Label() { Text = "Mod package created!", Visible = false};
     #endregion
