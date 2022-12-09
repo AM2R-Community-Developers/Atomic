@@ -104,7 +104,7 @@ public static class Core
         }
         
         // Create game.droid patch and wrapper if Android is supported
-        if (profile.Android)
+        if (profile.SupportsAndroid)
         {
             string tempAndroid = Directory.CreateDirectory(tempPath + "/android").FullName;
 

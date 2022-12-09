@@ -9,7 +9,7 @@ public partial class ModPacker : Form
 {
     public ModPacker()
     {
-        profile = new ModProfileXML("", 1, "", "", "", false, "", false, false, ""); // (1, "", "", false, "default", false, false);
+        profile = new ModProfileXML();
 
         Title = "AM2R ModPacker " + version;
         // Currently broken as I don't know how to do this from Rider

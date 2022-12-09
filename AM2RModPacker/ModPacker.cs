@@ -328,7 +328,7 @@ public partial class ModPacker : Form
         profile.Version = versionTextBox.Text;
         profile.UsesCustomMusic = musicCheckBox.Checked.Value;
         profile.UsesYYC = yycCheckBox.Checked.Value;
-        profile.Android = apkCheckBox.Checked.Value;
+        profile.SupportsAndroid = apkCheckBox.Checked.Value;
         profile.ProfileNotes = modNotesTextBox.Text;
         profile.OperatingSystem = operatingSystem.ToString();
         if (customSaveCheckBox.Checked.Value && customSaveTextBox.Text != "")
