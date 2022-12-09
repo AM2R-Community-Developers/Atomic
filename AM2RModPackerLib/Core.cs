@@ -264,7 +264,7 @@ public static class Core
         using var stream = File.OpenRead(filename);
         using var md5 = MD5.Create();
         byte[] hash = md5.ComputeHash(stream);
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+        return BitConverter.ToString(hash).Replace("-", "").ToLower();
     }
     
     public static void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)

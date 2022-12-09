@@ -252,7 +252,7 @@ public partial class ModPacker : Form
                 }
             }
             LoadProfileParameters(ProfileOperatingSystems.Windows);
-            (successful, errorCode) = Core.CreateModPack(profile, windowsPath, originalPath, apkPath, output);
+            (successful, errorCode) = Core.CreateModPack(profile, originalPath, windowsPath, apkPath, output);
             if (!successful)
             {
                 MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
@@ -293,7 +293,7 @@ public partial class ModPacker : Form
                 }
             }
             LoadProfileParameters(ProfileOperatingSystems.Linux);
-            (successful, errorCode) = Core.CreateModPack(profile, linuxPath, originalPath, apkPath, output);
+            (successful, errorCode) = Core.CreateModPack(profile, originalPath, linuxPath, apkPath, output);
             if (!successful)
             {
                 MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
