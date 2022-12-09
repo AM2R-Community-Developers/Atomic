@@ -63,7 +63,6 @@ public partial class ModPacker : Form
         resultPanel.AddRow(createLabel);
 
         // Combine together
-        //TODO: add scrollbar pls
         rightSide.AddRow(savePanel);
         rightSide.AddRow(saveTextPanel);
         rightSide.AddRow(miscOptionsPanel);
