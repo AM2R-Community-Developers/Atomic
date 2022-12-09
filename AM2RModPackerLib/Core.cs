@@ -111,12 +111,13 @@ public static class Core
             // - java -jar apktool.jar d "%~dp0AM2RWrapper_old.apk"
 
             // Process startInfo
-            // TODO: cross platform
+            string filename = OS.IsWindows ? "cmd.exe" : "java";
+            string javaArgs = OS.IsWindows ? "/C java -jar" : "-jar";
             var procStartInfo = new ProcessStartInfo
             {
-                FileName = "cmd.exe",
+                FileName = filename,
                 WorkingDirectory = tempAndroid,
-                Arguments = "/C java -jar \"" + localPath + "/utilities/android/apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + apkPath + "\"",
+                Arguments = $"{javaArgs} \"" + localPath + "/utilities/android/apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + apkPath + "\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
