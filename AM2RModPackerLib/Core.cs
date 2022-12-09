@@ -165,9 +165,9 @@ public static class Core
             // - java -jar apktool.jar b "%~dp0AM2RWrapper_old" -o "%~dp0AM2RWrapper.apk"
             var procStartInfo2 = new ProcessStartInfo
             {
-                FileName = "cmd.exe",
+                FileName = filename,
                 WorkingDirectory = tempAndroid,
-                Arguments = "/C java -jar \"" + localPath + "/utilities/android/apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfilePath + "/AM2RWrapper.apk\"",
+                Arguments = $"{javaArgs} \"" + localPath + "/utilities/android/apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfilePath + "/AM2RWrapper.apk\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
