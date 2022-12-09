@@ -15,11 +15,12 @@ public partial class ModPacker : Form
         // Currently broken as I don't know how to do this from Rider
         //Icon = Icon.FromResource("icon64.ico");
 
-        MinimumSize = new Size(550, 430);
+        MinimumSize = new Size(550, 400);
 
         var mainContent = new DynamicLayout() { Spacing = new Size(15, 15) };
         var leftSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5) };
-        var rightSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5) };
+        var rightSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5), };
+        var rightSideScrollable = new Scrollable() { Border = BorderType.None};
 
         // Left side
         var modInfoPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
@@ -62,17 +63,19 @@ public partial class ModPacker : Form
         resultPanel.AddRow(createLabel);
 
         // Combine together
+        //TODO: add scrollbar pls
         rightSide.AddRow(savePanel);
         rightSide.AddRow(saveTextPanel);
         rightSide.AddRow(miscOptionsPanel);
         rightSide.AddRow(new Label() { Text = "I am a spacer!", TextColor = this.BackgroundColor });
         rightSide.AddRow(loadZipsPanel);
         rightSide.AddRow(resultPanel);
+        rightSideScrollable.Content = rightSide;
         
         // Combine all into main panel and assign
         Splitter splitter = new Splitter() {};
         splitter.Panel1 = leftSide;
-        splitter.Panel2 = rightSide;
+        splitter.Panel2 = rightSideScrollable;
         splitter.Panel1MinimumSize = 180;
         splitter.Panel2MinimumSize = 320;
         splitter.Orientation = Orientation.Horizontal;

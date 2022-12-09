@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Security;
 using System.Security.Cryptography;
@@ -22,7 +23,7 @@ public static class Core
     private static readonly string localPath = Directory.GetCurrentDirectory();
     
     // TODO: go over thhis and clean
-    public static (bool, string) CreateModPack(ModProfileXML profile, string input, string originalPath, string apkPath, string output)
+    public static (bool, string) CreateModPack(ModProfileXML profile, string originalZipPath, string modZipPath, string apkPath, string output)
     {
         // Cleanup in case of previous errors
         if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
@@ -48,8 +49,8 @@ public static class Core
         }
 
         // Extract 1.1 and modded AM2R to their own directories in temp work
-        ZipFile.ExtractToDirectory(originalPath, tempOriginalPath);
-        ZipFile.ExtractToDirectory(input, tempModPath);
+        ZipFile.ExtractToDirectory(originalZipPath, tempOriginalPath);
+        ZipFile.ExtractToDirectory(modZipPath, tempModPath);
 
         if (Directory.Exists(tempModPath + "/AM2R"))
             tempModPath += "/AM2R";
@@ -73,28 +74,6 @@ public static class Core
             // Create AM2R.exe and data.win patches
             case "Windows":
             {
-                if (!File.Exists(tempModPath + "/AM2R.exe"))
-                { //TODO: put this onto the outer method
-                    /*
-                var result = MessageBox.Show("Modded game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                if (result != DialogResult.Yes)
-                {
-                    AbortPatch();
-                    return (false, "");
-                }*/
-                }
-
-                if (File.Exists(tempModPath + "profile.xml"))
-                {
-                    //TODO: put this onto the outer method
-                    /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                if (result != DialogResult.Yes)
-                {
-                    AbortPatch();
-                return (false, "");
-                }*/
-                }
-
                 if (profile.UsesYYC)
                 {
                     CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
@@ -109,49 +88,12 @@ public static class Core
             case "Linux":
             {
                 string runnerName = File.Exists(tempModPath + "/" + "AM2R") ? "AM2R" : "runner";
-
-                if (!File.Exists(tempModPath + "/" + runnerName))
-                { //TODO: put this onto the outer method
-                    /*
-                var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                if (result != DialogResult.Yes)
-                {
-                    AbortPatch();
-                    return (false, "");
-                }*/
-                }
-
-                if (File.Exists(tempModPath + "profile.xml"))
-                {
-                    //TODO: put this onto the outer method
-                    /* var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                if (result != DialogResult.Yes)
-                {
-                    AbortPatch();
-                    return (false, "");
-                }*/
-                }
-
                 CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
                 CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
                 break;
             }
             case "Mac":
             {
-                if (!File.Exists(tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner"))
-                {
-                    /*var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result != DialogResult.Yes)
-                    AbortPatch();*/
-                }
-
-                if (File.Exists(tempModPath + "profile.xml"))
-                {
-                    /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result != DialogResult.Yes)
-                    AbortPatch();*/
-                }
-
                 CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.app/Contents/Resources/game.ios", tempProfilePath + "/game.xdelta");
                 CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner", tempProfilePath + "/AM2R.xdelta");
 
@@ -297,18 +239,24 @@ public static class Core
         // Specify process start info
         var parameters = new ProcessStartInfo
         {
-            // TODO: deal with linux/mac 
-            FileName = localPath + "/utilities/xdelta/xdelta3.exe",
+            FileName = OS.IsWindows ? localPath + "/utilities/xdelta/xdelta3.exe" : "xdelta3",
             WorkingDirectory = localPath,
             UseShellExecute = false,
             CreateNoWindow = true,
             Arguments = "-f -e -s \"" + original + "\" \"" + modified + "\" \"" + output + "\""
         };
 
-        // Launch process and wait for exit. using statement automatically disposes the object for us!
-        using var proc = new Process { StartInfo = parameters };
-        proc.Start();
-        proc.WaitForExit();
+        // Launch process and wait for exit.
+        try
+        {
+            using var proc = new Process { StartInfo = parameters };
+            proc.Start();
+            proc.WaitForExit();
+        }
+        catch (Win32Exception e)
+        {
+            throw new Exception("Xdelta3 could not be found! For Windows, make sure that the utilities folder exists, for other OS make sure it is installed and in PATH.");
+        }
     }
     
     public static string CalculateMD5(string filename)

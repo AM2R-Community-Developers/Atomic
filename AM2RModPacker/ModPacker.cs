@@ -208,6 +208,27 @@ public partial class ModPacker : Form
 
         if (windowsCheckBox.Checked.Value)
         {
+            var windowsZip = ZipFile.Open(windowsPath, ZipArchiveMode.Read);
+            if (windowsZip.Entries.All(f => f.FullName != "AM2R.exe"))
+            {                
+                var result = MessageBox.Show("Modded game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                if (result != DialogResult.Yes)
+                {
+                    AbortPatch();
+                    return;
+                }
+            }
+
+            if (windowsZip.Entries.Any(f => f.Name == "profile.xml"))
+            {
+                var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                if (result != DialogResult.Yes)
+                {
+                    AbortPatch();
+                    return;
+                }
+            }
+            
             using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
@@ -229,6 +250,29 @@ public partial class ModPacker : Form
 
         if (linuxCheckBox.Checked.Value)
         {
+            /*
+            if (!File.Exists(tempModPath + "/" + runnerName))
+            { //TODO: put this onto the outer method
+                
+            var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+            if (result != DialogResult.Yes)
+            {
+                AbortPatch();
+                return (false, "");
+            }
+            }
+
+            if (File.Exists(tempModPath + "profile.xml"))
+            {
+                //TODO: put this onto the outer method
+                /* var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+            if (result != DialogResult.Yes)
+            {
+                AbortPatch();
+                return (false, "");
+            }
+            }*/
+
             using (var saveFile = new SaveFileDialog { Title = "Save Linux mod profile", Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
@@ -249,6 +293,20 @@ public partial class ModPacker : Form
         }
         if (macCheckBox.Checked.Value)
         {
+            /*if (!File.Exists(tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner"))
+            {
+                var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result != DialogResult.Yes)
+                AbortPatch();
+            }
+
+            if (File.Exists(tempModPath + "profile.xml"))
+            {
+                /*var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result != DialogResult.Yes)
+                AbortPatch();
+            }*/
+
             using (SaveFileDialog saveFile = new SaveFileDialog { Title = "Save Mac mod profile", Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
