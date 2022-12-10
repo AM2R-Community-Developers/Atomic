@@ -263,7 +263,7 @@ public partial class ModPacker : Form
         if (linuxCheckBox.Checked.Value)
         {
             var linuxZip = ZipFile.Open(linuxPath, ZipArchiveMode.Read);
-            if (linuxZip.Entries.Any(f => f.FullName != "AM2R") && linuxZip.Entries.Any(f => f.FullName != "runner"))
+            if (linuxZip.Entries.All(f => f.FullName != "AM2R") && linuxZip.Entries.All(f => f.FullName != "runner"))
             { 
                 var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
@@ -306,8 +306,8 @@ public partial class ModPacker : Form
             if (macZip.Entries.All(f => f.Name != "AM2R.app/Contents/MacOS/Mac_Runner"))
             {
                 var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-            if (result != DialogResult.Yes)
-                AbortPatch();
+                if (result != DialogResult.Yes)
+                    AbortPatch();
             }
 
             if (macZip.Entries.Any(f => f.Name == "profile.xml"))
@@ -327,7 +327,7 @@ public partial class ModPacker : Form
                     return;
                 }
             }
-            Core.CreateModPack(profile, macPath, originalPath, apkPath, output);
+            Core.CreateModPack(profile, originalPath, macPath, apkPath, output);
         }
         createLabel.Text = "Mod package(s) created!";
     }
