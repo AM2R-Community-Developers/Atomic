@@ -254,6 +254,9 @@ public partial class ModPacker : Form
                     return;
                 }
             }
+            // Some filepickers don't automatically set the file extension
+            if (!output.ToLower().EndsWith(".zip"))
+                output += ".zip";
             LoadProfileParameters(ProfileOperatingSystems.Windows);
             (successful, errorCode) = Core.CreateModPack(profile, originalPath, windowsPath, apkPath, output);
             if (!successful)
@@ -295,6 +298,9 @@ public partial class ModPacker : Form
                     return;
                 }
             }
+            // Some filepickers don't automatically set the file extension
+            if (!output.ToLower().EndsWith(".zip"))
+                output += ".zip";
             LoadProfileParameters(ProfileOperatingSystems.Linux);
             (successful, errorCode) = Core.CreateModPack(profile, originalPath, linuxPath, apkPath, output);
             if (!successful)
@@ -330,7 +336,16 @@ public partial class ModPacker : Form
                     return;
                 }
             }
-            Core.CreateModPack(profile, originalPath, macPath, apkPath, output);
+            // Some filepickers don't automatically set the file extension
+            if (!output.ToLower().EndsWith(".zip"))
+                output += ".zip";
+            LoadProfileParameters(ProfileOperatingSystems.Mac);
+            (successful, errorCode) = Core.CreateModPack(profile, originalPath, macPath, apkPath, output);
+            if (!successful)
+            {
+                MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                AbortPatch();
+            }
         }
         createLabel.Text = "Mod package(s) created!";
     }
