@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.Compression;
-using System.Security;
 using System.Security.Cryptography;
 using AM2RModPackerLib.XML;
 
@@ -15,7 +14,7 @@ public enum ProfileOperatingSystems
 }
 
 /// <summary>
-/// An enum, that has possible return codes for <see cref="CheckIfZipIsAM2R11"/>.
+/// An enum, that has possible return codes for <see cref="Core.CheckIfZipIsAM2R11"/>.
 /// </summary>
 public enum IsZipAM2R11ReturnCodes
 {
@@ -28,7 +27,7 @@ public enum IsZipAM2R11ReturnCodes
 
 public static class Core
 {
-    public static readonly string Version = "2.0.3";
+    public const string Version = "2.0.3";
     private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx", "game.ios" };
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
@@ -237,7 +236,7 @@ public static class Core
             proc.Start();
             proc.WaitForExit();
         }
-        catch (Win32Exception e)
+        catch (Win32Exception)
         {
             throw new Exception("Xdelta3 could not be found! For Windows, make sure that the utilities folder exists, for other OS make sure it is installed and in PATH.");
         }
