@@ -14,6 +14,18 @@ public enum ProfileOperatingSystems
     Mac
 }
 
+/// <summary>
+/// An enum, that has possible return codes for <see cref="CheckIfZipIsAM2R11"/>.
+/// </summary>
+public enum IsZipAM2R11ReturnCodes
+{
+    Successful,
+    MissingOrInvalidAM2RExe,
+    MissingOrInvalidD3DX943Dll,
+    MissingOrInvalidDataWin,
+    GameIsInASubfolder
+}
+
 public static class Core
 {
     public static readonly string Version = "2.0.3";
@@ -53,21 +65,7 @@ public static class Core
 
         if (Directory.Exists(tempModPath + "/AM2R"))
             tempModPath += "/AM2R";
-
-        // Verify 1.1 with an MD5. If it does not match, exit cleanly and provide a warning window.
-        try
-        {
-            // TODO: dont. do what launcher does
-            string newMD5 = CalculateMD5(tempOriginalPath + "/data.win");
-
-            if (newMD5 != originalMD5)
-                return (false, "1.1 data.win does not meet MD5 checksum! Mod packaging aborted.\n1.1 MD5: " + originalMD5 + "\nYour MD5: " + newMD5);
-        }
-        catch (FileNotFoundException)
-        {
-            return (false, "data.win not found! Are you sure you selected AM2R 1.1? Mod packaging aborted.");
-        }
-
+        
         switch (profile.OperatingSystem)
         {
             // Create AM2R.exe and data.win patches
@@ -257,6 +255,70 @@ public static class Core
         {
             throw new Exception("Xdelta3 could not be found! For Windows, make sure that the utilities folder exists, for other OS make sure it is installed and in PATH.");
         }
+    }
+    
+    // Taken from AM2RLauncher
+    /// <summary>
+    /// Checks if a Zip file is a valid AM2R_1.1 zip.
+    /// </summary>
+    /// <param name="zipPath">Full Path to the Zip file to validate.</param>
+    /// <returns><see cref="IsZipAM2R11ReturnCodes"/> detailing the result</returns>
+    public static IsZipAM2R11ReturnCodes CheckIfZipIsAM2R11(string zipPath)
+    {
+        const string d3dHash = "86e39e9161c3d930d93822f1563c280d";
+        const string dataWinHash = "f2b84fe5ba64cb64e284be1066ca08ee";
+        const string am2rHash = "15253f7a66d6ea3feef004ebbee9b438";
+        string tmpPath = Path.GetTempPath() + Path.GetFileNameWithoutExtension(zipPath);
+
+        // Clean up in case folder exists already
+        if (Directory.Exists(tmpPath))
+            Directory.Delete(tmpPath, true);
+        Directory.CreateDirectory(tmpPath);
+
+        // Open archive
+        ZipArchive am2rZip = ZipFile.OpenRead(zipPath);
+
+
+        // Check if exe exists anywhere
+        ZipArchiveEntry am2rExe = am2rZip.Entries.FirstOrDefault(x => x.FullName.Contains("AM2R.exe"));
+        if (am2rExe == null)
+            return IsZipAM2R11ReturnCodes.MissingOrInvalidAM2RExe;
+
+        // Check if it's not in a subfolder. if it'd be in a subfolder, fullname would be "folder/AM2R.exe"
+        if (am2rExe.FullName != "AM2R.exe")
+            return IsZipAM2R11ReturnCodes.GameIsInASubfolder;
+
+        // Check validity
+        am2rExe.ExtractToFile($"{tmpPath}/{am2rExe.FullName}");
+        if (CalculateMD5($"{tmpPath}/{am2rExe.FullName}") != am2rHash)
+            return IsZipAM2R11ReturnCodes.MissingOrInvalidAM2RExe;
+
+
+        // Check if data.win exists / is valid
+        ZipArchiveEntry dataWin = am2rZip.Entries.FirstOrDefault(x => x.FullName == "data.win");
+        if (dataWin == null)
+            return IsZipAM2R11ReturnCodes.MissingOrInvalidDataWin;
+
+        dataWin.ExtractToFile($"{tmpPath}/{dataWin.FullName}");
+        if (CalculateMD5($"{tmpPath}/{dataWin.FullName}") != dataWinHash)
+            return IsZipAM2R11ReturnCodes.MissingOrInvalidDataWin;
+
+
+        // Check if d3d.dll exists / is valid
+        ZipArchiveEntry d3dx = am2rZip.Entries.FirstOrDefault(x => x.FullName == "D3DX9_43.dll");
+        if (d3dx == null)
+            return IsZipAM2R11ReturnCodes.MissingOrInvalidD3DX943Dll;
+
+        d3dx.ExtractToFile($"{tmpPath}/{d3dx.FullName}");
+        if (CalculateMD5($"{tmpPath}/{d3dx.FullName}") != d3dHash)
+            return IsZipAM2R11ReturnCodes.MissingOrInvalidD3DX943Dll;
+
+
+        // Clean up
+        Directory.Delete(tmpPath, true);
+
+        // If we didn't exit before, everything is fine
+        return IsZipAM2R11ReturnCodes.Successful;
     }
     
     public static string CalculateMD5(string filename)

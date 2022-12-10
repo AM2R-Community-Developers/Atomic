@@ -213,6 +213,15 @@ public partial class ModPacker : Form
             MessageBox.Show("Name contains invalid characters! These characters are not allowed:\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
             return;
         }
+        
+        // Verify 1.1
+        var result11 = Core.CheckIfZipIsAM2R11(originalPath);
+        if (result11 != IsZipAM2R11ReturnCodes.Successful)
+        {
+            MessageBox.Show("AM2R 1.1 zip is invalid! Error code: " + result11);
+            AbortPatch();
+            return;
+        }
 
         createLabel.Visible = true;
         createLabel.Text = "Packaging mod(s)... This could take a while!";
