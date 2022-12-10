@@ -31,20 +31,20 @@ public partial class ModPacker : Form
     
     private void CustomSaveDataButton_Click(object sender, EventArgs e)
     {
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         bool wasSuccessful = false;
-        var winSaveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\");                           //this is to ensure, that the save directory is valid. so far, this is only important for windows
-        var linSaveRegex = new Regex($@"{Environment.GetEnvironmentVariable("HOME")}/\.config/.*"); // GMS hardcodes save into ~/.config on linux 
-        
-        //TODO: var macSaveRegex = ????
+        var winSaveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\");                                                 //this is to ensure, that the save directory is valid. so far, this is only important for windows
+        var linSaveRegex = new Regex($@"{home}/\.config/"); // GMS hardcodes save into ~/.config on linux 
+        var macSaveRegex = new Regex($@"{home}/Library/Application Support/");
 
         var dialog = new SelectFolderDialog();
         string initialDir = "";
         if (OS.IsWindows)
             initialDir = Environment.GetEnvironmentVariable("LocalAppData");
         else if (OS.IsLinux)
-            initialDir = Environment.GetEnvironmentVariable("HOME") + "/.config";
+            initialDir = home + "/.config";
         else if (OS.IsMac)
-            initialDir = ""; //TODO!
+            initialDir = $@"{home}/Library/Application Support/";
         
         dialog.Directory = initialDir;
         while (!wasSuccessful)
@@ -57,19 +57,22 @@ public partial class ModPacker : Form
                 else if (OS.IsLinux)
                     match = linSaveRegex.Match(dialog.Directory);
                 else if (OS.IsMac)
-                    match = winSaveRegex.Match(dialog.Directory); //TODO!
+                    match = macSaveRegex.Match(dialog.Directory);
                 
                 if (match.Success == false)
                     MessageBox.Show("Invalid Save Directory! Please consult the GameMaker: Studio 1.4 documentation for valid save directories!");
                 else
                 {
-                    //TODO: figure out mac
                     wasSuccessful = true;
                     saveFilePath = dialog.Directory.Replace(match.Value, "%localappdata%/");
+                    // If we don't do this, custom save locations are going to fail on Linux
                     if (OS.IsWindows) 
-                    { 
-                        saveFilePath = saveFilePath.Replace("\\", "/"); // if we don't do this, custom save locations are going to fail on Linux
-                    }
+                        saveFilePath = saveFilePath.Replace("\\", "/");
+                    
+                    // On Mac, we need to adjust the path
+                    if (OS.IsMac)
+                        saveFilePath = saveFilePath.Replace("com.yoyogames.am2r", "AM2R");
+                    
                     // if someone has a custom save path inside of am2r and creates these whithin game maker, they will always be lower case
                     // we need to adjust them here to lowercase as well, as otherwise launcher gets problems on nix systems
                     const string vanillaPrefix = "%localappdata%/AM2R/";
