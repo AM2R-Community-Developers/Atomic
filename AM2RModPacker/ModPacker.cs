@@ -267,11 +267,15 @@ public partial class ModPacker : Form
             if (!output.ToLower().EndsWith(".zip"))
                 output += ".zip";
             LoadProfileParameters(ProfileOperatingSystems.Windows);
-            (successful, errorCode) = Core.CreateModPack(profile, originalPath, windowsPath, apkPath, output);
-            if (!successful)
+            try
             {
-                MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                Core.CreateModPack(profile, originalPath, windowsPath, apkPath, output);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
                 AbortPatch();
+                return;
             }
         }
 
@@ -311,11 +315,15 @@ public partial class ModPacker : Form
             if (!output.ToLower().EndsWith(".zip"))
                 output += ".zip";
             LoadProfileParameters(ProfileOperatingSystems.Linux);
-            (successful, errorCode) = Core.CreateModPack(profile, originalPath, linuxPath, apkPath, output);
-            if (!successful)
+            try
             {
-                MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                Core.CreateModPack(profile, originalPath, linuxPath, apkPath, output);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
                 AbortPatch();
+                return;
             }
         }
         if (macCheckBox.Checked.Value)
@@ -349,11 +357,15 @@ public partial class ModPacker : Form
             if (!output.ToLower().EndsWith(".zip"))
                 output += ".zip";
             LoadProfileParameters(ProfileOperatingSystems.Mac);
-            (successful, errorCode) = Core.CreateModPack(profile, originalPath, macPath, apkPath, output);
-            if (!successful)
+            try
             {
-                MessageBox.Show(errorCode, "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                Core.CreateModPack(profile, originalPath, macPath, apkPath, output);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
                 AbortPatch();
+                return;
             }
         }
         createLabel.Text = "Mod package(s) created!";

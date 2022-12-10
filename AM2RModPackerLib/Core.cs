@@ -33,30 +33,18 @@ public static class Core
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
     // TODO: go over thhis and clean
-    public static (bool, string) CreateModPack(ModProfileXML profile, string originalZipPath, string modZipPath, string apkPath, string output)
+    public static void CreateModPack(ModProfileXML profile, string originalZipPath, string modZipPath, string apkPath, string output)
     {
         // Cleanup in case of previous errors
         if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
             Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
 
         // Create temp work folders
-        string tempPath,
-               tempOriginalPath,
-               tempModPath,
-               tempProfilePath;
+        string tempPath = Directory.CreateDirectory(Path.GetTempPath() + "/AM2RModPacker").FullName;
+        string tempOriginalPath = Directory.CreateDirectory(tempPath + "/original").FullName;
+        string tempModPath = Directory.CreateDirectory(tempPath + "/mod").FullName;
+        string tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
 
-        // We might not have permission to access to the temp directory, so we need to catch the exception.
-        try
-        {
-            tempPath = Directory.CreateDirectory(Path.GetTempPath() + "/AM2RModPacker").FullName;
-            tempOriginalPath = Directory.CreateDirectory(tempPath + "/original").FullName;
-            tempModPath = Directory.CreateDirectory(tempPath + "/mod").FullName;
-            tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
-        }
-        catch (SecurityException)
-        {
-            return (false, "Could not create temp directory! Please run the application with administrator rights.");
-        }
 
         // Extract 1.1 and modded AM2R to their own directories in temp work
         ZipFile.ExtractToDirectory(originalZipPath, tempOriginalPath);
@@ -227,7 +215,6 @@ public static class Core
 
         // Delete temp folder
         Directory.Delete(tempPath, true);
-        return (true, "");
     }
 
     
