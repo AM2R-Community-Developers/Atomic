@@ -227,8 +227,6 @@ public partial class ModPacker : Form
         createLabel.Text = "Packaging mod(s)... This could take a while!";
         
         string output;
-        bool successful;
-        string errorCode;
 
         if (windowsCheckBox.Checked.Value)
         {
@@ -399,17 +397,6 @@ public partial class ModPacker : Form
 
     private void AbortPatch()
     {
-        // Unload files
-        isOriginalLoaded = false;
-        isWindowsLoaded = false;
-        isApkLoaded = false;
-        isLinuxLoaded = false;
-        originalPath = "";
-        windowsPath = "";
-        apkPath = "";
-        linuxPath = "";
-        saveFilePath = null;
-
         // Set labels
         createLabel.Text = "Mod packaging aborted!";
         originalZipLabel.Visible = false;

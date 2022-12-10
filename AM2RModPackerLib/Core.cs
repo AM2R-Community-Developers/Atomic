@@ -254,7 +254,7 @@ public static class Core
         const string d3dHash = "86e39e9161c3d930d93822f1563c280d";
         const string dataWinHash = "f2b84fe5ba64cb64e284be1066ca08ee";
         const string am2rHash = "15253f7a66d6ea3feef004ebbee9b438";
-        string tmpPath = Path.GetTempPath() + Path.GetFileNameWithoutExtension(zipPath);
+        string tmpPath = Path.GetTempPath() + "/" + Path.GetFileNameWithoutExtension(zipPath);
 
         // Clean up in case folder exists already
         if (Directory.Exists(tmpPath))

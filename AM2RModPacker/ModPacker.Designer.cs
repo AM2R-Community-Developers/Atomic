@@ -56,7 +56,7 @@ public partial class ModPacker : Form
         miscOptionsPanel.AddRow(macButton, macLabel);
 
         var loadZipsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
-        loadZipsPanel.AddRow(originalZipButton, null, originalZipLabel);
+        loadZipsPanel.AddRow(originalZipButton, originalZipLabel);
 
         var resultPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
         resultPanel.AddRow(createButton);
@@ -110,7 +110,8 @@ public partial class ModPacker : Form
 
     private CheckBox customSaveCheckBox = new CheckBox() { Text = "Uses custom save directory" };
     private Button customSaveButton = new Button() { Text = "Select folder", Enabled = false };
-    private TextBox customSaveTextBox = new TextBox();
+    // TODO: remove read only and make it correctly respond to user input
+    private TextBox customSaveTextBox = new TextBox() { ReadOnly = true};
     private CheckBox musicCheckBox = new CheckBox() { Text = "Uses custom music" };
 
     private CheckBox yycCheckBox = new CheckBox() { Text = "Uses the YoYo Compiler" };
