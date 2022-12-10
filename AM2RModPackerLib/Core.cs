@@ -29,7 +29,6 @@ public enum IsZipAM2R11ReturnCodes
 public static class Core
 {
     public static readonly string Version = "2.0.3";
-    private const string originalMD5 = "f2b84fe5ba64cb64e284be1066ca08ee";
     private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx", "game.ios" };
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
