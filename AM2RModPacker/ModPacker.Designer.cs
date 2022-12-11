@@ -12,9 +12,9 @@ public partial class ModPacker : Form
         profile = new ModProfileXML();
 
         Title = "AM2R ModPacker " + version;
-        //TODO: Currently broken as I don't know how to do this from Rider
+        // TODO: Currently broken as I don't know how to do this from Rider
         //Icon = Icon.FromResource("icon64.ico");
-
+        
         MinimumSize = new Size(550, 400);
 
         var mainContent = new DynamicLayout() { Spacing = new Size(15, 15) };

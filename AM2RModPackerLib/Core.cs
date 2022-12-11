@@ -44,7 +44,6 @@ public static class Core
         string tempModPath = Directory.CreateDirectory(tempPath + "/mod").FullName;
         string tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
 
-
         // Extract 1.1 and modded AM2R to their own directories in temp work
         ZipFile.ExtractToDirectory(originalZipPath, tempOriginalPath);
         ZipFile.ExtractToDirectory(modZipPath, tempModPath);
@@ -172,7 +171,6 @@ public static class Core
         }
 
         // Copy datafiles (exclude .ogg if custom music is not selected)
-
         var dirInfo = new DirectoryInfo(tempModPath);
         if (profile.OperatingSystem == "Linux")
             dirInfo = new DirectoryInfo(tempModPath + "/assets");

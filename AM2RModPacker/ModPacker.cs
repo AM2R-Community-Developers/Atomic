@@ -203,7 +203,7 @@ public partial class ModPacker : Form
     {
         if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
         {
-            MessageBox.Show("Text field missing! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+            MessageBox.Show("Mod name, author or version field missing! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
             return;
         }
 
@@ -224,8 +224,55 @@ public partial class ModPacker : Form
 
         createLabel.Visible = true;
         createLabel.Text = "Packaging mod(s)... This could take a while!";
-        
-        string output;
+
+        bool PromptAndSaveOSMod(ProfileOperatingSystems os)
+        {
+            string modZipPath = os switch
+            {
+                ProfileOperatingSystems.Windows => windowsPath,
+                ProfileOperatingSystems.Linux => linuxPath,
+                ProfileOperatingSystems.Mac => macPath,
+                _ => null
+            };
+            string output;
+            
+            using (var saveFile = new SaveFileDialog { Title = $"Save {os.ToString()} mod profile", Filters = { zipFileFilter } })
+            {
+                if (saveFile.ShowDialog(this) == DialogResult.Ok)
+                    output = saveFile.FileName;
+                else
+                {
+                    createLabel.Text = "Mod packaging aborted!";
+                    return false;
+                }
+            }
+            // Some filepickers don't automatically set the file extension
+            if (!output.ToLower().EndsWith(".zip"))
+                output += ".zip";
+            LoadProfileParameters(os);
+            try
+            {
+                Core.CreateModPack(profile, originalPath, modZipPath, apkPath, output);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                AbortPatch();
+                return false;
+            }
+            return true;
+        }
+
+        bool CheckForProfileXML(ZipArchive zipfile)
+        {
+            if (zipfile.Entries.All(f => f.Name != "profile.xml"))
+                return true;
+            var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+            if (result == DialogResult.Yes)
+                return true;
+            AbortPatch();
+            return false;
+        }
 
         if (windowsCheckBox.Checked.Value)
         {
@@ -240,40 +287,11 @@ public partial class ModPacker : Form
                 }
             }
 
-            if (windowsZip.Entries.Any(f => f.Name == "profile.xml"))
-            {
-                var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                if (result != DialogResult.Yes)
-                {
-                    AbortPatch();
-                    return;
-                }
-            }
-            
-            using (var saveFile = new SaveFileDialog { Title = "Save Windows mod profile", Filters = { zipFileFilter } })
-            {
-                if (saveFile.ShowDialog(this) == DialogResult.Ok)
-                    output = saveFile.FileName;
-                else
-                {
-                    createLabel.Text = "Mod packaging aborted!";
-                    return;
-                }
-            }
-            // Some filepickers don't automatically set the file extension
-            if (!output.ToLower().EndsWith(".zip"))
-                output += ".zip";
-            LoadProfileParameters(ProfileOperatingSystems.Windows);
-            try
-            {
-                Core.CreateModPack(profile, originalPath, windowsPath, apkPath, output);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-                AbortPatch();
+            if (!CheckForProfileXML(windowsZip))
                 return;
-            }
+
+            if (!PromptAndSaveOSMod(ProfileOperatingSystems.Windows))
+                return;
         }
 
         if (linuxCheckBox.Checked.Value)
@@ -289,39 +307,11 @@ public partial class ModPacker : Form
                 }
             }
 
-            if (linuxZip.Entries.Any(f => f.Name == "profile.xml"))
-            {
-                var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);            if (result != DialogResult.Yes)
-                {
-                    AbortPatch();
-                    return;
-                }
-            }
-
-            using (var saveFile = new SaveFileDialog { Title = "Save Linux mod profile", Filters = { zipFileFilter } })
-            {
-                if (saveFile.ShowDialog(this) == DialogResult.Ok)
-                    output = saveFile.FileName;
-                else
-                {
-                    createLabel.Text = "Mod packaging aborted!";
-                    return;
-                }
-            }
-            // Some filepickers don't automatically set the file extension
-            if (!output.ToLower().EndsWith(".zip"))
-                output += ".zip";
-            LoadProfileParameters(ProfileOperatingSystems.Linux);
-            try
-            {
-                Core.CreateModPack(profile, originalPath, linuxPath, apkPath, output);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-                AbortPatch();
+            if (!CheckForProfileXML(linuxZip))
                 return;
-            }
+
+            if (!PromptAndSaveOSMod(ProfileOperatingSystems.Linux))
+                return;
         }
         if (macCheckBox.Checked.Value)
         {
@@ -333,37 +323,11 @@ public partial class ModPacker : Form
                     AbortPatch();
             }
 
-            if (macZip.Entries.Any(f => f.Name == "profile.xml"))
-            {
-                var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                if (result != DialogResult.Yes)
-                    AbortPatch();
-            }
-
-            using (SaveFileDialog saveFile = new SaveFileDialog { Title = "Save Mac mod profile", Filters = { zipFileFilter } })
-            {
-                if (saveFile.ShowDialog(this) == DialogResult.Ok)
-                    output = saveFile.FileName;
-                else
-                {
-                    createLabel.Text = "Mod packaging aborted!";
-                    return;
-                }
-            }
-            // Some filepickers don't automatically set the file extension
-            if (!output.ToLower().EndsWith(".zip"))
-                output += ".zip";
-            LoadProfileParameters(ProfileOperatingSystems.Mac);
-            try
-            {
-                Core.CreateModPack(profile, originalPath, macPath, apkPath, output);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
-                AbortPatch();
+            if (!CheckForProfileXML(macZip))
                 return;
-            }
+
+            if (!PromptAndSaveOSMod(ProfileOperatingSystems.Mac))
+                return;
         }
         createLabel.Text = "Mod package(s) created!";
     }
@@ -398,9 +362,6 @@ public partial class ModPacker : Form
     {
         // Set labels
         createLabel.Text = "Mod packaging aborted!";
-        originalZipLabel.Visible = false;
-        apkLabel.Visible = false;
-        linuxLabel.Visible = false;
 
         // Remove temp directory
         if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
