@@ -2,6 +2,7 @@ using Eto.Forms;
 using Eto.Drawing;
 using AM2RModPackerLib.XML;
 using System.IO;
+using AM2RModPackerLib;
 
 namespace AM2RModPacker;
 
@@ -83,15 +84,15 @@ public partial class ModPacker : Form
         // Assign events
         originalZipButton.Click += OriginalZipButton_Click;
         createButton.Click += CreateButton_Click;
-        windowsCheckBox.CheckedChanged += WindowsCheckBox_CheckedChanged;
-        windowsButton.Click += WindowsButton_Click;
-        apkButton.Click += ApkButton_Click;
-        apkCheckBox.CheckedChanged += ApkCheckBoxCheckedChanged;
-        customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
-        linuxCheckBox.CheckedChanged += LinuxCheckBox_CheckedChanged;
-        linuxButton.Click += LinuxButton_Click;
+        windowsCheckBox.CheckedChanged += (_, _) => OSCheckboxChanged(ProfileOperatingSystems.Windows);
+        windowsButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Windows);
+        apkCheckBox.CheckedChanged += (_, _) => OSCheckboxChanged(ProfileOperatingSystems.Android);
+        apkButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Android);
+        linuxCheckBox.CheckedChanged += (_, _) => OSCheckboxChanged(ProfileOperatingSystems.Linux);
+        linuxButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Linux);
         macCheckBox.CheckedChanged += macCheckBox_CheckedChanged;
-        macButton.Click += macButton_Click;
+        macButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Mac);
+        customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
         customSaveButton.Click += CustomSaveDataButton_Click;
         yycCheckBox.CheckedChanged += YYCCheckBox_CheckedChanged;
     }

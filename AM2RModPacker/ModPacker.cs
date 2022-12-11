@@ -98,20 +98,6 @@ public partial class ModPacker : Form
         modInfo.MacModPath = null;
     }
     
-    private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e) => OSCheckboxChanged(ProfileOperatingSystems.Windows);
-    
-    
-    private void WindowsButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Windows);
-
-
-    private void ApkCheckBoxCheckedChanged(object sender, EventArgs e) => OSCheckboxChanged(ProfileOperatingSystems.Android);
-
-    private void ApkButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Android);
-
-    private void LinuxCheckBox_CheckedChanged(object sender, EventArgs e) => OSCheckboxChanged(ProfileOperatingSystems.Linux);
-
-    private void LinuxButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Linux);
-    
     private void macCheckBox_CheckedChanged(object sender, EventArgs e)
     {
         if (!yycCheckBox.Checked.Value)
@@ -122,8 +108,6 @@ public partial class ModPacker : Form
             macCheckBox.Checked = false;
         }
     }
-
-    private void macButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Mac);
 
     private void OriginalZipButton_Click(object sender, EventArgs e)
     {
@@ -360,7 +344,7 @@ public partial class ModPacker : Form
     
     private void OSButtonClicked(ProfileOperatingSystems os)
     {
-        string pickerMessage = null;
+        string pickerMessage = $"Please select your custom {os.ToString()} AM2R .{(os == ProfileOperatingSystems.Android ?  "apk" : "zip")}";
         Label osLabel = null;
         FieldInfo osModPathPropertyField = null;
         PropertyInfo isOsModLoaded = null;
@@ -368,25 +352,21 @@ public partial class ModPacker : Form
         switch (os)
         {
             case ProfileOperatingSystems.Windows:
-                pickerMessage = "Please select your custom Windows AM2R .zip";
                 osLabel = windowsLabel;
                 osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.WindowsModPath));
                 isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsWindowsModLoaded));
                 break;
             case ProfileOperatingSystems.Linux:
-                pickerMessage = "Please select your custom Linux AM2R .zip";
                 osLabel = linuxLabel;
                 osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.LinuxModPath));
                 isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsLinuxModLoaded));
                 break;
             case ProfileOperatingSystems.Mac:
-                pickerMessage = "Please select your custom Mac AM2R .zip";
                 osLabel = macLabel;
                 osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.MacModPath));
                 isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsMacModLoaded));
                 break;
             case ProfileOperatingSystems.Android:
-                pickerMessage = "Please select your custom AM2R .apk";
                 osLabel = apkLabel;
                 osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.ApkModPath));
                 isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsApkModLoaded));
