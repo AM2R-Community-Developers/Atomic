@@ -18,6 +18,4 @@ public class ModCreationInfo
     public string ApkModPath;
     public string LinuxModPath;
     public string MacModPath;
-    
-    public string SaveFolderPath;
 }
