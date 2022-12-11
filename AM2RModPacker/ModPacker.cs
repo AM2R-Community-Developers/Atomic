@@ -386,7 +386,7 @@ public partial class ModPacker : Form
                 isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsMacModLoaded));
                 break;
             case ProfileOperatingSystems.Android:
-                pickerMessage = "PPlease select your custom AM2R .apk";
+                pickerMessage = "Please select your custom AM2R .apk";
                 osLabel = apkLabel;
                 osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.ApkModPath));
                 isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsApkModLoaded));
