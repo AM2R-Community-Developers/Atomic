@@ -316,21 +316,14 @@ public partial class ModPacker : Form
 
     private void OSCheckboxChanged(ProfileOperatingSystems os)
     {
-        var osCheckbox = os switch
+        CheckBox osCheckbox = null;
+        Button osButton = null; 
+        switch(os)
         {
-            ProfileOperatingSystems.Windows => windowsCheckBox,
-            ProfileOperatingSystems.Linux => linuxCheckBox,
-            ProfileOperatingSystems.Mac => macCheckBox,
-            ProfileOperatingSystems.Android => apkCheckBox,
-            _ => null
-        };
-        var osButton = os switch
-        {
-            ProfileOperatingSystems.Windows => windowsButton,
-            ProfileOperatingSystems.Linux => linuxButton,
-            ProfileOperatingSystems.Mac => macButton,
-            ProfileOperatingSystems.Android => apkButton,
-            _ => null
+            case ProfileOperatingSystems.Windows: osCheckbox = windowsCheckBox; osButton = windowsButton; break;
+            case ProfileOperatingSystems.Linux: osCheckbox = linuxCheckBox; osButton = linuxButton; break;
+            case ProfileOperatingSystems.Mac: osCheckbox = macCheckBox; osButton = macButton; break;
+            case ProfileOperatingSystems.Android: osCheckbox = apkCheckBox; osButton = apkButton; break;
         };
         osButton.Enabled = osCheckbox.Checked.Value;
         // If it was disabled, clean the appropriate attributes
