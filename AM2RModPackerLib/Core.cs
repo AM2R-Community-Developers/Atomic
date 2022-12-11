@@ -33,8 +33,17 @@ public static class Core
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
     // TODO: go over thhis and clean
-    public static void CreateModPack(ModProfileXML profile, string originalZipPath, string modZipPath, string apkPath, string output)
+    public static void CreateModPack(ModCreationInfo modInfo, string output)
     {
+        ProfileOperatingSystems profileOS = Enum.Parse<ProfileOperatingSystems>(modInfo.Profile.OperatingSystem);
+        string modZipPath = profileOS switch
+        {
+            ProfileOperatingSystems.Windows => modInfo.WindowsModPath,
+            ProfileOperatingSystems.Linux => modInfo.LinuxModPath,
+            ProfileOperatingSystems.Mac => modInfo.MacModPath,
+            _ => throw new NotSupportedException("The current Operating system is not supported!")
+        };
+        
         // Cleanup in case of previous errors
         if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
             Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
@@ -46,21 +55,19 @@ public static class Core
         string tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
 
         // Extract 1.1 and modded AM2R to their own directories in temp work
-        ZipFile.ExtractToDirectory(originalZipPath, tempOriginalPath);
+        ZipFile.ExtractToDirectory(modInfo.AM2R11Path, tempOriginalPath);
         ZipFile.ExtractToDirectory(modZipPath, tempModPath);
 
         if (Directory.Exists(tempModPath + "/AM2R"))
             tempModPath += "/AM2R";
         
-        switch (profile.OperatingSystem)
+        switch (profileOS)
         {
             // Create AM2R.exe and data.win patches
-            case "Windows":
+            case ProfileOperatingSystems.Windows:
             {
-                if (profile.UsesYYC)
-                {
+                if (modInfo.Profile.UsesYYC)
                     CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
-                }
                 else
                 {
                     CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
@@ -68,14 +75,14 @@ public static class Core
                 }
                 break;
             }
-            case "Linux":
+            case ProfileOperatingSystems.Linux:
             {
                 string runnerName = File.Exists(tempModPath + "/" + "AM2R") ? "AM2R" : "runner";
                 CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
                 CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
                 break;
             }
-            case "Mac":
+            case ProfileOperatingSystems.Mac:
             {
                 CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.app/Contents/Resources/game.ios", tempProfilePath + "/game.xdelta");
                 CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner", tempProfilePath + "/AM2R.xdelta");
@@ -87,7 +94,7 @@ public static class Core
         }
         
         // Create game.droid patch and wrapper if Android is supported
-        if (profile.SupportsAndroid)
+        if (modInfo.Profile.SupportsAndroid)
         {
             string tempAndroid = Directory.CreateDirectory(tempPath + "/android").FullName;
 
@@ -101,7 +108,7 @@ public static class Core
             {
                 FileName = filename,
                 WorkingDirectory = tempAndroid,
-                Arguments = $"{javaArgs} \"" + localPath + "/utilities/android/apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + apkPath + "\"",
+                Arguments = $"{javaArgs} \"" + localPath + "/utilities/android/apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + modInfo.ApkModPath + "\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -117,7 +124,6 @@ public static class Core
             CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
 
             // Delete excess files in APK
-
             // Create whitelist
             string[] whitelist = { "splash.png", "portrait_splash.png" };
 
@@ -173,14 +179,14 @@ public static class Core
 
         // Copy datafiles (exclude .ogg if custom music is not selected)
         var dirInfo = new DirectoryInfo(tempModPath);
-        if (profile.OperatingSystem == "Linux")
+        if (profileOS == ProfileOperatingSystems.Linux)
             dirInfo = new DirectoryInfo(tempModPath + "/assets");
-        else if (profile.OperatingSystem == "Mac")
+        else if (profileOS == ProfileOperatingSystems.Mac)
             dirInfo = new DirectoryInfo(tempModPath + "/AM2R.app/Contents/Resources");
 
         Directory.CreateDirectory(tempProfilePath + "/files_to_copy");
 
-        if (profile.UsesCustomMusic)
+        if (modInfo.Profile.UsesCustomMusic)
         {
             // Copy files, excluding the blacklist
             CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
@@ -190,7 +196,7 @@ public static class Core
             // Get list of 1.1's music files
             string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
 
-            if (profile.OperatingSystem == "Linux" || profile.OperatingSystem == "Mac")
+            if (profileOS == ProfileOperatingSystems.Linux || profileOS == ProfileOperatingSystems.Mac)
                 musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file).ToLower()).ToArray();
 
 
@@ -202,7 +208,7 @@ public static class Core
         }
 
         // Export profile as XML
-        string xmlOutput = Serializer.Serialize<ModProfileXML>(profile);
+        string xmlOutput = Serializer.Serialize<ModProfileXML>(modInfo.Profile);
         File.WriteAllText(tempProfilePath + "/profile.xml", xmlOutput);
 
         // Compress temp folder to .zip

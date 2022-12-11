@@ -153,13 +153,6 @@ public partial class ModPacker : Form
 
         bool PromptAndSaveOSMod(ProfileOperatingSystems os)
         {
-            string modZipPath = os switch
-            {
-                ProfileOperatingSystems.Windows => modInfo.WindowsModPath,
-                ProfileOperatingSystems.Linux => modInfo.LinuxModPath,
-                ProfileOperatingSystems.Mac => modInfo.MacModPath,
-                _ => null
-            };
             string output;
             
             using (var saveFile = new SaveFileDialog { Title = $"Save {os.ToString()} mod profile", Filters = { zipFileFilter } })
@@ -178,7 +171,7 @@ public partial class ModPacker : Form
             LoadProfileParameters(os);
             try
             {
-                Core.CreateModPack(modInfo.Profile, modInfo.AM2R11Path, modZipPath, modInfo.ApkModPath, output);
+                Core.CreateModPack(modInfo, output);
             }
             catch (Exception exception)
             {
