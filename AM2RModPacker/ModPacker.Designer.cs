@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using Eto.Forms;
 using Eto.Drawing;
 using AM2RModPackerLib.XML;
 using System.IO;
+using System.Reflection;
 using AM2RModPackerLib;
 
 namespace AM2RModPacker;
@@ -10,6 +12,45 @@ public partial class ModPacker : Form
 {
     public ModPacker()
     {
+        // Fill in lookup tables:
+        #region Lookup Table filling
+        labelLookupTable = new Dictionary<ProfileOperatingSystems, Label>()
+        {
+            { ProfileOperatingSystems.Windows, windowsLabel },
+            { ProfileOperatingSystems.Linux, windowsLabel },
+            { ProfileOperatingSystems.Mac, windowsLabel },
+            { ProfileOperatingSystems.Android, windowsLabel },
+        };
+        buttonLookupTable = new Dictionary<ProfileOperatingSystems, Button>()
+        {
+            { ProfileOperatingSystems.Windows, windowsButton },
+            { ProfileOperatingSystems.Linux, linuxButton },
+            { ProfileOperatingSystems.Mac, macButton },
+            { ProfileOperatingSystems.Android, apkButton },
+        };
+        checkboxLookupTable = new Dictionary<ProfileOperatingSystems, CheckBox>()
+        {
+            { ProfileOperatingSystems.Windows, windowsCheckBox },
+            { ProfileOperatingSystems.Linux, linuxCheckBox },
+            { ProfileOperatingSystems.Mac, macCheckBox },
+            { ProfileOperatingSystems.Android, apkCheckBox },
+        };
+        modPathLookupTable = new Dictionary<ProfileOperatingSystems, FieldInfo>()
+        {
+            { ProfileOperatingSystems.Windows, modInfo.GetType().GetField(nameof(modInfo.WindowsModPath)) },
+            { ProfileOperatingSystems.Linux, modInfo.GetType().GetField(nameof(modInfo.LinuxModPath)) },
+            { ProfileOperatingSystems.Mac, modInfo.GetType().GetField(nameof(modInfo.MacModPath)) },
+            { ProfileOperatingSystems.Android, modInfo.GetType().GetField(nameof(modInfo.ApkModPath)) },
+        };
+        isModLoadedLookupTable = new Dictionary<ProfileOperatingSystems, PropertyInfo>()
+        {
+            { ProfileOperatingSystems.Windows, modInfo.GetType().GetProperty(nameof(modInfo.IsWindowsModLoaded)) },
+            { ProfileOperatingSystems.Linux, modInfo.GetType().GetProperty(nameof(modInfo.IsLinuxModLoaded)) },
+            { ProfileOperatingSystems.Mac, modInfo.GetType().GetProperty(nameof(modInfo.IsMacModLoaded)) },
+            { ProfileOperatingSystems.Android, modInfo.GetType().GetProperty(nameof(modInfo.IsApkModLoaded)) },
+        };
+        #endregion
+        
         Title = "AM2R ModPacker " + version;
         // TODO: Currently broken as I don't know how to do this from Rider
         //Icon = Icon.FromResource("icon64.ico");

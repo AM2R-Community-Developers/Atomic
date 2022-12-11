@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -14,6 +15,13 @@ public partial class ModPacker : Form
     private const string version = Core.Version;
 
     private ModCreationInfo modInfo = new ModCreationInfo();
+    
+    // Lookup dictionaries, filled in Constructor
+    private Dictionary<ProfileOperatingSystems, Label> labelLookupTable = new Dictionary<ProfileOperatingSystems, Label>();
+    private Dictionary<ProfileOperatingSystems, Button> buttonLookupTable = new Dictionary<ProfileOperatingSystems, Button>();
+    private Dictionary<ProfileOperatingSystems, CheckBox> checkboxLookupTable = new Dictionary<ProfileOperatingSystems, CheckBox>();
+    private Dictionary<ProfileOperatingSystems, FieldInfo> modPathLookupTable = new Dictionary<ProfileOperatingSystems, FieldInfo>();
+    private Dictionary<ProfileOperatingSystems, PropertyInfo> isModLoadedLookupTable = new Dictionary<ProfileOperatingSystems, PropertyInfo>();
 
     private readonly FileFilter zipFileFilter = new FileFilter("zip archives (*.zip)", ".zip");
     private readonly FileFilter apkFileFilter = new FileFilter("Android application packages (*.apk)", ".apk");
@@ -316,21 +324,16 @@ public partial class ModPacker : Form
 
     private void OSCheckboxChanged(ProfileOperatingSystems os)
     {
-        CheckBox osCheckbox = null;
-        Button osButton = null; 
-        switch(os)
-        {
-            case ProfileOperatingSystems.Windows: osCheckbox = windowsCheckBox; osButton = windowsButton; break;
-            case ProfileOperatingSystems.Linux: osCheckbox = linuxCheckBox; osButton = linuxButton; break;
-            case ProfileOperatingSystems.Mac: osCheckbox = macCheckBox; osButton = macButton; break;
-            case ProfileOperatingSystems.Android: osCheckbox = apkCheckBox; osButton = apkButton; break;
-        };
-        osButton.Enabled = osCheckbox.Checked.Value;
+        CheckBox osCheckbox = checkboxLookupTable[os];
+        Button osButton = buttonLookupTable[os];
+        Label osLabel = labelLookupTable[os];
+        FieldInfo osModPath = modPathLookupTable[os];
         // If it was disabled, clean the appropriate attributes
+        osButton.Enabled = osCheckbox.Checked.Value;
         if (!osCheckbox.Checked.Value)
         {
-            windowsLabel.Visible = false;
-            modInfo.WindowsModPath = null;
+            osLabel.Visible = false;
+            osModPath.SetValue(modInfo, null);
         }
         UpdateCreateButton();
     }
@@ -338,37 +341,12 @@ public partial class ModPacker : Form
     private void OSButtonClicked(ProfileOperatingSystems os)
     {
         string pickerMessage = $"Please select your custom {os.ToString()} AM2R .{(os == ProfileOperatingSystems.Android ?  "apk" : "zip")}";
-        Label osLabel = null;
-        FieldInfo osModPathPropertyField = null;
-        PropertyInfo isOsModLoaded = null;
-
-        switch (os)
-        {
-            case ProfileOperatingSystems.Windows:
-                osLabel = windowsLabel;
-                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.WindowsModPath));
-                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsWindowsModLoaded));
-                break;
-            case ProfileOperatingSystems.Linux:
-                osLabel = linuxLabel;
-                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.LinuxModPath));
-                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsLinuxModLoaded));
-                break;
-            case ProfileOperatingSystems.Mac:
-                osLabel = macLabel;
-                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.MacModPath));
-                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsMacModLoaded));
-                break;
-            case ProfileOperatingSystems.Android:
-                osLabel = apkLabel;
-                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.ApkModPath));
-                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsApkModLoaded));
-                break;
-        }
-        
+        Label osLabel = labelLookupTable[os];
+        FieldInfo osModPath = modPathLookupTable[os];
+        PropertyInfo isOsModLoaded = isModLoadedLookupTable[os];
         // Open window to select modded file
         string selectedFile = SelectFile(pickerMessage, os == ProfileOperatingSystems.Android ? apkFileFilter : zipFileFilter);
-        osModPathPropertyField.SetValue(modInfo, selectedFile);
+        osModPath.SetValue(modInfo, selectedFile);
         osLabel.Visible = (bool)isOsModLoaded.GetValue(modInfo);
         UpdateCreateButton();
     }
