@@ -10,7 +10,8 @@ public enum ProfileOperatingSystems
 {
     Windows,
     Linux,
-    Mac
+    Mac,
+    Android
 }
 
 /// <summary>

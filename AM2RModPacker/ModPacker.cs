@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using AM2RModPackerLib;
 using Eto.Forms;
@@ -96,95 +97,33 @@ public partial class ModPacker : Form
         macButton.Enabled = false;
         modInfo.MacModPath = null;
     }
-
-    // TODO: replace checked changed and click with a generic method to avoid copy paste
-    private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-        windowsButton.Enabled = windowsCheckBox.Checked.Value;
-        // If it was disabled, clean the appropriate attributes
-        if (!windowsCheckBox.Checked.Value)
-        {
-            windowsLabel.Visible = false;
-            modInfo.WindowsModPath = null;
-        }
-        UpdateCreateButton();
-    }
     
-    private void WindowsButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded Linux .zip
-        modInfo.WindowsModPath = SelectFile("Please select your custom Windows AM2R .zip", zipFileFilter);
-        windowsLabel.Visible = modInfo.IsWindowsModLoaded;
-        UpdateCreateButton();
-    }
+    private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e) => OSCheckboxChanged(ProfileOperatingSystems.Windows);
     
-    private void ApkCheckBoxCheckedChanged(object sender, EventArgs e)
-    {
-        apkButton.Enabled = apkCheckBox.Checked.Value;
-        // If it was disabled, clean the appropriate attributes
-        if (!apkCheckBox.Checked.Value)
-        {
-            apkLabel.Visible = false;
-            modInfo.ApkModPath = null;
-        }
-        UpdateCreateButton();
-    }
     
-    private void ApkButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded AM2R APK
-        modInfo.ApkModPath = SelectFile("Please select your custom AM2R .apk", apkFileFilter);
-        apkLabel.Visible = modInfo.IsApkModLoaded;
-        UpdateCreateButton();
-    }
+    private void WindowsButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Windows);
 
-    private void LinuxCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-        linuxButton.Enabled = linuxCheckBox.Checked.Value;
-        // If it was disabled, clean the appropriate attributes
-        if (!linuxCheckBox.Checked.Value)
-        {
-            linuxLabel.Visible = false;
-            modInfo.LinuxModPath = null;
-        }
-        UpdateCreateButton();
-    }
 
-    private void LinuxButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded Linux .zip
-        modInfo.LinuxModPath = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
-        linuxLabel.Visible = modInfo.IsLinuxModLoaded;
-        UpdateCreateButton();
-    }
+    private void ApkCheckBoxCheckedChanged(object sender, EventArgs e) => OSCheckboxChanged(ProfileOperatingSystems.Android);
+
+    private void ApkButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Android);
+
+    private void LinuxCheckBox_CheckedChanged(object sender, EventArgs e) => OSCheckboxChanged(ProfileOperatingSystems.Linux);
+
+    private void LinuxButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Linux);
     
     private void macCheckBox_CheckedChanged(object sender, EventArgs e)
     {
         if (!yycCheckBox.Checked.Value)
-        {
-            macButton.Enabled = macCheckBox.Checked.Value;
-            // If it was disabled, clean the appropriate attributes
-            if (!macCheckBox.Checked.Value)
-            {
-                macLabel.Visible = false;
-                modInfo.MacModPath = null;
-            }
-            UpdateCreateButton();
-        }
+            OSCheckboxChanged(ProfileOperatingSystems.Mac);
         else if (macCheckBox.Checked.Value)
         {
             MessageBox.Show("YoYoCompiler isn't supported with Mac!", "Warning", MessageBoxButtons.OK, MessageBoxType.Warning);
             macCheckBox.Checked = false;
         }
     }
-    
-    private void macButton_Click(object sender, EventArgs e)
-    {
-        // Open window to select modded Mac .zip
-        modInfo.MacModPath = SelectFile("Please select your custom Mac AM2R .zip", zipFileFilter);
-        macLabel.Visible = modInfo.IsMacModLoaded;
-        UpdateCreateButton();
-    }
+
+    private void macButton_Click(object sender, EventArgs e) => OSButtonClicked(ProfileOperatingSystems.Mac);
 
     private void OriginalZipButton_Click(object sender, EventArgs e)
     {
@@ -389,5 +328,75 @@ public partial class ModPacker : Form
 
         string location = fileFinder.FileName;
         return location;
+    }
+
+    private void OSCheckboxChanged(ProfileOperatingSystems os)
+    {
+        var osCheckbox = os switch
+        {
+            ProfileOperatingSystems.Windows => windowsCheckBox,
+            ProfileOperatingSystems.Linux => linuxCheckBox,
+            ProfileOperatingSystems.Mac => macCheckBox,
+            ProfileOperatingSystems.Android => apkCheckBox,
+            _ => null
+        };
+        var osButton = os switch
+        {
+            ProfileOperatingSystems.Windows => windowsButton,
+            ProfileOperatingSystems.Linux => linuxButton,
+            ProfileOperatingSystems.Mac => macButton,
+            ProfileOperatingSystems.Android => apkButton,
+            _ => null
+        };
+        osButton.Enabled = osCheckbox.Checked.Value;
+        // If it was disabled, clean the appropriate attributes
+        if (!osCheckbox.Checked.Value)
+        {
+            windowsLabel.Visible = false;
+            modInfo.WindowsModPath = null;
+        }
+        UpdateCreateButton();
+    }
+    
+    private void OSButtonClicked(ProfileOperatingSystems os)
+    {
+        string pickerMessage = null;
+        Label osLabel = null;
+        FieldInfo osModPathPropertyField = null;
+        PropertyInfo isOsModLoaded = null;
+
+        switch (os)
+        {
+            case ProfileOperatingSystems.Windows:
+                pickerMessage = "Please select your custom Windows AM2R .zip";
+                osLabel = windowsLabel;
+                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.WindowsModPath));
+                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsWindowsModLoaded));
+                break;
+            case ProfileOperatingSystems.Linux:
+                pickerMessage = "Please select your custom Linux AM2R .zip";
+                osLabel = linuxLabel;
+                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.LinuxModPath));
+                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsLinuxModLoaded));
+                break;
+            case ProfileOperatingSystems.Mac:
+                pickerMessage = "Please select your custom Mac AM2R .zip";
+                osLabel = macLabel;
+                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.MacModPath));
+                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsMacModLoaded));
+                break;
+            case ProfileOperatingSystems.Android:
+                pickerMessage = "PPlease select your custom AM2R .apk";
+                osLabel = apkLabel;
+                osModPathPropertyField = modInfo.GetType().GetField(nameof(modInfo.ApkModPath));
+                isOsModLoaded = modInfo.GetType().GetProperty(nameof(modInfo.IsApkModLoaded));
+                break;
+        }
+        
+        // Open window to select modded file
+        string selectedFile = SelectFile(pickerMessage, os == ProfileOperatingSystems.Android ? apkFileFilter : zipFileFilter);
+        osModPathPropertyField.SetValue(modInfo, selectedFile);
+        osLabel.Visible = (bool)isOsModLoaded.GetValue(modInfo);
+        UpdateCreateButton();
     }
 }
