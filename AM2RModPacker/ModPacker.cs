@@ -30,9 +30,9 @@ public partial class ModPacker : Form
     
     private void CustomSaveDataButton_Click(object sender, EventArgs e)
     {
-        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace("\\", "\\\\"); // This is \ -> \\
         bool wasSuccessful = false;
-        var winSaveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\");                                                 //this is to ensure, that the save directory is valid. so far, this is only important for windows
+        var winSaveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid. so far, this is only important for windows
         var linSaveRegex = new Regex($@"{home}/\.config/"); // GMS hardcodes save into ~/.config on linux 
         var macSaveRegex = new Regex($@"{home}/Library/Application Support/");
 
