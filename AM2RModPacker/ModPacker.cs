@@ -14,8 +14,6 @@ public partial class ModPacker : Form
     private static readonly string version = Core.Version;
 
     private ModCreationInfo modinfo = new ModCreationInfo();
-    
-    private readonly ModProfileXML profile;
 
     private readonly FileFilter zipFileFilter = new FileFilter("zip archives (*.zip)", ".zip");
     private readonly FileFilter apkFileFilter = new FileFilter("Android application packages (*.apk)", ".apk");
@@ -78,16 +76,16 @@ public partial class ModPacker : Form
                     if (saveFilePath.Contains(vanillaPrefix))
                         saveFilePath = vanillaPrefix + saveFilePath.Substring(vanillaPrefix.Length).ToLower();
 
-                    modinfo.saveFilePath = saveFilePath;
+                    modinfo.SaveFolderPath = saveFilePath;
                 }
             }
             else
             {
                 wasSuccessful = true;
-                modinfo.saveFilePath = null;
+                modinfo.SaveFolderPath = null;
             }
         }
-        customSaveTextBox.Text = modinfo.saveFilePath;
+        customSaveTextBox.Text = modinfo.SaveFolderPath;
     }
     
     private void YYCCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -95,10 +93,11 @@ public partial class ModPacker : Form
         // Don't do anything if it's been disabled
         if (!yycCheckBox.Checked.Value)
             return;
+        // Disable mac stuff, as its incompatible with yyc
         macCheckBox.Checked = false;
         macLabel.Visible = false;
         macButton.Enabled = false;
-        modinfo.macPath = "";
+        modinfo.MacModPath = null;
     }
 
     private void WindowsCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -108,7 +107,7 @@ public partial class ModPacker : Form
         if (!windowsCheckBox.Checked.Value)
         {
             windowsLabel.Visible = false;
-            modinfo.windowsPath = "";
+            modinfo.WindowsModPath = null;
         }
         UpdateCreateButton();
     }
@@ -116,7 +115,7 @@ public partial class ModPacker : Form
     private void WindowsButton_Click(object sender, EventArgs e)
     {
         // Open window to select modded Linux .zip
-        (_, modinfo.windowsPath) = SelectFile("Please select your custom Windows AM2R .zip", zipFileFilter);
+        modinfo.WindowsModPath = SelectFile("Please select your custom Windows AM2R .zip", zipFileFilter);
         windowsLabel.Visible = modinfo.IsWindowsModLoaded;
         UpdateCreateButton();
     }
@@ -128,7 +127,7 @@ public partial class ModPacker : Form
         if (!apkCheckBox.Checked.Value)
         {
             apkLabel.Visible = false;
-            modinfo.apkPath = "";
+            modinfo.ApkModPath = null;
         }
         UpdateCreateButton();
     }
@@ -136,7 +135,7 @@ public partial class ModPacker : Form
     private void ApkButton_Click(object sender, EventArgs e)
     {
         // Open window to select modded AM2R APK
-        (_, modinfo.apkPath) = SelectFile("Please select your custom AM2R .apk", apkFileFilter);
+        modinfo.ApkModPath = SelectFile("Please select your custom AM2R .apk", apkFileFilter);
         apkLabel.Visible = modinfo.IsApkModLoaded;
         UpdateCreateButton();
     }
@@ -148,7 +147,7 @@ public partial class ModPacker : Form
         if (!linuxCheckBox.Checked.Value)
         {
             linuxLabel.Visible = false;
-            modinfo.linuxPath = "";
+            modinfo.LinuxModPath = null;
         }
         UpdateCreateButton();
     }
@@ -156,7 +155,7 @@ public partial class ModPacker : Form
     private void LinuxButton_Click(object sender, EventArgs e)
     {
         // Open window to select modded Linux .zip
-        (_, modinfo.linuxPath) = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
+        modinfo.LinuxModPath = SelectFile("Please select your custom Linux AM2R .zip", zipFileFilter);
         linuxLabel.Visible = modinfo.IsLinuxModLoaded;
         UpdateCreateButton();
     }
@@ -170,7 +169,7 @@ public partial class ModPacker : Form
             if (!macCheckBox.Checked.Value)
             {
                 macLabel.Visible = false;
-                modinfo.macPath = "";
+                modinfo.MacModPath = null;
             }
             UpdateCreateButton();
         }
@@ -184,7 +183,7 @@ public partial class ModPacker : Form
     private void macButton_Click(object sender, EventArgs e)
     {
         // Open window to select modded Mac .zip
-        (_, modinfo.macPath) = SelectFile("Please select your custom Mac AM2R .zip", zipFileFilter);
+        modinfo.MacModPath = SelectFile("Please select your custom Mac AM2R .zip", zipFileFilter);
         macLabel.Visible = modinfo.IsMacModLoaded;
         UpdateCreateButton();
     }
@@ -192,7 +191,7 @@ public partial class ModPacker : Form
     private void OriginalZipButton_Click(object sender, EventArgs e)
     {
         // Open window to select AM2R 1.1
-        (_, modinfo.originalPath) = SelectFile("Please select AM2R_11.zip", zipFileFilter);
+        modinfo.AM2R11Path = SelectFile("Please select AM2R_11.zip", zipFileFilter);
         originalZipLabel.Visible = modinfo.IsAM2R11Loaded;
         UpdateCreateButton();
     }
@@ -212,7 +211,7 @@ public partial class ModPacker : Form
         }
         
         // Verify 1.1
-        var result11 = Core.CheckIfZipIsAM2R11(modinfo.originalPath);
+        var result11 = Core.CheckIfZipIsAM2R11(modinfo.AM2R11Path);
         if (result11 != IsZipAM2R11ReturnCodes.Successful)
         {
             MessageBox.Show("AM2R 1.1 zip is invalid! Error code: " + result11);
@@ -227,9 +226,9 @@ public partial class ModPacker : Form
         {
             string modZipPath = os switch
             {
-                ProfileOperatingSystems.Windows => modinfo.windowsPath,
-                ProfileOperatingSystems.Linux => modinfo.linuxPath,
-                ProfileOperatingSystems.Mac => modinfo.macPath,
+                ProfileOperatingSystems.Windows => modinfo.WindowsModPath,
+                ProfileOperatingSystems.Linux => modinfo.LinuxModPath,
+                ProfileOperatingSystems.Mac => modinfo.MacModPath,
                 _ => null
             };
             string output;
@@ -250,7 +249,7 @@ public partial class ModPacker : Form
             LoadProfileParameters(os);
             try
             {
-                Core.CreateModPack(profile, modinfo.originalPath, modZipPath, modinfo.apkPath, output);
+                Core.CreateModPack(modinfo.Profile, modinfo.AM2R11Path, modZipPath, modinfo.ApkModPath, output);
             }
             catch (Exception exception)
             {
@@ -274,7 +273,7 @@ public partial class ModPacker : Form
 
         if (windowsCheckBox.Checked.Value)
         {
-            var windowsZip = ZipFile.Open(modinfo.windowsPath, ZipArchiveMode.Read);
+            var windowsZip = ZipFile.Open(modinfo.WindowsModPath, ZipArchiveMode.Read);
             if (windowsZip.Entries.All(f => f.FullName != "AM2R.exe"))
             {                
                 var result = MessageBox.Show("Modded game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
@@ -294,7 +293,7 @@ public partial class ModPacker : Form
 
         if (linuxCheckBox.Checked.Value)
         {
-            var linuxZip = ZipFile.Open(modinfo.linuxPath, ZipArchiveMode.Read);
+            var linuxZip = ZipFile.Open(modinfo.LinuxModPath, ZipArchiveMode.Read);
             if (linuxZip.Entries.All(f => f.FullName != "AM2R") && linuxZip.Entries.All(f => f.FullName != "runner"))
             { 
                 var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
@@ -313,7 +312,7 @@ public partial class ModPacker : Form
         }
         if (macCheckBox.Checked.Value)
         {
-            var macZip = ZipFile.Open(modinfo.macPath, ZipArchiveMode.Read);
+            var macZip = ZipFile.Open(modinfo.MacModPath, ZipArchiveMode.Read);
             if (macZip.Entries.All(f => f.Name != "AM2R.app/Contents/MacOS/Mac_Runner"))
             {
                 var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
@@ -333,26 +332,26 @@ public partial class ModPacker : Form
     
     private void LoadProfileParameters(ProfileOperatingSystems operatingSystem)
     {
-        profile.Name = nameTextBox.Text;
-        profile.Author = authorTextBox.Text;
-        profile.Version = versionTextBox.Text;
-        profile.UsesCustomMusic = musicCheckBox.Checked.Value;
-        profile.UsesYYC = yycCheckBox.Checked.Value;
-        profile.SupportsAndroid = apkCheckBox.Checked.Value;
-        profile.ProfileNotes = modNotesTextBox.Text;
-        profile.OperatingSystem = operatingSystem.ToString();
+        modinfo.Profile.Name = nameTextBox.Text;
+        modinfo.Profile.Author = authorTextBox.Text;
+        modinfo.Profile.Version = versionTextBox.Text;
+        modinfo.Profile.UsesCustomMusic = musicCheckBox.Checked.Value;
+        modinfo.Profile.UsesYYC = yycCheckBox.Checked.Value;
+        modinfo.Profile.SupportsAndroid = apkCheckBox.Checked.Value;
+        modinfo.Profile.ProfileNotes = modNotesTextBox.Text;
+        modinfo.Profile.OperatingSystem = operatingSystem.ToString();
         if (customSaveCheckBox.Checked.Value && customSaveTextBox.Text != "")
-            profile.SaveLocation = customSaveTextBox.Text;
+            modinfo.Profile.SaveLocation = customSaveTextBox.Text;
         else
-            profile.SaveLocation = "%localappdata%/AM2R";
+            modinfo.Profile.SaveLocation = "%localappdata%/AM2R";
         if (operatingSystem == ProfileOperatingSystems.Linux)
-            profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%", "~/.config");
+            modinfo.Profile.SaveLocation = modinfo.Profile.SaveLocation.Replace("%localappdata%", "~/.config");
         else if (operatingSystem == ProfileOperatingSystems.Mac)
         {
-            if (profile.SaveLocation.Contains("%localappdata%/AM2R"))
-                profile.SaveLocation = profile.SaveLocation.Replace("%localappdata%/AM2R", "~/Library/Application Support/com.yoyogames.am2r");
+            if (modinfo.Profile.SaveLocation.Contains("%localappdata%/AM2R"))
+                modinfo.Profile.SaveLocation = modinfo.Profile.SaveLocation.Replace("%localappdata%/AM2R", "~/Library/Application Support/com.yoyogames.am2r");
             else
-                profile.SaveLocation = "~/Library/Application Support/com.yoyogames." + new DirectoryInfo(profile.SaveLocation).Name.ToLower();
+                modinfo.Profile.SaveLocation = "~/Library/Application Support/com.yoyogames." + new DirectoryInfo(modinfo.Profile.SaveLocation).Name.ToLower();
         }
     }
 
@@ -380,7 +379,7 @@ public partial class ModPacker : Form
             createButton.Enabled = false;
     }
     
-    private (bool, string) SelectFile(string title, FileFilter filter)
+    private string SelectFile(string title, FileFilter filter)
     {
         using var fileFinder = new OpenFileDialog { Filters = { filter } };
         fileFinder.Title = title;
@@ -388,9 +387,9 @@ public partial class ModPacker : Form
         fileFinder.CheckFileExists = true;
 
         if (fileFinder.ShowDialog(this) != DialogResult.Ok)
-            return (false, "");
+            return null;
 
         string location = fileFinder.FileName;
-        return (true, location);
+        return location;
     }
 }

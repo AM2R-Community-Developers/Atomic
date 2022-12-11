@@ -5,14 +5,19 @@ namespace AM2RModPackerLib;
 
 public class ModCreationInfo
 {
-    public ModProfileXML profile;
+    public ModProfileXML Profile = new ModProfileXML();
 
-    public bool IsAM2R11Loaded => String.IsNullOrWhiteSpace(originalPath);
-    public bool IsWindowsModLoaded=> String.IsNullOrWhiteSpace(windowsPath);
-    public bool IsApkModLoaded => String.IsNullOrWhiteSpace(apkPath);
-    public bool IsLinuxModLoaded=> String.IsNullOrWhiteSpace(linuxPath);
-    public bool IsMacModLoaded=> String.IsNullOrWhiteSpace(macPath);
+    public bool IsAM2R11Loaded => String.IsNullOrWhiteSpace(AM2R11Path);
+    public bool IsWindowsModLoaded=> String.IsNullOrWhiteSpace(WindowsModPath);
+    public bool IsApkModLoaded => String.IsNullOrWhiteSpace(ApkModPath);
+    public bool IsLinuxModLoaded=> String.IsNullOrWhiteSpace(LinuxModPath);
+    public bool IsMacModLoaded=> String.IsNullOrWhiteSpace(MacModPath);
+
+    public string AM2R11Path;
+    public string WindowsModPath;
+    public string ApkModPath;
+    public string LinuxModPath;
+    public string MacModPath;
     
-    public string originalPath, windowsPath, apkPath, linuxPath, macPath;
-    public string saveFilePath;
+    public string SaveFolderPath;
 }

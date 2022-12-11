@@ -9,8 +9,6 @@ public partial class ModPacker : Form
 {
     public ModPacker()
     {
-        profile = new ModProfileXML();
-
         Title = "AM2R ModPacker " + version;
         // TODO: Currently broken as I don't know how to do this from Rider
         //Icon = Icon.FromResource("icon64.ico");
