@@ -29,10 +29,8 @@ public enum IsZipAM2R11ReturnCodes
 public static class Core
 {
     public const string Version = "2.0.3";
-    private static readonly string[] DATAFILES_BLACKLIST = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx", "game.ios" };
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
-    // TODO: go over thhis and clean
     public static void CreateModPack(ModCreationInfo modInfo, string output)
     {
         ProfileOperatingSystems profileOS = Enum.Parse<ProfileOperatingSystems>(modInfo.Profile.OperatingSystem);
@@ -45,171 +43,153 @@ public static class Core
         };
         
         // Cleanup in case of previous errors
-        if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
-            Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
+        if (Directory.Exists($"{Path.GetTempPath()}/AM2RModPacker"))
+            Directory.Delete($"{Path.GetTempPath()}/AM2RModPacker", true);
 
         // Create temp work folders
-        string tempPath = Directory.CreateDirectory(Path.GetTempPath() + "/AM2RModPacker").FullName;
-        string tempOriginalPath = Directory.CreateDirectory(tempPath + "/original").FullName;
-        string tempModPath = Directory.CreateDirectory(tempPath + "/mod").FullName;
-        string tempProfilePath = Directory.CreateDirectory(tempPath + "/profile").FullName;
+        string tempPath = Directory.CreateDirectory($"{Path.GetTempPath()}/AM2RModPacker").FullName;
+        string tempOriginalPath = Directory.CreateDirectory($"{tempPath}/original").FullName;
+        string tempModPath = Directory.CreateDirectory($"{tempPath}/mod").FullName;
+        string tempProfilePath = Directory.CreateDirectory($"{tempPath}/profile").FullName;
 
         // Extract 1.1 and modded AM2R to their own directories in temp work
         ZipFile.ExtractToDirectory(modInfo.AM2R11Path, tempOriginalPath);
         ZipFile.ExtractToDirectory(modZipPath, tempModPath);
 
-        if (Directory.Exists(tempModPath + "/AM2R"))
+        if (Directory.Exists($"{tempModPath}/AM2R"))
             tempModPath += "/AM2R";
         
+        // Create AM2R.exe and data.win patches
         switch (profileOS)
         {
-            // Create AM2R.exe and data.win patches
             case ProfileOperatingSystems.Windows:
-            {
                 if (modInfo.Profile.UsesYYC)
-                    CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                    CreatePatch($"{tempOriginalPath}/data.win", $"{tempModPath}/AM2R.exe", $"{tempProfilePath}/AM2R.xdelta");
                 else
                 {
-                    CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/data.win", tempProfilePath + "/data.xdelta");
-                    CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.exe", tempProfilePath + "/AM2R.xdelta");
+                    CreatePatch($"{tempOriginalPath}/data.win", $"{tempModPath}/data.win", $"{tempProfilePath}/data.xdelta");
+                    CreatePatch($"{tempOriginalPath}/AM2R.exe", $"{tempModPath}/AM2R.exe", $"{tempProfilePath}/AM2R.xdelta");
                 }
                 break;
-            }
+            
             case ProfileOperatingSystems.Linux:
-            {
-                string runnerName = File.Exists(tempModPath + "/" + "AM2R") ? "AM2R" : "runner";
-                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/assets/game.unx", tempProfilePath + "/game.xdelta");
-                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/" + runnerName, tempProfilePath + "/AM2R.xdelta");
+                string runnerName = File.Exists($"{tempModPath}/AM2R") ? "AM2R" : "runner";
+                CreatePatch($"{tempOriginalPath}/data.win", $"{tempModPath}/assets/game.unx", $"{tempProfilePath}/game.xdelta");
+                CreatePatch($"{tempOriginalPath}/AM2R.exe", $"{tempModPath}/{runnerName}", $"{tempProfilePath}/AM2R.xdelta");
                 break;
-            }
+            
             case ProfileOperatingSystems.Mac:
-            {
-                CreatePatch(tempOriginalPath + "/data.win", tempModPath + "/AM2R.app/Contents/Resources/game.ios", tempProfilePath + "/game.xdelta");
-                CreatePatch(tempOriginalPath + "/AM2R.exe", tempModPath + "/AM2R.app/Contents/MacOS/Mac_Runner", tempProfilePath + "/AM2R.xdelta");
+                CreatePatch($"{tempOriginalPath}/data.win", $"{tempModPath}/AM2R.app/Contents/Resources/game.ios", $"{tempProfilePath}/game.xdelta");
+                CreatePatch($"{tempOriginalPath}/AM2R.exe", $"{tempModPath}/AM2R.app/Contents/MacOS/Mac_Runner", $"{tempProfilePath}/AM2R.xdelta");
 
                 // Copy plist over for custom title name
-                File.Copy(tempModPath + "/AM2R.app/Contents/Info.plist", tempProfilePath + "/Info.plist");
+                File.Copy($"{tempModPath}/AM2R.app/Contents/Info.plist", $"{tempProfilePath}/Info.plist");
                 break;
-            }
         }
         
         // Create game.droid patch and wrapper if Android is supported
         if (modInfo.Profile.SupportsAndroid)
         {
-            string tempAndroid = Directory.CreateDirectory(tempPath + "/android").FullName;
-
-            // Extract APK 
-            // - java -jar apktool.jar d "%~dp0AM2RWrapper_old.apk"
-
+            string tempAndroid = Directory.CreateDirectory($"{tempPath}/android").FullName;
+            
+            // Extract APK first in order to create patch from the data.win 
+            // TODO: simplify these java calls?
+            // - java -jar apktool.jar d "AM2RWrapper_old.apk"
             // Process startInfo
             string filename = OS.IsWindows ? "cmd.exe" : "java";
             string javaArgs = OS.IsWindows ? "/C java -jar" : "-jar";
-            var procStartInfo = new ProcessStartInfo
+            var apktoolDump = new ProcessStartInfo
             {
                 FileName = filename,
                 WorkingDirectory = tempAndroid,
-                Arguments = $"{javaArgs} \"" + localPath + "/utilities/android/apktool.jar\" d -f -o \"" + tempAndroid + "\" \"" + modInfo.ApkModPath + "\"",
+                Arguments = $"{javaArgs} \"{localPath}/utilities/android/apktool.jar\" d -f -o \"{tempAndroid}\" \"{modInfo.ApkModPath}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-
             // Run process
-            using (var proc = new Process { StartInfo = procStartInfo })
+            using (var proc = new Process { StartInfo = apktoolDump })
             {
                 proc.Start();
                 proc.WaitForExit();
             }
-
             // Create game.droid patch
-            CreatePatch(tempOriginalPath + "/data.win", tempAndroid + "/assets/game.droid", tempProfilePath + "/droid.xdelta");
+            CreatePatch($"{tempOriginalPath}/data.win", $"{tempAndroid}/assets/game.droid", $"{tempProfilePath}/droid.xdelta");
 
-            // Delete excess files in APK
+            // Delete excess files in APK, so we can use it as a bare-minimum wrapper
             // Create whitelist
             string[] whitelist = { "splash.png", "portrait_splash.png" };
-
             // Get directory
-            var androidAssets = new DirectoryInfo(tempAndroid + "/assets");
-
-
-            // Delete files
+            var androidAssets = new DirectoryInfo($"{tempAndroid}/assets");
+            // Delete files and folders
             foreach (var file in androidAssets.GetFiles())
             {
+                // Not really sure why it's checked like this, but AM2R.ini is a file necessary to boot for YYC 
                 if (file.Name.EndsWith(".ini") && file.Name != "modifiers.ini")
-                {
-                    if (File.Exists(tempProfilePath + "/AM2R.ini"))
-                        // This shouldn't be a problem... normally...
-                        File.Delete(tempProfilePath + "/AM2R.ini");
-                    File.Copy(file.FullName, tempProfilePath + "/AM2R.ini");
-                }
+                    File.Copy(file.FullName, $"{tempProfilePath}/AM2R.ini", true);
 
                 if (!whitelist.Contains(file.Name))
                     File.Delete(file.FullName);
             }
-
             foreach (var dir in androidAssets.GetDirectories())
                 Directory.Delete(dir.FullName, true);
 
-            // Create wrapper
-
+            // And now we create the wrapper from it
             // Process startInfo
-            // - java -jar apktool.jar b "%~dp0AM2RWrapper_old" -o "%~dp0AM2RWrapper.apk"
-            var procStartInfo2 = new ProcessStartInfo
+            // - java -jar apktool.jar b "AM2RWrapper_old" -o "AM2RWrapper.apk"
+            var apktoolBuild = new ProcessStartInfo
             {
                 FileName = filename,
                 WorkingDirectory = tempAndroid,
-                Arguments = $"{javaArgs} \"" + localPath + "/utilities/android/apktool.jar\" b -f \"" + tempAndroid + "\" -o \"" + tempProfilePath + "/AM2RWrapper.apk\"",
+                Arguments = $"{javaArgs} \"{localPath}/utilities/android/apktool.jar\" b -f \"{tempAndroid}\" -o \"{tempProfilePath}/AM2RWrapper.apk\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-
             // Run process
-            using (var proc = new Process { StartInfo = procStartInfo2 })
+            using (var proc = new Process { StartInfo = apktoolBuild })
             {
                 proc.Start();
                 proc.WaitForExit();
             }
 
-            string tempAndroidProfilePath = tempProfilePath + "/android";
-            Directory.CreateDirectory(tempAndroidProfilePath);
+            string tempAndroidWrapperPath = $"{tempProfilePath}/android";
+            Directory.CreateDirectory(tempAndroidWrapperPath);
 
-            File.Move(tempProfilePath + "/AM2RWrapper.apk", tempAndroidProfilePath + "/AM2RWrapper.apk");
-            if (File.Exists(tempProfilePath + "/AM2R.ini"))
-                File.Move(tempProfilePath + "/AM2R.ini", tempAndroidProfilePath + "/AM2R.ini");
+            File.Move($"{tempProfilePath}/AM2RWrapper.apk", $"{tempAndroidWrapperPath}/AM2RWrapper.apk");
+            if (File.Exists($"{tempProfilePath}/AM2R.ini"))
+                File.Move($"{tempProfilePath}/AM2R.ini", $"{tempAndroidWrapperPath}/AM2R.ini");
         }
 
-        // Copy datafiles (exclude .ogg if custom music is not selected)
-        var dirInfo = new DirectoryInfo(tempModPath);
+        // Copy datafiles and exclude .ogg if custom music is not selected
+        var gameAssetDir = new DirectoryInfo(tempModPath);
         if (profileOS == ProfileOperatingSystems.Linux)
-            dirInfo = new DirectoryInfo(tempModPath + "/assets");
+            gameAssetDir = new DirectoryInfo($"{tempModPath}/assets");
         else if (profileOS == ProfileOperatingSystems.Mac)
-            dirInfo = new DirectoryInfo(tempModPath + "/AM2R.app/Contents/Resources");
+            gameAssetDir = new DirectoryInfo($"{tempModPath}/AM2R.app/Contents/Resources");
 
-        Directory.CreateDirectory(tempProfilePath + "/files_to_copy");
+        Directory.CreateDirectory($"{tempProfilePath}/files_to_copy");
+        string[] datafilesBlacklist = { "data.win", "AM2R.exe", "D3DX9_43.dll", "game.unx", "game.ios" };
 
         if (modInfo.Profile.UsesCustomMusic)
         {
-            // Copy files, excluding the blacklist
-            CopyFilesRecursive(dirInfo, DATAFILES_BLACKLIST, tempProfilePath + "/files_to_copy");
+            // Copy all files, excluding the blacklist
+            CopyFilesRecursive(gameAssetDir, datafilesBlacklist, $"{tempProfilePath}/files_to_copy");
         }
         else
         {
             // Get list of 1.1's music files
             string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
-
+            // Since on Unix our songs are in lowercase and we want to compare them later, we need to adjust for it here
             if (profileOS == ProfileOperatingSystems.Linux || profileOS == ProfileOperatingSystems.Mac)
-                musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file).ToLower()).ToArray();
-
-
+                musFiles = musFiles.Select(f => f.ToLower()).ToArray();
             // Combine musFiles with the known datafiles for a blacklist
-            string[] blacklist = musFiles.Concat(DATAFILES_BLACKLIST).ToArray();
-
+            string[] blacklist = musFiles.Concat(datafilesBlacklist).ToArray();
             // Copy files, excluding the blacklist
-            CopyFilesRecursive(dirInfo, blacklist, tempProfilePath + "/files_to_copy");
+            CopyFilesRecursive(gameAssetDir, blacklist, $"{tempProfilePath}/files_to_copy");
         }
 
         // Export profile as XML
         string xmlOutput = Serializer.Serialize<ModProfileXML>(modInfo.Profile);
-        File.WriteAllText(tempProfilePath + "/profile.xml", xmlOutput);
+        File.WriteAllText($"{tempProfilePath}/profile.xml", xmlOutput);
 
         // Compress temp folder to .zip
         if (File.Exists(output))
@@ -220,7 +200,6 @@ public static class Core
         // Delete temp folder
         Directory.Delete(tempPath, true);
     }
-
     
     public static void CreatePatch(string original, string modified, string output)
     {

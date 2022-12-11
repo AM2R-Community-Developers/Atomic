@@ -254,6 +254,7 @@ public partial class ModPacker : Form
     
     private void LoadProfileParameters(ProfileOperatingSystems operatingSystem)
     {
+        // TODO: give the control events where they assign the values directly?
         modInfo.Profile.Name = nameTextBox.Text;
         modInfo.Profile.Author = authorTextBox.Text;
         modInfo.Profile.Version = versionTextBox.Text;
