@@ -235,7 +235,7 @@ public partial class ModPacker : Form
         if (macCheckBox.Checked.Value)
         {
             var macZip = ZipFile.Open(modInfo.MacModPath, ZipArchiveMode.Read);
-            if (macZip.Entries.All(f => f.Name != "AM2R.app/Contents/MacOS/Mac_Runner"))
+            if (macZip.Entries.All(f => f.FullName != "AM2R.app/Contents/MacOS/Mac_Runner"))
             {
                 var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
