@@ -56,7 +56,7 @@ public partial class ModPacker : Form
         //Icon = Icon.FromResource("icon64.ico");
         
         MinimumSize = new Size(300, 200);
-        ClientSize = new Size(540, 520);
+        ClientSize = new Size(550, 450);
 
         var mainContent = new DynamicLayout() { Spacing = new Size(15, 15) };
         var leftSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5) };
