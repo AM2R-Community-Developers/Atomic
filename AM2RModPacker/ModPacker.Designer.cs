@@ -17,9 +17,9 @@ public partial class ModPacker : Form
         labelLookupTable = new Dictionary<ProfileOperatingSystems, Label>()
         {
             { ProfileOperatingSystems.Windows, windowsLabel },
-            { ProfileOperatingSystems.Linux, windowsLabel },
-            { ProfileOperatingSystems.Mac, windowsLabel },
-            { ProfileOperatingSystems.Android, windowsLabel },
+            { ProfileOperatingSystems.Linux, linuxLabel },
+            { ProfileOperatingSystems.Mac, macLabel },
+            { ProfileOperatingSystems.Android, apkLabel },
         };
         buttonLookupTable = new Dictionary<ProfileOperatingSystems, Button>()
         {
@@ -151,7 +151,7 @@ public partial class ModPacker : Form
     private CheckBox customSaveCheckBox = new CheckBox() { Text = "Uses custom save directory" };
     private Button customSaveButton = new Button() { Text = "Select folder", Enabled = false };
     // TODO: remove read only and make it correctly respond to user input
-    private TextBox customSaveTextBox = new TextBox() { ReadOnly = true};
+    private TextBox customSaveTextBox = new TextBox() { ReadOnly = true };
     private CheckBox musicCheckBox = new CheckBox() { Text = "Uses custom music" };
 
     private CheckBox yycCheckBox = new CheckBox() { Text = "Uses the YoYo Compiler" };
