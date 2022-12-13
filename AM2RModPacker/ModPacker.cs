@@ -92,6 +92,7 @@ public partial class ModPacker : Form
             }
         }
         customSaveTextBox.Text = saveFolderPath;
+        UpdateCreateButton();
     }
     
     private void YYCCheckBox_CheckedChanged(object sender, EventArgs e)
