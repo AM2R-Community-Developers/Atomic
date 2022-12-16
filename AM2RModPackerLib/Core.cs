@@ -93,25 +93,9 @@ public static class Core
             string tempAndroid = Directory.CreateDirectory($"{tempPath}/android").FullName;
             
             // Extract APK first in order to create patch from the data.win 
-            // TODO: simplify these java calls?
             // - java -jar apktool.jar d "AM2RWrapper_old.apk"
-            // Process startInfo
-            string filename = OS.IsWindows ? "cmd.exe" : "java";
-            string javaArgs = OS.IsWindows ? "/C java -jar" : "-jar";
-            var apktoolDump = new ProcessStartInfo
-            {
-                FileName = filename,
-                WorkingDirectory = tempAndroid,
-                Arguments = $"{javaArgs} \"{localPath}/utilities/android/apktool.jar\" d -f -o \"{tempAndroid}\" \"{modInfo.ApkModPath}\"",
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            // Run process
-            using (var proc = new Process { StartInfo = apktoolDump })
-            {
-                proc.Start();
-                proc.WaitForExit();
-            }
+            RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" d -f -o \"{tempAndroid}\" \"{modInfo.ApkModPath}\"", tempAndroid);
+            
             // Create game.droid patch
             CreatePatch($"{tempOriginalPath}/data.win", $"{tempAndroid}/assets/game.droid", $"{tempProfilePath}/droid.xdelta");
 
@@ -136,21 +120,8 @@ public static class Core
             // And now we create the wrapper from it
             // Process startInfo
             // - java -jar apktool.jar b "AM2RWrapper_old" -o "AM2RWrapper.apk"
-            var apktoolBuild = new ProcessStartInfo
-            {
-                FileName = filename,
-                WorkingDirectory = tempAndroid,
-                Arguments = $"{javaArgs} \"{localPath}/utilities/android/apktool.jar\" b -f \"{tempAndroid}\" -o \"{tempProfilePath}/AM2RWrapper.apk\"",
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            // Run process
-            using (var proc = new Process { StartInfo = apktoolBuild })
-            {
-                proc.Start();
-                proc.WaitForExit();
-            }
-
+            RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" b -f \"{tempAndroid}\" -o \"{tempProfilePath}/AM2RWrapper.apk\"", tempAndroid);
+            
             string tempAndroidWrapperPath = $"{tempProfilePath}/android";
             Directory.CreateDirectory(tempAndroidWrapperPath);
 
@@ -224,6 +195,49 @@ public static class Core
         {
             throw new Exception("Xdelta3 could not be found! For Windows, make sure that the utilities folder exists, for other OS make sure it is installed and in PATH.");
         }
+    }
+    
+    public static void RunJavaJar(string arguments = null, string workingDirectory = null)
+    {
+        workingDirectory ??= Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string proc = "",
+               javaArgs = "";
+
+        if (OS.IsWindows)
+        {
+            proc = "cmd";
+            javaArgs = "/C java -jar";
+        }
+        else if (OS.IsUnix)
+        {
+            proc = "java";
+            javaArgs = "-jar";
+        }
+
+        ProcessStartInfo jarStart = new ProcessStartInfo
+        {
+            FileName = proc,
+            Arguments = $"{javaArgs} {arguments}",
+            WorkingDirectory = workingDirectory,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        Process jarProcess = new Process
+        {
+            StartInfo = jarStart
+        };
+
+        try
+        {
+            jarProcess.Start();
+            jarProcess.WaitForExit();
+        }
+        catch
+        {
+            throw new Exception("Java could not be found! Make sure it is installed and in PATH.");
+        }
+        
     }
     
     // Taken from AM2RLauncher
