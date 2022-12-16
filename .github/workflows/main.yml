@@ -15,13 +15,13 @@ jobs:
         configuration: [Release]
         include:
           - os: ubuntu-latest
-            COMMAND: AM2RModPacker -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
+            COMMAND: AM2RModPacker.Gtk -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
             ARTIFACT: builds/ubuntu-latest
           - os: macOS-latest
-            COMMAND: AM2RModPacker -r osx-x64 --no-self-contained -o builds/macOS-latest
+            COMMAND: AM2RModPacker.Mac -r osx-x64 --no-self-contained -o builds/macOS-latest
             ARTIFACT: builds/macOS-latest
           - os: windows-latest
-            COMMAND: AM2RModPacker -p:PublishSingleFile=true -r win-x86 --no-self-contained -o builds/windows-latest
+            COMMAND: AM2RModPacker.Wpf -p:PublishSingleFile=true -r win-x86 --no-self-contained -o builds/windows-latest
             ARTIFACT: builds/windows-latest
     runs-on: ${{ matrix.os }}
     
