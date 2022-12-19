@@ -39,7 +39,7 @@ public static class Core
             ProfileOperatingSystems.Windows => modInfo.WindowsModPath,
             ProfileOperatingSystems.Linux => modInfo.LinuxModPath,
             ProfileOperatingSystems.Mac => modInfo.MacModPath,
-            _ => throw new NotSupportedException("The current Operating system is not supported!")
+            _ => throw new NotSupportedException("The current operating system is not supported!")
         };
         
         // Cleanup in case of previous errors
@@ -56,8 +56,7 @@ public static class Core
         ZipFile.ExtractToDirectory(modInfo.AM2R11Path, tempOriginalPath);
         ZipFile.ExtractToDirectory(modZipPath, tempModPath);
 
-        if (Directory.Exists($"{tempModPath}/AM2R"))
-            tempModPath += "/AM2R";
+        // There once was a workaround here to work with Linux mods built with GMS1.4, however since then, GMS broke even more and is now seemingly unable to built for Linux.
         
         // Create AM2R.exe and data.win patches
         switch (profileOS)
