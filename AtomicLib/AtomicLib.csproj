@@ -5,7 +5,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <LangVersion>10</LangVersion>
-        <RootNamespace>AM2RModPackerLib</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
