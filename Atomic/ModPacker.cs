@@ -5,10 +5,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using AM2RModPackerLib;
+using AtomicLib;
 using Eto.Forms;
 
-namespace AM2RModPacker;
+namespace Atomic;
 
 public partial class ModPacker : Form
 {
@@ -285,8 +285,8 @@ public partial class ModPacker : Form
         createLabel.Text = "Mod packaging aborted!";
 
         // Remove temp directory
-        if (Directory.Exists(Path.GetTempPath() + "/AM2RModPacker"))
-            Directory.Delete(Path.GetTempPath() + "/AM2RModPacker", true);
+        if (Directory.Exists(Path.GetTempPath() + "/Atomic"))
+            Directory.Delete(Path.GetTempPath() + "/Atomic", true);
     }
     
     private void UpdateCreateButton()

@@ -3,7 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
+        <RootNamespace>AM2RModPacker.Mac</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AM2RModPacker\AM2RModPacker.csproj" />
+      <ProjectReference Include="..\Atomic\Atomic.csproj" />
     </ItemGroup>
 
 </Project>

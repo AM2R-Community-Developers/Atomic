@@ -1,6 +1,6 @@
 ﻿using Eto.Forms;
 
-namespace AM2RModPacker.Mac;
+namespace Atomic.Mac;
 
 class Program
 {

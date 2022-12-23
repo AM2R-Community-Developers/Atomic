@@ -1,6 +1,6 @@
 ﻿using Eto.Forms;
 
-namespace AM2RModPacker.Wpf;
+namespace Atomic.Wpf;
 
 class Program
 {

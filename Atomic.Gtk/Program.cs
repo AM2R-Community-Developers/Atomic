@@ -1,6 +1,6 @@
 ﻿using Eto.Forms;
 
-namespace AM2RModPacker.Gtk;
+namespace Atomic.Gtk;
 
 class Program
 {

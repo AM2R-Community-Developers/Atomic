@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Eto.Forms;
 using Eto.Drawing;
-using AM2RModPackerLib.XML;
+using AtomicLib.XML;
 using System.IO;
 using System.Reflection;
-using AM2RModPackerLib;
+using AtomicLib;
 
-namespace AM2RModPacker;
+namespace Atomic;
 
 public partial class ModPacker : Form
 {
@@ -51,8 +51,8 @@ public partial class ModPacker : Form
         };
         #endregion
         
-        Title = "AM2R ModPacker " + version;
-        Icon = new Icon(1f, new Bitmap(AM2RModPacker.Resources.icon64));
+        Title = "Atomic v" + version;
+        Icon = new Icon(1f, new Bitmap(Resources.icon64));
         
         MinimumSize = new Size(300, 200);
         ClientSize = new Size(550, 450);

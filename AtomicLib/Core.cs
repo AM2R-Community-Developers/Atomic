@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using AM2RModPackerLib.XML;
+using AtomicLib.XML;
 
-namespace AM2RModPackerLib;
+namespace AtomicLib;
 
 public enum ProfileOperatingSystems
 {
@@ -43,11 +43,11 @@ public static class Core
         };
         
         // Cleanup in case of previous errors
-        if (Directory.Exists($"{Path.GetTempPath()}/AM2RModPacker"))
-            Directory.Delete($"{Path.GetTempPath()}/AM2RModPacker", true);
+        if (Directory.Exists($"{Path.GetTempPath()}/Atomic"))
+            Directory.Delete($"{Path.GetTempPath()}/Atomic", true);
 
         // Create temp work folders
-        string tempPath = Directory.CreateDirectory($"{Path.GetTempPath()}/AM2RModPacker").FullName;
+        string tempPath = Directory.CreateDirectory($"{Path.GetTempPath()}/Atomic").FullName;
         string tempOriginalPath = Directory.CreateDirectory($"{tempPath}/original").FullName;
         string tempModPath = Directory.CreateDirectory($"{tempPath}/mod").FullName;
         string tempProfilePath = Directory.CreateDirectory($"{tempPath}/profile").FullName;

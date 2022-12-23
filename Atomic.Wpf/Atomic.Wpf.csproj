@@ -3,8 +3,10 @@
     <PropertyGroup>
         <TargetFramework>net6.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
         <LangVersion>10</LangVersion>
+        <ApplicationIcon>icon64.ico</ApplicationIcon>
+        <RootNamespace>AM2RModPacker.Wpf</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AM2RModPacker\AM2RModPacker.csproj" />
+      <ProjectReference Include="..\Atomic\Atomic.csproj" />
     </ItemGroup>
 
 </Project>

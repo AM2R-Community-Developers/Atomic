@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>10</LangVersion>
+    <RootNamespace>AM2RModPacker</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AM2RModPackerLib\AM2RModPackerLib.csproj" />
+    <ProjectReference Include="..\AtomicLib\AtomicLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

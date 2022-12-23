@@ -1,7 +1,7 @@
 using System.Reflection;
-using AM2RModPackerLib.XML;
+using AtomicLib.XML;
 
-namespace AM2RModPackerLib;
+namespace AtomicLib;
 
 public class ModCreationInfo
 {
