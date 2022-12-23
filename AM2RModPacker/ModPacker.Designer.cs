@@ -52,8 +52,7 @@ public partial class ModPacker : Form
         #endregion
         
         Title = "AM2R ModPacker " + version;
-        // TODO: Currently broken as I don't know how to do this from Rider
-        //Icon = Icon.FromResource("icon64.ico");
+        Icon = new Icon(1f, new Bitmap(AM2RModPacker.Resources.icon64));
         
         MinimumSize = new Size(300, 200);
         ClientSize = new Size(550, 450);
