@@ -7,6 +7,10 @@
   <ItemGroup>
     <Content Include="modpack5_GREENLID_256_NN.ico" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="icon64.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">
