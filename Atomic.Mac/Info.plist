@@ -3,7 +3,7 @@
 <plist version="1.0">
   <dict>
     <key>CFBundleName</key>
-    <string>AM2RModPacker</string>
+    <string>Atomic</string>
     <key>CFBundleIdentifier</key>
     <string>com.example.AM2RModPacker</string>
     <key>CFBundleShortVersionString</key>
