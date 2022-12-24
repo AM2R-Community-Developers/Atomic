@@ -116,8 +116,10 @@ public partial class ModPacker : Form
         splitter.Panel1 = leftSide;
         splitter.Panel2 = rightSideScrollable;
         splitter.Panel1MinimumSize = 180;
-        splitter.Panel2MinimumSize = 320;
+        splitter.Panel2MinimumSize = 250;
         splitter.Orientation = Orientation.Horizontal;
+        // HACK: (Client)Size is bugged on GTK before screen is drawn, so I'm having the width hardcoded
+        splitter.Position =  550 / 2;
         
         mainContent.Add(splitter);
         Content = mainContent;
