@@ -6,6 +6,7 @@
         <OutputType>WinExe</OutputType>
         <LangVersion>10</LangVersion>
         <ApplicationIcon>icon64.ico</ApplicationIcon>
+        <RollForward>LatestMajor</RollForward>
     </PropertyGroup>
 
     <ItemGroup>

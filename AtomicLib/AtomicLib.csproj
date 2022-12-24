@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <LangVersion>10</LangVersion>
+        <RollForward>LatestMajor</RollForward>
     </PropertyGroup>
 
     <ItemGroup>
