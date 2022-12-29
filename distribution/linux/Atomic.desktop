@@ -7,4 +7,3 @@ Comment=A mod packaging toolchain for AM2R mods.
 Exec=Atomic
 Icon=Atomic
 Terminal=false
-SingleMainWindow=true
