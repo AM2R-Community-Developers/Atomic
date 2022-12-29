@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2022 AM2R Community Developers -->
+<component type="desktop-application">
+    <id>io.github.am2r_community_developers.Atomic</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0</project_license>
+    <name>Atomic</name>
+    <developer_name>AM2R Community Developers</developer_name>
+    <summary>A mod packaging toolchain for AM2R mods.</summary>
+    <categories>
+        <category>Utility</category>
+    </categories>
+    <description>
+        <p>
+            Atomic (AM2R Tool: Organized Modpacker in C#) is a tool for modcreators who wish to make their mods usable with the AM2RLauncher.
+            It currently supports creating Windows, Linux, Mac and Android mods.
+        </p>
+    </description>
+    <launchable type="desktop-id">io.github.am2r_community_developers.Atomic.desktop</launchable>
+    <url type="homepage">https://github.com/AM2R-Community-Developers/Atomic</url>
+    <url type="bugtracker">https://github.com/AM2R-Community-Developers/Atomicissues</url>
+    <releases>
+        <release version="2.1.0" date="2022-12-29"/>
+    </releases>
+      <content_rating type="oars-1.1" />
+    <screenshots>
+        <screenshot type="default">
+            <caption>Atomic main window</caption>
+            <image type="source" width="743" height="647">https://media.discordapp.net/attachments/509717926807601182/1058091940874301511/image.png?width=705&height=640</image>
+        </screenshot>
+    </screenshots>
+</component>
