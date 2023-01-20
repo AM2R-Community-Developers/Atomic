@@ -134,6 +134,10 @@ public partial class ModPacker : Form
             return;
         }
 
+        // Trim the mod name textbox so that it has no leading/ending whitespace.
+        // Also check for invalid file names
+        nameTextBox.Text = nameTextBox.Text.Trim();
+        
         if (Path.GetInvalidFileNameChars().Any(nameTextBox.Text.Contains))
         {
             MessageBox.Show("Name contains invalid characters! These characters are not allowed:\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
