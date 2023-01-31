@@ -1,14 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net6.0-macos</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
+        <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
+        <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
         <RollForward>LatestMajor</RollForward>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Eto.Platform.Mac64" Version="2.7.2" />
+      <PackageReference Include="Eto.Platform.macOS" Version="2.7.2" />
     </ItemGroup>
 
     <ItemGroup>

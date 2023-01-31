@@ -7,7 +7,7 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
-        var application = new Application(Eto.Platforms.Mac64);
+        var application = new Application(Eto.Platforms.macOS);
         application.UnhandledException += ApplicationOnUnhandledException;
         try
         {
