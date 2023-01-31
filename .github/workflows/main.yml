@@ -21,7 +21,7 @@ jobs:
           - os: macOS-latest
             COMMAND: Atomic.Mac -o builds/macOS-latest
             ARTIFACT: builds/macOS-latest
-            POSTBUILD: rm -r builds/macOS-latest/* && mv Atomic/Atomic.Mac/bin/Release/net6.0-macos/Atomic.Mac.app builds/macOS-latest/Atomic.Mac.app
+            POSTBUILD: rm -r builds/macOS-latest/* && mv Atomic.Mac/bin/Release/net6.0-macos/Atomic.Mac.app builds/macOS-latest/Atomic.Mac.app
           - os: windows-latest
             COMMAND: Atomic.Wpf -p:PublishSingleFile=true -p:DebugType=embedded -r win-x86 --no-self-contained -o builds/windows-latest
             ARTIFACT: builds/windows-latest
