@@ -55,7 +55,6 @@ public partial class ModPacker : Form
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
         
         MinimumSize = new Size(300, 200);
-        ClientSize = new Size(550, 450);
 
         var mainContent = new DynamicLayout() { Spacing = new Size(15, 15) };
         var leftSide = new DynamicLayout() { Padding = 10, Spacing = new Size(5, 5) };
@@ -88,12 +87,12 @@ public partial class ModPacker : Form
         miscOptionsPanel.AddRow(yycCheckBox);
         miscOptionsPanel.AddRow(windowsCheckBox);
         miscOptionsPanel.AddRow(windowsButton, windowsLabel);
-        miscOptionsPanel.AddRow(apkCheckBox);
-        miscOptionsPanel.AddRow(apkButton, apkLabel);
         miscOptionsPanel.AddRow(linuxCheckBox);
         miscOptionsPanel.AddRow(linuxButton, linuxLabel);
         miscOptionsPanel.AddRow(macCheckBox);
         miscOptionsPanel.AddRow(macButton, macLabel);
+        miscOptionsPanel.AddRow(apkCheckBox);
+        miscOptionsPanel.AddRow(apkButton, apkLabel);
 
         var loadZipsPanel = new DynamicLayout() { Spacing = new Size(5, 5) };
         loadZipsPanel.AddRow(originalZipButton, originalZipLabel);
@@ -162,7 +161,7 @@ public partial class ModPacker : Form
     private Button windowsButton = new Button() { Text = "Load modded Windows .zip", Enabled = false };
     private Label windowsLabel = new Label() { Text = "Modded Windows game loaded!", Visible = false };
     
-    private CheckBox apkCheckBox = new CheckBox() { Text = "Supports Android" };
+    private CheckBox apkCheckBox = new CheckBox() { Text = "Additionally bundle Android" };
     private Button apkButton = new Button() { Text = "Load modded Android APK", Enabled = false };
     private Label apkLabel = new Label() { Text = "Modded APK loaded!", Visible = false };
 
