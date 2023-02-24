@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Mime;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Atomic.Language;
 using AtomicLib;
 using Eto.Forms;
 
@@ -23,8 +25,8 @@ public partial class ModPacker : Form
     private Dictionary<ProfileOperatingSystems, FieldInfo> modPathLookupTable = new Dictionary<ProfileOperatingSystems, FieldInfo>();
     private Dictionary<ProfileOperatingSystems, PropertyInfo> isModLoadedLookupTable = new Dictionary<ProfileOperatingSystems, PropertyInfo>();
 
-    private readonly FileFilter zipFileFilter = new FileFilter("zip archives (*.zip)", ".zip");
-    private readonly FileFilter apkFileFilter = new FileFilter("Android application packages (*.apk)", ".apk");
+    private readonly FileFilter zipFileFilter = new FileFilter(Text.ZipArchivesFileFilter, ".zip");
+    private readonly FileFilter apkFileFilter = new FileFilter(Text.APKFileFilter, ".apk");
 
     #region Eto events
     private void CustomSaveCheckBoxChecked_Changed(object sender, EventArgs e)
@@ -66,7 +68,7 @@ public partial class ModPacker : Form
                     match = macSaveRegex.Match(dialog.Directory);
                 
                 if (match.Success == false)
-                    MessageBox.Show("Invalid Save Directory! Please consult the GameMaker: Studio 1.4 documentation for valid save directories!");
+                    MessageBox.Show(Text.InvalidSaveDirectory);
                 else
                 {
                     wasSuccessful = true;
@@ -113,7 +115,7 @@ public partial class ModPacker : Form
             OSCheckboxChanged(ProfileOperatingSystems.Mac);
         else if (macCheckBox.Checked.Value)
         {
-            MessageBox.Show("YoYoCompiler isn't supported with Mac!", "Warning", MessageBoxButtons.OK, MessageBoxType.Warning);
+            MessageBox.Show(Text.YYCMacUnsupported, Text.Warning, MessageBoxButtons.OK, MessageBoxType.Warning);
             macCheckBox.Checked = false;
         }
     }
@@ -121,7 +123,7 @@ public partial class ModPacker : Form
     private void OriginalZipButton_Click(object sender, EventArgs e)
     {
         // Open window to select AM2R 1.1
-        modInfo.AM2R11Path = SelectFile("Please select AM2R_11.zip", zipFileFilter);
+        modInfo.AM2R11Path = SelectFile(Text.SelectAM2R11FileDialog, zipFileFilter);
         originalZipLabel.Visible = modInfo.IsAM2R11Loaded;
         UpdateCreateButton();
     }
@@ -130,7 +132,7 @@ public partial class ModPacker : Form
     {
         if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
         {
-            MessageBox.Show("Mod name, author or version field missing! Mod packaging aborted.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+            MessageBox.Show(Text.FieldsMissing, Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
             return;
         }
 
@@ -140,7 +142,7 @@ public partial class ModPacker : Form
         
         if (Path.GetInvalidFileNameChars().Any(nameTextBox.Text.Contains))
         {
-            MessageBox.Show("Name contains invalid characters! These characters are not allowed:\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
+            MessageBox.Show( Text.NameInvalidCharacters + "\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
             return;
         }
         
@@ -148,25 +150,25 @@ public partial class ModPacker : Form
         var result11 = Core.CheckIfZipIsAM2R11(modInfo.AM2R11Path);
         if (result11 != IsZipAM2R11ReturnCodes.Successful)
         {
-            MessageBox.Show("AM2R 1.1 zip is invalid! Error code: " + result11);
+            MessageBox.Show(Text.AM2R11Invalid + " " + result11);
             AbortPatch();
             return;
         }
 
         createLabel.Visible = true;
-        createLabel.Text = "Packaging mod(s)... This could take a while!";
+        createLabel.Text = Text.PackagingMods;
 
         bool PromptAndSaveOSMod(ProfileOperatingSystems os)
         {
             string output;
-            
-            using (var saveFile = new SaveFileDialog { Title = $"Save {os.ToString()} mod profile", Filters = { zipFileFilter } })
+
+            using (var saveFile = new SaveFileDialog { Title = Text.SaveOSModProfile.Replace("$1", GetLocalizedStringOfOS(os)), Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
                     output = saveFile.FileName;
                 else
                 {
-                    createLabel.Text = "Mod packaging aborted!";
+                    createLabel.Text = Text.ModPackagingAborted;
                     return false;
                 }
             }
@@ -180,7 +182,7 @@ public partial class ModPacker : Form
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+                MessageBox.Show(exception.ToString(), Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
                 AbortPatch();
                 return false;
             }
@@ -191,7 +193,7 @@ public partial class ModPacker : Form
         {
             if (zipfile.Entries.All(f => f.Name != "profile.xml"))
                 return true;
-            var result = MessageBox.Show("profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+            var result = MessageBox.Show(Text.ProfileXMLFound, Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
             if (result == DialogResult.Yes)
                 return true;
             AbortPatch();
@@ -203,7 +205,8 @@ public partial class ModPacker : Form
             var windowsZip = ZipFile.Open(modInfo.WindowsModPath, ZipArchiveMode.Read);
             if (windowsZip.Entries.All(f => f.FullName != "AM2R.exe"))
             {                
-                var result = MessageBox.Show("Modded game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                // TODO: make method for these $1 replacements
+                var result = MessageBox.Show(Text.ModdedGameNotFound.Replace("$1", Text.Windows), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
@@ -223,7 +226,7 @@ public partial class ModPacker : Form
             var linuxZip = ZipFile.Open(modInfo.LinuxModPath, ZipArchiveMode.Read);
             if (linuxZip.Entries.All(f => f.FullName != "AM2R") && linuxZip.Entries.All(f => f.FullName != "runner"))
             { 
-                var result = MessageBox.Show("Modded Linux game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                var result = MessageBox.Show(Text.ModdedGameNotFound.Replace("$1", Text.Linux), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
@@ -242,7 +245,7 @@ public partial class ModPacker : Form
             var macZip = ZipFile.Open(modInfo.MacModPath, ZipArchiveMode.Read);
             if (macZip.Entries.All(f => f.FullName != "AM2R.app/Contents/MacOS/Mac_Runner"))
             {
-                var result = MessageBox.Show("Modded Mac game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?", "WARNING", MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                var result = MessageBox.Show(Text.ModdedGameNotFound.Replace("$1", Text.Mac), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                     AbortPatch();
             }
@@ -255,6 +258,19 @@ public partial class ModPacker : Form
         }
         createLabel.Text = "Mod package(s) created!";
     }
+
+    private static string GetLocalizedStringOfOS(ProfileOperatingSystems os)
+    {
+        return os switch
+        {
+            ProfileOperatingSystems.Windows => Text.Windows,
+            ProfileOperatingSystems.Linux => Text.Linux,
+            ProfileOperatingSystems.Mac => Text.Mac,
+            ProfileOperatingSystems.Android => Text.Android,
+            _ => "Unknown"
+        };
+    }
+
     #endregion
     
     private void LoadProfileParameters(ProfileOperatingSystems operatingSystem)
@@ -286,7 +302,7 @@ public partial class ModPacker : Form
     private void AbortPatch()
     {
         // Set labels
-        createLabel.Text = "Mod packaging aborted!";
+        createLabel.Text = Text.ModPackagingAborted;
 
         // Remove temp directory
         if (Directory.Exists(Path.GetTempPath() + "/Atomic"))
@@ -339,7 +355,7 @@ public partial class ModPacker : Form
     
     private void OSButtonClicked(ProfileOperatingSystems os)
     {
-        string pickerMessage = $"Please select your custom {os.ToString()} AM2R .{(os == ProfileOperatingSystems.Android ?  "apk" : "zip")}";
+        string pickerMessage = Text.SelectModdedFile.Replace("$1", GetLocalizedStringOfOS(os)).Replace("$2", os == ProfileOperatingSystems.Android ? Text.APK : Text.Zip);
         Label osLabel = labelLookupTable[os];
         FieldInfo osModPath = modPathLookupTable[os];
         PropertyInfo isOsModLoaded = isModLoadedLookupTable[os];

@@ -26,6 +26,8 @@ public enum IsZipAM2R11ReturnCodes
     GameIsInASubfolder
 }
 
+// TODO: documentation
+
 public static class Core
 {
     public const string Version = "2.1.0";

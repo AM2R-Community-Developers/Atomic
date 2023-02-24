@@ -3,8 +3,10 @@ using Eto.Forms;
 using Eto.Drawing;
 using AtomicLib.XML;
 using System.IO;
+using System.Net.Mime;
 using System.Reflection;
 using AtomicLib;
+using Atomic.Language;
 
 namespace Atomic;
 
@@ -140,42 +142,42 @@ public partial class ModPacker : Form
     }
 
     #region Design Elements
-    private Label nameLabel = new Label() { Text = "Mod name:" };
+    private Label nameLabel = new Label() { Text = Text.ModName };
     private TextBox nameTextBox = new TextBox();
-    private Label authorLabel = new Label() { Text = "Author:" };
+    private Label authorLabel = new Label() { Text = Text.Author };
     private TextBox authorTextBox = new TextBox();
-    private Label versionLabel = new Label() { Text = "Version:" };
+    private Label versionLabel = new Label() { Text = Text.Version };
     private TextBox versionTextBox = new TextBox();
-    private Label modNotesLabel = new Label() { Text = "Mod notes:" };
+    private Label modNotesLabel = new Label() { Text = Text.ModNotes };
     private TextArea modNotesTextBox = new TextArea() { };
 
-    private CheckBox customSaveCheckBox = new CheckBox() { Text = "Uses custom save directory" };
-    private Button customSaveButton = new Button() { Text = "Select folder", Enabled = false };
+    private CheckBox customSaveCheckBox = new CheckBox() { Text = Text.UsesCustomSaves };
+    private Button customSaveButton = new Button() { Text = Text.SelectFolder, Enabled = false };
     // TODO: remove read only and make it correctly respond to user input
     private TextBox customSaveTextBox = new TextBox() { ReadOnly = true };
-    private CheckBox musicCheckBox = new CheckBox() { Text = "Uses custom music" };
+    private CheckBox musicCheckBox = new CheckBox() { Text = Text.UsesCustomMusic };
 
-    private CheckBox yycCheckBox = new CheckBox() { Text = "Uses the YoYo Compiler" };
+    private CheckBox yycCheckBox = new CheckBox() { Text = Text.UsesYYC };
 
-    private CheckBox windowsCheckBox = new CheckBox() { Text = "Supports Windows" };
-    private Button windowsButton = new Button() { Text = "Load modded Windows .zip", Enabled = false };
-    private Label windowsLabel = new Label() { Text = "Modded Windows game loaded!", Visible = false };
+    private CheckBox windowsCheckBox = new CheckBox() { Text = Text.SupportsWindows };
+    private Button windowsButton = new Button() { Text = Text.LoadWindowsZip, Enabled = false };
+    private Label windowsLabel = new Label() { Text = Text.WindowsLoaded, Visible = false };
     
-    private CheckBox apkCheckBox = new CheckBox() { Text = "Additionally bundle Android" };
-    private Button apkButton = new Button() { Text = "Load modded Android APK", Enabled = false };
-    private Label apkLabel = new Label() { Text = "Modded APK loaded!", Visible = false };
+    private CheckBox apkCheckBox = new CheckBox() { Text = Text.BundleAndroid };
+    private Button apkButton = new Button() { Text = Text.LoadAndroidAPK, Enabled = false };
+    private Label apkLabel = new Label() { Text = Text.AndroidLoaded, Visible = false };
 
-    private CheckBox linuxCheckBox = new CheckBox() { Text = "Supports Linux" };
-    private Button linuxButton = new Button() { Text = "Load modded Linux .zip", Enabled = false };
-    private Label linuxLabel = new Label() { Text = "Modded Linux game loaded!", Visible = false };
+    private CheckBox linuxCheckBox = new CheckBox() { Text = Text.SupportsLinux};
+    private Button linuxButton = new Button() { Text = Text.LoadLinuxZip, Enabled = false };
+    private Label linuxLabel = new Label() { Text = Text.LinuxLoaded, Visible = false };
     
-    private CheckBox macCheckBox = new CheckBox() { Text = "Supports Mac" };
-    private Button macButton = new Button() { Text = "Load modded Mac .zip", Enabled = false };
-    private Label macLabel = new Label() { Text = "Modded Mac game loaded!", Visible = false };
+    private CheckBox macCheckBox = new CheckBox() { Text = Text.SupportsMac };
+    private Button macButton = new Button() { Text = Text.LoadMacZip, Enabled = false };
+    private Label macLabel = new Label() { Text = Text.MacLoaded, Visible = false };
 
-    private Button originalZipButton = new Button() { Text = "Load 1.1" };
-    private Label originalZipLabel = new Label() { Text = "1.1 loaded!", Visible = false};
-    private Button createButton = new Button() { Text = "Create mod package(s)", Enabled = false };
-    private Label createLabel = new Label() { Text = "Mod package created!", Visible = false};
+    private Button originalZipButton = new Button() { Text = Text.LoadAM2R11 };
+    private Label originalZipLabel = new Label() { Text = Text.AM2R11Loaded, Visible = false};
+    private Button createButton = new Button() { Text = Text.CreateModPackage, Enabled = false };
+    private Label createLabel = new Label() { Text = Text.ModPackageCreated, Visible = false};
     #endregion
 }
