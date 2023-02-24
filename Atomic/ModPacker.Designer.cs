@@ -53,6 +53,11 @@ public partial class ModPacker : Form
         };
         #endregion
         
+        // loop through all resource files for test
+        //ResXResourceReader rsxr = new ResXResourceReader("items.resx");
+        
+        
+        
         Title = "Atomic v" + version;
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
         
@@ -159,21 +164,21 @@ public partial class ModPacker : Form
 
     private CheckBox yycCheckBox = new CheckBox() { Text = Text.UsesYYC };
 
-    private CheckBox windowsCheckBox = new CheckBox() { Text = Text.SupportsWindows };
-    private Button windowsButton = new Button() { Text = Text.LoadWindowsZip, Enabled = false };
-    private Label windowsLabel = new Label() { Text = Text.WindowsLoaded, Visible = false };
+    private CheckBox windowsCheckBox = new CheckBox() { Text = Text.SupportsOS.Replace("$1", Text.Windows) };
+    private Button windowsButton = new Button() { Text = Text.LoadOSZip.Replace("$1", Text.Windows), Enabled = false };
+    private Label windowsLabel = new Label() { Text = Text.OSGameLoaded.Replace("$1", Text.Windows), Visible = false };
     
     private CheckBox apkCheckBox = new CheckBox() { Text = Text.BundleAndroid };
     private Button apkButton = new Button() { Text = Text.LoadAndroidAPK, Enabled = false };
     private Label apkLabel = new Label() { Text = Text.AndroidLoaded, Visible = false };
 
-    private CheckBox linuxCheckBox = new CheckBox() { Text = Text.SupportsLinux};
-    private Button linuxButton = new Button() { Text = Text.LoadLinuxZip, Enabled = false };
-    private Label linuxLabel = new Label() { Text = Text.LinuxLoaded, Visible = false };
+    private CheckBox linuxCheckBox = new CheckBox() { Text = Text.SupportsOS.Replace("$1", Text.Linux)};
+    private Button linuxButton = new Button() { Text = Text.LoadOSZip.Replace("$1", Text.Linux), Enabled = false };
+    private Label linuxLabel = new Label() { Text = Text.OSGameLoaded.Replace("$1", Text.Linux), Visible = false };
     
-    private CheckBox macCheckBox = new CheckBox() { Text = Text.SupportsMac };
-    private Button macButton = new Button() { Text = Text.LoadMacZip, Enabled = false };
-    private Label macLabel = new Label() { Text = Text.MacLoaded, Visible = false };
+    private CheckBox macCheckBox = new CheckBox() { Text = Text.SupportsOS.Replace("$1", Text.Mac) };
+    private Button macButton = new Button() { Text = Text.LoadOSZip.Replace("$1", Text.Mac), Enabled = false };
+    private Label macLabel = new Label() { Text = Text.OSGameLoaded.Replace("$1", Text.Mac), Visible = false };
 
     private Button originalZipButton = new Button() { Text = Text.LoadAM2R11 };
     private Label originalZipLabel = new Label() { Text = Text.AM2R11Loaded, Visible = false};

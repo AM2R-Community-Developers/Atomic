@@ -42,15 +42,6 @@
     <data name="UsesYYC" xml:space="preserve">
         <value>Uses YoYo Compiler</value>
     </data>
-    <data name="SupportsWindows" xml:space="preserve">
-        <value>Supports Windows</value>
-    </data>
-    <data name="LoadWindowsZip" xml:space="preserve">
-        <value>Load modded Windows .zip</value>
-    </data>
-    <data name="WindowsLoaded" xml:space="preserve">
-        <value>Modded Mac game loaded!</value>
-    </data>
     <data name="BundleAndroid" xml:space="preserve">
         <value>Additionally bundle Android</value>
     </data>
@@ -59,21 +50,6 @@
     </data>
     <data name="AndroidLoaded" xml:space="preserve">
         <value>Modded APK loaded!</value>
-    </data>
-    <data name="SupportsLinux" xml:space="preserve">
-        <value>Supports Linux .zip</value>
-    </data>
-    <data name="LinuxLoaded" xml:space="preserve">
-        <value>Modded Linux game loaded!</value>
-    </data>
-    <data name="SupportsMac" xml:space="preserve">
-        <value>Supports Mac</value>
-    </data>
-    <data name="LoadMacZip" xml:space="preserve">
-        <value>Load modded Mac .zip</value>
-    </data>
-    <data name="MacLoaded" xml:space="preserve">
-        <value>Modded Mac game loaded!</value>
     </data>
     <data name="LoadAM2R11" xml:space="preserve">
         <value>Load 1.1</value>
@@ -86,9 +62,6 @@
     </data>
     <data name="ModPackageCreated" xml:space="preserve">
         <value>Mod package created!</value>
-    </data>
-    <data name="LoadLinuxZip" xml:space="preserve">
-        <value>Load modded Linux .zip</value>
     </data>
     <data name="ZipArchivesFileFilter" xml:space="preserve">
         <value>Zip 压缩文件 (*.zip)</value>
@@ -155,5 +128,14 @@
     </data>
     <data name="Zip" xml:space="preserve">
         <value>zip</value>
+    </data>
+    <data name="OSGameLoaded" xml:space="preserve">
+        <value>Modded $1 game loaded!</value>
+    </data>
+    <data name="SupportsOS" xml:space="preserve">
+        <value>Supports $1</value>
+    </data>
+    <data name="LoadOSZip" xml:space="preserve">
+        <value>Load modded $1 .zip</value>
     </data>
 </root>

@@ -6,45 +6,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Language\Text.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="Language\Text.de.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Language\Text.es.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <Generator></Generator>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Update="Language\Text.fr.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Language\Text.it.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Language\Text.ja.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <Generator></Generator>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Update="Language\Text.pt.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+    <EmbeddedResource Update="Language\Text.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <LastGenOutput>Text.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Language\Text.ru.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator></Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Language\Text.zh-Hans.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
