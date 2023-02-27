@@ -284,5 +284,47 @@ namespace Atomic.Language {
                 return ResourceManager.GetString("LoadOSZip", resourceCulture);
             }
         }
+        
+        public static string SystemLanguage {
+            get {
+                return ResourceManager.GetString("SystemLanguage", resourceCulture);
+            }
+        }
+        
+        public static string LanguageNotice {
+            get {
+                return ResourceManager.GetString("LanguageNotice", resourceCulture);
+            }
+        }
+        
+        public static string SettingsTitle {
+            get {
+                return ResourceManager.GetString("SettingsTitle", resourceCulture);
+            }
+        }
+        
+        public static string SettingsMenu {
+            get {
+                return ResourceManager.GetString("SettingsMenu", resourceCulture);
+            }
+        }
+        
+        public static string RememberFields {
+            get {
+                return ResourceManager.GetString("RememberFields", resourceCulture);
+            }
+        }
+        
+        public static string QuitMenu {
+            get {
+                return ResourceManager.GetString("QuitMenu", resourceCulture);
+            }
+        }
+        
+        public static string FileMenu {
+            get {
+                return ResourceManager.GetString("FileMenu", resourceCulture);
+            }
+        }
     }
 }

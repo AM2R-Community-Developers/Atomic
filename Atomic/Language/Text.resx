@@ -138,4 +138,25 @@
     <data name="LoadOSZip" xml:space="preserve">
         <value>Load modded $1 .zip</value>
     </data>
+    <data name="SystemLanguage" xml:space="preserve">
+        <value>System Language</value>
+    </data>
+    <data name="LanguageNotice" xml:space="preserve">
+        <value>Language (change requires a retart)</value>
+    </data>
+    <data name="SettingsTitle" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="SettingsMenu" xml:space="preserve">
+        <value>&amp;Settings</value>
+    </data>
+    <data name="RememberFields" xml:space="preserve">
+        <value>Automatically fill in fields from last usage</value>
+    </data>
+    <data name="QuitMenu" xml:space="preserve">
+        <value>&amp;Quit</value>
+    </data>
+    <data name="FileMenu" xml:space="preserve">
+        <value>&amp;File</value>
+    </data>
 </root>

@@ -144,6 +144,19 @@ public partial class ModPacker : Form
         customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
         customSaveButton.Click += CustomSaveDataButton_Click;
         yycCheckBox.CheckedChanged += YYCCheckBox_CheckedChanged;
+        
+        // Menu items
+        var settings = new Command() { MenuText = Text.SettingsMenu, Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.P};
+        settings.Executed += (sender, args) =>
+        {
+            var settings = new SettingsForm();
+            settings.ShowModal();
+        };
+        var quit = new Command() { MenuText = Text.QuitMenu, Shortcut = Application.Instance.CommonModifier | Keys.Q};
+        quit.Executed += (sender, args) => Application.Instance.Quit();
+
+        var file = new SubMenuItem() { Text = Text.FileMenu, Items = { settings, quit } };
+        Menu = new MenuBar() {Items = { file }};
     }
 
     #region Design Elements
