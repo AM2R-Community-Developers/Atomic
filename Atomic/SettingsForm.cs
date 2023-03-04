@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Atomic.Language;
 using AtomicLib;
+using AtomicLib.XML;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -9,6 +10,8 @@ namespace Atomic;
 
 public class SettingsForm : Dialog
 {
+    private Settings settings = new Settings();
+    
     public SettingsForm()
     {
         Title = Text.SettingsTitle;
@@ -34,14 +37,20 @@ public class SettingsForm : Dialog
         var langdropDown = new DropDown() { DataStore = languageList };
         langdropDown.SelectedIndexChanged += (sender, args) =>
         {
-            // TODO: save new setting
+            settings.Language = langdropDown.SelectedKey;
         };
 
         var fillInContents = new CheckBox() { Text = Text.RememberFields };
         fillInContents.CheckedChanged += (sender, args) =>
         {
-            // TODO: save new setting
+            settings.FillInContents = fillInContents.Checked.Value;
         };
+        
+        this.Closing += (sender, args) =>
+        {
+            System.Diagnostics.Debug.WriteLine(Serializer.Serialize<Settings>(settings));
+        };
+        
 
         layout.AddRange(Text.LanguageNotice, langdropDown, fillInContents);
         //layout.AddSpace();
