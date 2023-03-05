@@ -10,7 +10,7 @@ namespace Atomic;
 
 public class SettingsForm : Dialog
 {
-    private Settings settings = new Settings();
+    private Config config = new Config();
     
     public SettingsForm()
     {
@@ -37,18 +37,18 @@ public class SettingsForm : Dialog
         var langdropDown = new DropDown() { DataStore = languageList };
         langdropDown.SelectedIndexChanged += (sender, args) =>
         {
-            settings.Language = langdropDown.SelectedKey;
+            config.Language = langdropDown.SelectedKey;
         };
 
         var fillInContents = new CheckBox() { Text = Text.RememberFields };
         fillInContents.CheckedChanged += (sender, args) =>
         {
-            settings.FillInContents = fillInContents.Checked.Value;
+            config.FillInContents = fillInContents.Checked.Value;
         };
         
         this.Closing += (sender, args) =>
         {
-            System.Diagnostics.Debug.WriteLine(Serializer.Serialize<Settings>(settings));
+            System.Diagnostics.Debug.WriteLine(Serializer.Serialize<Config>(config));
         };
         
 

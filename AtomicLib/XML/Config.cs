@@ -4,7 +4,7 @@ namespace AtomicLib.XML;
 
 [Serializable]
 [XmlRoot("message")]
-public class Settings
+public class Config
 {
     [XmlAttribute("Language")]
     public string Language
@@ -14,8 +14,8 @@ public class Settings
     public bool FillInContents
     { get; set; }
 
-    public Settings()
     // default settings
+    public Config()
     {
         Language = "English";
         FillInContents = false;
