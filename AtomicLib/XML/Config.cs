@@ -42,6 +42,7 @@ public class Config
     
     public static Config CreateDefaultConfig()
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(ConfigFilePath));
         Config defaultConfig = new Config();
         SaveConfig(defaultConfig);
         return defaultConfig;

@@ -48,7 +48,8 @@ public class SettingsForm : Dialog
         
         this.Closing += (sender, args) =>
         {
-            System.Diagnostics.Debug.WriteLine(Serializer.Serialize<Config>(config));
+            Config.CreateDefaultConfig();
+            Config.SaveConfig(config);
         };
         
 
