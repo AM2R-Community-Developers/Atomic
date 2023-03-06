@@ -19,8 +19,13 @@ public class Config
     // default settings
     public Config()
     {
-        Language = "English";
-        FillInContents = false;
+
+    }
+
+    public Config(string language, bool fillIn)
+    {
+        Language = language;
+        FillInContents = fillIn;
     }
     
     // functions
@@ -34,16 +39,15 @@ public class Config
         }
         else
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(ConfigFilePath));
-            config = CreateDefaultConfig();
+            config = CreateAndReturnDefaultConfig();
         }
         return config;
     }
     
-    public static Config CreateDefaultConfig()
+    public static Config CreateAndReturnDefaultConfig()
     {
         Directory.CreateDirectory(Path.GetDirectoryName(ConfigFilePath));
-        Config defaultConfig = new Config();
+        Config defaultConfig = new Config("English", false);
         SaveConfig(defaultConfig);
         return defaultConfig;
     }

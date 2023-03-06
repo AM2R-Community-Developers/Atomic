@@ -10,9 +10,8 @@ namespace Atomic;
 
 public class SettingsForm : Dialog
 {
-    private Config config = new Config();
-    
-    public SettingsForm()
+
+    public SettingsForm(Config currentConfig)
     {
         Title = Text.SettingsTitle;
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
@@ -35,21 +34,16 @@ public class SettingsForm : Dialog
         };
 
         var langdropDown = new DropDown() { DataStore = languageList };
-        langdropDown.SelectedIndexChanged += (sender, args) =>
-        {
-            config.Language = langdropDown.SelectedKey;
-        };
+        langdropDown.SelectedKey = currentConfig.Language;
 
         var fillInContents = new CheckBox() { Text = Text.RememberFields };
-        fillInContents.CheckedChanged += (sender, args) =>
-        {
-            config.FillInContents = fillInContents.Checked.Value;
-        };
-        
+        fillInContents.Checked = currentConfig.FillInContents;
+
         this.Closing += (sender, args) =>
         {
-            Config.CreateDefaultConfig();
-            Config.SaveConfig(config);
+            currentConfig.Language = langdropDown.SelectedKey;
+            currentConfig.FillInContents = fillInContents.Checked.Value;
+            Config.SaveConfig(currentConfig);
         };
         
 

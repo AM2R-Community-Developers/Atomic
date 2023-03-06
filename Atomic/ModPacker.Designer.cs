@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Eto.Forms;
 using Eto.Drawing;
@@ -55,7 +56,8 @@ public partial class ModPacker : Form
         
         // loop through all resource files for test
         //ResXResourceReader rsxr = new ResXResourceReader("items.resx");
-        
+
+        Config currentConfig = Config.LoadAndReturnConfig();
         
         
         Title = "Atomic v" + version;
@@ -149,7 +151,7 @@ public partial class ModPacker : Form
         var settings = new Command() { MenuText = Text.SettingsMenu, Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.P};
         settings.Executed += (sender, args) =>
         {
-            var settings = new SettingsForm();
+            var settings = new SettingsForm(currentConfig);
             settings.ShowModal();
         };
         var quit = new Command() { MenuText = Text.QuitMenu, Shortcut = Application.Instance.CommonModifier | Keys.Q};
