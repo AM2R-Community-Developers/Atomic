@@ -1,6 +1,7 @@
 ﻿using System.Xml.Serialization;
+using AtomicLib.XML;
 
-namespace AtomicLib.XML;
+namespace AtomicLib;
 
 [Serializable]
 [XmlRoot("message")]
