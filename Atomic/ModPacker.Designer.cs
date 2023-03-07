@@ -58,8 +58,7 @@ public partial class ModPacker : Form
         //ResXResourceReader rsxr = new ResXResourceReader("items.resx");
 
         Config currentConfig = Config.LoadAndReturnConfig();
-        
-        
+
         Title = "Atomic v" + version;
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
         
@@ -147,6 +146,22 @@ public partial class ModPacker : Form
         customSaveButton.Click += CustomSaveDataButton_Click;
         yycCheckBox.CheckedChanged += YYCCheckBox_CheckedChanged;
         
+        if (currentConfig.FillInContents && currentConfig.Fields != null)
+        {
+            nameTextBox.Text =  currentConfig.Fields.ModName;
+            authorTextBox.Text =  currentConfig.Fields.Author;
+            versionTextBox.Text =  currentConfig.Fields.Version;
+            modNotesTextBox.Text =  currentConfig.Fields.Notes;
+            customSaveCheckBox.Checked =  currentConfig.Fields.UsesCustomSave;
+            customSaveTextBox.Text = currentConfig.Fields.CustomSaveDir;
+            musicCheckBox.Checked =  currentConfig.Fields.UsesCustomMusic;
+            yycCheckBox.Checked =  currentConfig.Fields.UsesYYC;
+            windowsCheckBox.Checked =  currentConfig.Fields.SupportsWindows;
+            linuxCheckBox.Checked =  currentConfig.Fields.SupportsLinux;
+            macCheckBox.Checked =  currentConfig.Fields.SupportsMac;
+            apkCheckBox.Checked =  currentConfig.Fields.SupportsAndroid;
+        }
+        
         // Menu items
         var settings = new Command() { MenuText = Text.SettingsMenu, Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.P};
         settings.Executed += (sender, args) =>
@@ -159,6 +174,29 @@ public partial class ModPacker : Form
 
         var file = new SubMenuItem() { Text = Text.FileMenu, Items = { settings, quit } };
         Menu = new MenuBar() {Items = { file }};
+        
+        this.Closing += (sender, args) =>
+        {
+            if (currentConfig.FillInContents)
+            {
+                currentConfig.Fields = new FieldContents()
+                {
+                    ModName = nameTextBox.Text,
+                    Author = authorTextBox.Text,
+                    Version = versionTextBox.Text,
+                    Notes = modNotesTextBox.Text,
+                    UsesCustomSave = customSaveCheckBox.Checked.Value,
+                    CustomSaveDir = customSaveTextBox.Text,
+                    UsesCustomMusic = musicCheckBox.Checked.Value,
+                    UsesYYC = yycCheckBox.Checked.Value,
+                    SupportsWindows = windowsCheckBox.Checked.Value,
+                    SupportsLinux = linuxCheckBox.Checked.Value,
+                    SupportsMac = macCheckBox.Checked.Value,
+                    SupportsAndroid = apkCheckBox.Checked.Value
+                };
+            }
+            Config.SaveConfig(currentConfig);
+        };
     }
 
     #region Design Elements

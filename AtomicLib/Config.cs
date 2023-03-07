@@ -16,8 +16,11 @@ public class Config
     [XmlAttribute("FillInContents")]
     public bool FillInContents
     { get; set; }
-
-    // default settings
+    
+    [XmlElement("Fields")]
+    public FieldContents Fields
+    { get; set; }
+    
     public Config()
     {
 
@@ -29,7 +32,6 @@ public class Config
         FillInContents = fillIn;
     }
     
-    // functions
     public static Config LoadAndReturnConfig()
     {
         Config config = null;

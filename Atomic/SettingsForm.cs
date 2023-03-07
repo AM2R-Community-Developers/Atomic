@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Atomic.Language;
 using AtomicLib;
-using AtomicLib.XML;
 using Eto.Drawing;
 using Eto.Forms;
 
