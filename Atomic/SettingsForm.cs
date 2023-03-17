@@ -40,7 +40,7 @@ public class SettingsForm : Dialog
 
         this.Closing += (sender, args) =>
         {
-            currentConfig.Language = langdropDown.SelectedKey;
+            currentConfig.Language = langdropDown.SelectedKey == Text.SystemLanguage ? "SystemLanguage" : langdropDown.SelectedKey;
             currentConfig.FillInContents = fillInContents.Checked.Value;
             Config.SaveConfig(currentConfig);
         };
