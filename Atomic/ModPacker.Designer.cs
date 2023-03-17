@@ -179,21 +179,18 @@ public partial class ModPacker : Form
         {
             if (currentConfig.FillInContents)
             {
-                currentConfig.Fields = new FieldContents()
-                {
-                    ModName = nameTextBox.Text,
-                    Author = authorTextBox.Text,
-                    Version = versionTextBox.Text,
-                    Notes = modNotesTextBox.Text,
-                    UsesCustomSave = customSaveCheckBox.Checked.Value,
-                    CustomSaveDir = customSaveTextBox.Text,
-                    UsesCustomMusic = musicCheckBox.Checked.Value,
-                    UsesYYC = yycCheckBox.Checked.Value,
-                    SupportsWindows = windowsCheckBox.Checked.Value,
-                    SupportsLinux = linuxCheckBox.Checked.Value,
-                    SupportsMac = macCheckBox.Checked.Value,
-                    SupportsAndroid = apkCheckBox.Checked.Value
-                };
+                currentConfig.Fields.ModName = nameTextBox.Text;
+                    currentConfig.Fields.Author = authorTextBox.Text;
+                    currentConfig.Fields.Version = versionTextBox.Text;
+                    currentConfig.Fields.Notes = modNotesTextBox.Text;
+                    currentConfig.Fields.UsesCustomSave = customSaveCheckBox.Checked.Value;
+                    currentConfig.Fields.CustomSaveDir = customSaveTextBox.Text;
+                    currentConfig.Fields.UsesCustomMusic = musicCheckBox.Checked.Value;
+                    currentConfig.Fields.UsesYYC = yycCheckBox.Checked.Value;
+                    currentConfig.Fields.SupportsWindows = windowsCheckBox.Checked.Value;
+                    currentConfig.Fields.SupportsLinux = linuxCheckBox.Checked.Value;
+                    currentConfig.Fields.SupportsMac = macCheckBox.Checked.Value;
+                    currentConfig.Fields.SupportsAndroid = apkCheckBox.Checked.Value;
             }
             Config.SaveConfig(currentConfig);
         };

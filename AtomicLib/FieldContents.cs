@@ -26,7 +26,7 @@ public class FieldContents
     public string Notes
     { get; set; }
     
-    [XmlAttribute("CustomSave")]
+    [XmlAttribute("UsesCustomSave")]
     public bool UsesCustomSave
     { get; set; }
     
@@ -34,27 +34,27 @@ public class FieldContents
     public string CustomSaveDir
     { get; set; }
     
-    [XmlAttribute("CustomMusic")]
+    [XmlAttribute("UsesCustomMusic")]
     public bool UsesCustomMusic
     { get; set; }
     
-    [XmlAttribute("YYC")]
+    [XmlAttribute("UsesYYC")]
     public bool UsesYYC
     { get; set; }
     
-    [XmlAttribute("Windows")]
+    [XmlAttribute("SupportsWindows")]
     public bool SupportsWindows
     { get; set; }
     
-    [XmlAttribute("Linux")]
+    [XmlAttribute("SupportsLinux")]
     public bool SupportsLinux
     { get; set; }
     
-    [XmlAttribute("Mac")]
+    [XmlAttribute("SupportsMac")]
     public bool SupportsMac
     { get; set; }
     
-    [XmlAttribute("Android")]
+    [XmlAttribute("SupportsAndroid")]
     public bool SupportsAndroid
     { get; set; }
 

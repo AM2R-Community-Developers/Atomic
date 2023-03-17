@@ -30,6 +30,7 @@ public class Config
     {
         Language = language;
         FillInContents = fillIn;
+        Fields = new FieldContents();
     }
     
     public static Config LoadAndReturnConfig()
