@@ -33,7 +33,7 @@ public class SettingsForm : Dialog
         };
 
         var langdropDown = new DropDown() { DataStore = languageList };
-        langdropDown.SelectedKey = currentConfig.Language;
+        langdropDown.SelectedKey = currentConfig.Language == "SystemLanguage" ? Text.SystemLanguage : currentConfig.Language;
 
         var fillInContents = new CheckBox() { Text = Text.RememberFields };
         fillInContents.Checked = currentConfig.FillInContents;
