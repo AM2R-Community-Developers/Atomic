@@ -5,7 +5,7 @@ using AtomicLib.XML;
 namespace AtomicLib;
 
 [Serializable]
-[XmlRoot("message")]
+[XmlRoot("fieldcontents")]
 
 public class FieldContents
 {

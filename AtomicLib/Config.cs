@@ -4,7 +4,7 @@ using AtomicLib.XML;
 namespace AtomicLib;
 
 [Serializable]
-[XmlRoot("message")]
+[XmlRoot("config")]
 public class Config
 {
     public static string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Atomic/config.xml");
