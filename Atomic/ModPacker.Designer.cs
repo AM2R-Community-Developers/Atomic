@@ -59,10 +59,9 @@ public partial class ModPacker : Form
         
         // loop through all resource files for test
         //ResXResourceReader rsxr = new ResXResourceReader("items.resx");
-
-        Config currentConfig = Config.LoadAndReturnConfig();
-
-        // from AM2R Launcher
+        
+        currentConfig = Config.LoadAndReturnConfig();
+        
         if (!currentConfig.Language.Equals("SystemLanguage"))
         {
            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultures(CultureTypes.AllCultures).First(c => c.NativeName.ToLower().Contains(currentConfig.Language.ToLower()));
@@ -186,6 +185,7 @@ public partial class ModPacker : Form
         customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
         customSaveButton.Click += CustomSaveDataButton_Click;
         yycCheckBox.CheckedChanged += YYCCheckBox_CheckedChanged;
+        this.Closing += ModPacker_Closing;
         
         if (currentConfig.FillInContents && currentConfig.Fields != null)
         {
@@ -215,28 +215,10 @@ public partial class ModPacker : Form
 
         var file = new SubMenuItem() { Text = Text.FileMenu, Items = { settings, quit } };
         Menu = new MenuBar() {Items = { file }};
-        
-        this.Closing += (sender, args) =>
-        {
-            if (currentConfig.FillInContents)
-            {
-                currentConfig.Fields.ModName = nameTextBox.Text;
-                    currentConfig.Fields.Author = authorTextBox.Text;
-                    currentConfig.Fields.Version = versionTextBox.Text;
-                    currentConfig.Fields.Notes = modNotesTextBox.Text;
-                    currentConfig.Fields.UsesCustomSave = customSaveCheckBox.Checked.Value;
-                    currentConfig.Fields.CustomSaveDir = customSaveTextBox.Text;
-                    currentConfig.Fields.UsesCustomMusic = musicCheckBox.Checked.Value;
-                    currentConfig.Fields.UsesYYC = yycCheckBox.Checked.Value;
-                    currentConfig.Fields.SupportsWindows = windowsCheckBox.Checked.Value;
-                    currentConfig.Fields.SupportsLinux = linuxCheckBox.Checked.Value;
-                    currentConfig.Fields.SupportsMac = macCheckBox.Checked.Value;
-                    currentConfig.Fields.SupportsAndroid = apkCheckBox.Checked.Value;
-            }
-            Config.SaveConfig(currentConfig);
-        };
     }
 
+    private Config currentConfig;
+    
     #region Design Elements
     private Label nameLabel = new Label();
     private TextBox nameTextBox = new TextBox();

@@ -259,6 +259,26 @@ public partial class ModPacker : Form
         createLabel.Text = "Mod package(s) created!";
     }
 
+    private void ModPacker_Closing(object sender, EventArgs e)
+    {
+        if (currentConfig.FillInContents)
+        {
+            currentConfig.Fields.ModName = nameTextBox.Text;
+            currentConfig.Fields.Author = authorTextBox.Text;
+            currentConfig.Fields.Version = versionTextBox.Text;
+            currentConfig.Fields.Notes = modNotesTextBox.Text;
+            currentConfig.Fields.UsesCustomSave = customSaveCheckBox.Checked.Value;
+            currentConfig.Fields.CustomSaveDir = customSaveTextBox.Text;
+            currentConfig.Fields.UsesCustomMusic = musicCheckBox.Checked.Value;
+            currentConfig.Fields.UsesYYC = yycCheckBox.Checked.Value;
+            currentConfig.Fields.SupportsWindows = windowsCheckBox.Checked.Value;
+            currentConfig.Fields.SupportsLinux = linuxCheckBox.Checked.Value;
+            currentConfig.Fields.SupportsMac = macCheckBox.Checked.Value;
+            currentConfig.Fields.SupportsAndroid = apkCheckBox.Checked.Value;
+        }
+        Config.SaveConfig(currentConfig);
+    }
+
     private static string GetLocalizedStringOfOS(ProfileOperatingSystems os)
     {
         return os switch
