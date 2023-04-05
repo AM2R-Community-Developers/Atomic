@@ -35,17 +35,10 @@ public class Config
     
     public static Config LoadAndReturnConfig()
     {
-        Config config = null;
-        if (File.Exists(ConfigFilePath))
-        {
-            string configXml = File.ReadAllText(ConfigFilePath);
-            config = Serializer.Deserialize<Config>(configXml);
-        }
-        else
-        {
-            config = CreateAndReturnDefaultConfig();
-        }
-        return config;
+        if (!File.Exists(ConfigFilePath))
+            return CreateAndReturnDefaultConfig(); 
+                    
+        return Serializer.Deserialize<Config>(File.ReadAllText(ConfigFilePath));     
     }
     
     public static Config CreateAndReturnDefaultConfig()
