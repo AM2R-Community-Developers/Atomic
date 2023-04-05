@@ -7,7 +7,7 @@ namespace AtomicLib;
 [XmlRoot("config")]
 public class Config
 {
-    public static string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Atomic/config.xml");
+    public static string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Atomic", "config.xml");
     
     [XmlAttribute("Language")]
     public string Language
