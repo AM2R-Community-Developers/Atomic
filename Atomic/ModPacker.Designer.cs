@@ -63,8 +63,10 @@ public partial class ModPacker : Form
         currentConfig = Config.LoadAndReturnConfig();
         
         if (!currentConfig.Language.Equals("SystemLanguage"))
-        {
-           Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultures(CultureTypes.AllCultures).First(c => c.NativeName.ToLower().Contains(currentConfig.Language.ToLower()));
+        { 
+           CultureInfo language = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(c => c.NativeName.ToLower().Contains(currentConfig.Language.ToLower()));
+           if (language is null) currentConfig.Language = "SystemLanguage";
+           else Thread.CurrentThread.CurrentUICulture = language;
         }
 
         nameLabel.Text = Text.ModName;
