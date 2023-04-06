@@ -44,7 +44,7 @@ public class Config
     public static Config CreateAndReturnDefaultConfig()
     {
         Directory.CreateDirectory(Path.GetDirectoryName(ConfigFilePath));
-        Config defaultConfig = new Config("SystemLanguage", false);
+        Config defaultConfig = new Config("SystemLanguage", true);
         SaveConfig(defaultConfig);
         return defaultConfig;
     }
