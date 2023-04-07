@@ -165,9 +165,7 @@ public static class Core
         {
             // Get list of 1.1's music files
             string[] musFiles = Directory.GetFiles(tempOriginalPath, "*.ogg").Select(file => Path.GetFileName(file)).ToArray();
-            // Since on Unix our songs are in lowercase and we want to compare them later, we need to adjust for it here
-            if (profileOS == ProfileOperatingSystems.Linux || profileOS == ProfileOperatingSystems.Mac)
-                musFiles = musFiles.Select(f => f.ToLower()).ToArray();
+            musFiles = musFiles.Select(f => f.ToLower()).ToArray();
             // Combine musFiles with the known datafiles for a blacklist
             string[] blacklist = musFiles.Concat(datafilesBlacklist).ToArray();
             // Copy files, excluding the blacklist
