@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Eto.Forms;
 using Eto.Drawing;
@@ -5,8 +6,11 @@ using AtomicLib.XML;
 using System.IO;
 using System.Net.Mime;
 using System.Reflection;
+using System.Threading;
 using AtomicLib;
 using Atomic.Language;
+using System.Globalization;
+using System.Linq;
 
 namespace Atomic;
 
@@ -56,7 +60,46 @@ public partial class ModPacker : Form
         // loop through all resource files for test
         //ResXResourceReader rsxr = new ResXResourceReader("items.resx");
         
+        currentConfig = Config.LoadAndReturnConfig();
         
+        if (!currentConfig.Language.Equals("SystemLanguage"))
+        { 
+           CultureInfo language = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(c => c.NativeName.ToLower().Contains(currentConfig.Language.ToLower()));
+           if (language is null) currentConfig.Language = "SystemLanguage";
+           else Thread.CurrentThread.CurrentUICulture = language;
+        }
+
+        nameLabel.Text = Text.ModName;
+        authorLabel.Text = Text.Author;
+        versionLabel.Text = Text.Version;
+        modNotesLabel.Text = Text.ModNotes;
+
+        customSaveCheckBox.Text = Text.UsesCustomSaves;
+        customSaveButton.Text = Text.SelectFolder;
+        musicCheckBox.Text = Text.UsesCustomMusic;
+
+        yycCheckBox.Text = Text.UsesYYC;
+
+        windowsCheckBox.Text = Text.SupportsOS.Replace("$1", Text.Windows);
+        windowsButton.Text = Text.LoadOSZip.Replace("$1", Text.Windows);
+        windowsLabel.Text = Text.OSGameLoaded.Replace("$1", Text.Windows);
+
+        apkCheckBox.Text = Text.BundleAndroid;
+        apkButton.Text = Text.LoadAndroidAPK;
+        apkLabel.Text = Text.AndroidLoaded;
+
+        linuxCheckBox.Text = Text.SupportsOS.Replace("$1", Text.Linux);
+        linuxButton.Text = Text.LoadOSZip.Replace("$1", Text.Linux);
+        linuxLabel.Text = Text.OSGameLoaded.Replace("$1", Text.Linux);
+
+        macCheckBox.Text = Text.SupportsOS.Replace("$1", Text.Mac);
+        macButton.Text = Text.LoadOSZip.Replace("$1", Text.Mac);
+        macLabel.Text = Text.OSGameLoaded.Replace("$1", Text.Mac);
+
+        originalZipButton.Text = Text.LoadAM2R11;
+        originalZipLabel.Text = Text.AM2R11Loaded;
+        createButton.Text = Text.CreateModPackage;
+        createLabel.Text = Text.ModPackageCreated;
         
         Title = "Atomic v" + version;
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
@@ -144,12 +187,29 @@ public partial class ModPacker : Form
         customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
         customSaveButton.Click += CustomSaveDataButton_Click;
         yycCheckBox.CheckedChanged += YYCCheckBox_CheckedChanged;
+        this.Closing += ModPacker_Closing;
+        
+        if (currentConfig.FillInContents && currentConfig.Fields != null)
+        {
+            nameTextBox.Text =  currentConfig.Fields.ModName;
+            authorTextBox.Text =  currentConfig.Fields.Author;
+            versionTextBox.Text =  currentConfig.Fields.Version;
+            modNotesTextBox.Text =  currentConfig.Fields.Notes;
+            customSaveCheckBox.Checked =  currentConfig.Fields.UsesCustomSave;
+            customSaveTextBox.Text = currentConfig.Fields.CustomSaveDir;
+            musicCheckBox.Checked =  currentConfig.Fields.UsesCustomMusic;
+            yycCheckBox.Checked =  currentConfig.Fields.UsesYYC;
+            windowsCheckBox.Checked =  currentConfig.Fields.SupportsWindows;
+            linuxCheckBox.Checked =  currentConfig.Fields.SupportsLinux;
+            macCheckBox.Checked =  currentConfig.Fields.SupportsMac;
+            apkCheckBox.Checked =  currentConfig.Fields.SupportsAndroid;
+        }
         
         // Menu items
         var settings = new Command() { MenuText = Text.SettingsMenu, Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.P};
         settings.Executed += (sender, args) =>
         {
-            var settings = new SettingsForm();
+            var settings = new SettingsForm(currentConfig);
             settings.ShowModal();
         };
         var quit = new Command() { MenuText = Text.QuitMenu, Shortcut = Application.Instance.CommonModifier | Keys.Q};
@@ -159,43 +219,45 @@ public partial class ModPacker : Form
         Menu = new MenuBar() {Items = { file }};
     }
 
+    private Config currentConfig;
+    
     #region Design Elements
-    private Label nameLabel = new Label() { Text = Text.ModName };
+    private Label nameLabel = new Label();
     private TextBox nameTextBox = new TextBox();
-    private Label authorLabel = new Label() { Text = Text.Author };
+    private Label authorLabel = new Label();
     private TextBox authorTextBox = new TextBox();
-    private Label versionLabel = new Label() { Text = Text.Version };
+    private Label versionLabel = new Label();
     private TextBox versionTextBox = new TextBox();
-    private Label modNotesLabel = new Label() { Text = Text.ModNotes };
-    private TextArea modNotesTextBox = new TextArea() { };
+    private Label modNotesLabel = new Label();
+    private TextArea modNotesTextBox = new TextArea();
 
-    private CheckBox customSaveCheckBox = new CheckBox() { Text = Text.UsesCustomSaves };
-    private Button customSaveButton = new Button() { Text = Text.SelectFolder, Enabled = false };
+    private CheckBox customSaveCheckBox = new CheckBox();
+    private Button customSaveButton = new Button() { Enabled = false };
     // TODO: remove read only and make it correctly respond to user input
     private TextBox customSaveTextBox = new TextBox() { ReadOnly = true };
-    private CheckBox musicCheckBox = new CheckBox() { Text = Text.UsesCustomMusic };
-
-    private CheckBox yycCheckBox = new CheckBox() { Text = Text.UsesYYC };
-
-    private CheckBox windowsCheckBox = new CheckBox() { Text = Text.SupportsOS.Replace("$1", Text.Windows) };
-    private Button windowsButton = new Button() { Text = Text.LoadOSZip.Replace("$1", Text.Windows), Enabled = false };
-    private Label windowsLabel = new Label() { Text = Text.OSGameLoaded.Replace("$1", Text.Windows), Visible = false };
+    private CheckBox musicCheckBox = new CheckBox();
     
-    private CheckBox apkCheckBox = new CheckBox() { Text = Text.BundleAndroid };
-    private Button apkButton = new Button() { Text = Text.LoadAndroidAPK, Enabled = false };
-    private Label apkLabel = new Label() { Text = Text.AndroidLoaded, Visible = false };
+    private CheckBox yycCheckBox = new CheckBox();
 
-    private CheckBox linuxCheckBox = new CheckBox() { Text = Text.SupportsOS.Replace("$1", Text.Linux)};
-    private Button linuxButton = new Button() { Text = Text.LoadOSZip.Replace("$1", Text.Linux), Enabled = false };
-    private Label linuxLabel = new Label() { Text = Text.OSGameLoaded.Replace("$1", Text.Linux), Visible = false };
-    
-    private CheckBox macCheckBox = new CheckBox() { Text = Text.SupportsOS.Replace("$1", Text.Mac) };
-    private Button macButton = new Button() { Text = Text.LoadOSZip.Replace("$1", Text.Mac), Enabled = false };
-    private Label macLabel = new Label() { Text = Text.OSGameLoaded.Replace("$1", Text.Mac), Visible = false };
+    private CheckBox windowsCheckBox = new CheckBox();
+    private Button windowsButton = new Button() { Enabled = false };
+    private Label windowsLabel = new Label() { Visible = false };
 
-    private Button originalZipButton = new Button() { Text = Text.LoadAM2R11 };
-    private Label originalZipLabel = new Label() { Text = Text.AM2R11Loaded, Visible = false};
-    private Button createButton = new Button() { Text = Text.CreateModPackage, Enabled = false };
-    private Label createLabel = new Label() { Text = Text.ModPackageCreated, Visible = false};
+    private CheckBox apkCheckBox = new CheckBox();
+    private Button apkButton = new Button() { Enabled = false };
+    private Label apkLabel = new Label() { Visible = false };
+
+    private CheckBox linuxCheckBox = new CheckBox();
+    private Button linuxButton = new Button() { Enabled = false };
+    private Label linuxLabel = new Label() { Visible = false };
+
+    private CheckBox macCheckBox = new CheckBox();
+    private Button macButton = new Button() { Enabled = false };
+    private Label macLabel = new Label() { Visible = false };
+
+    private Button originalZipButton = new Button();
+    private Label originalZipLabel = new Label() { Visible = false };
+    private Button createButton = new Button() { Enabled = false };
+    private Label createLabel = new Label() { Visible = false };
     #endregion
 }

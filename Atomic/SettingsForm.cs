@@ -9,8 +9,10 @@ namespace Atomic;
 
 public class SettingsForm : Dialog
 {
-    public SettingsForm()
+
+    public SettingsForm(Config config)
     {
+        currentConfig = config;
         Title = Text.SettingsTitle;
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
         Resizable = true;
@@ -31,21 +33,29 @@ public class SettingsForm : Dialog
             "中文(简体)"
         };
 
-        var langdropDown = new DropDown() { DataStore = languageList };
-        langdropDown.SelectedIndexChanged += (sender, args) =>
-        {
-            // TODO: save new setting
-        };
+        languageDropDown = new DropDown() { DataStore = languageList };
+        languageDropDown.SelectedKey = currentConfig.Language == "SystemLanguage" ? Text.SystemLanguage : currentConfig.Language;
 
-        var fillInContents = new CheckBox() { Text = Text.RememberFields };
-        fillInContents.CheckedChanged += (sender, args) =>
-        {
-            // TODO: save new setting
-        };
+        fillInContents = new CheckBox() { Text = Text.RememberFields };
+        fillInContents.Checked = currentConfig.FillInContents;
 
-        layout.AddRange(Text.LanguageNotice, langdropDown, fillInContents);
+        this.Closing += SettingsForm_Closing;
+        
+        layout.AddRange(Text.LanguageNotice, languageDropDown, fillInContents);
         //layout.AddSpace();
         
         Content = layout;
     }
+
+    private void SettingsForm_Closing(object sender, EventArgs e)
+    {
+        currentConfig.Language = languageDropDown.SelectedKey == Text.SystemLanguage ? "SystemLanguage" : languageDropDown.SelectedKey;
+        currentConfig.FillInContents = fillInContents.Checked.Value;
+        Config.SaveConfig(currentConfig);
+    }
+
+    private Config currentConfig;
+    private DropDown languageDropDown;
+    private CheckBox fillInContents;
+
 }
