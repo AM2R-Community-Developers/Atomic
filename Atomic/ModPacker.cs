@@ -38,7 +38,7 @@ public partial class ModPacker : Form
 
     private void CustomSaveDataButton_Click(object sender, EventArgs e)
     {
-        // TODO: is this replace necessary?
+        // TODO: get rid of the replace after doing the todo right below this. Currently necessary, as otherwise its trying to i.e. do a regex of "C:\Users\foo", and \U is not a valid regex escape sequence.
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace("\\", "\\\\"); // This is \ -> \\
         bool wasSuccessful = false;
         // TODO: instead of creating 3 different regexes, only create one regex and fill it out depending on current OS. Just leech off of the os check a bit further down for that.
