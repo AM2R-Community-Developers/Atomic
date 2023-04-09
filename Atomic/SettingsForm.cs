@@ -7,9 +7,9 @@ using Eto.Forms;
 
 namespace Atomic;
 
+// TODO: "eto bug" where this dialog behaves very weirdly if you try to resize it. As if the actual size is bigger than the display size
 public class SettingsForm : Dialog
 {
-
     public SettingsForm(Config config)
     {
         currentConfig = config;
@@ -19,7 +19,7 @@ public class SettingsForm : Dialog
 
         var layout = new DynamicLayout() { Padding = 10, Spacing = new Size(20, 20) };
         
-        List<String> languageList = new List<String>
+        List<string> languageList = new List<string>
         {
             Text.SystemLanguage,
             "Deutsch",
@@ -39,12 +39,11 @@ public class SettingsForm : Dialog
         fillInContents = new CheckBox() { Text = Text.RememberFields };
         fillInContents.Checked = currentConfig.FillInContents;
 
-        this.Closing += SettingsForm_Closing;
-        
         layout.AddRange(Text.LanguageNotice, languageDropDown, fillInContents);
-        //layout.AddSpace();
         
         Content = layout;
+        
+        this.Closing += SettingsForm_Closing;
     }
 
     private void SettingsForm_Closing(object sender, EventArgs e)

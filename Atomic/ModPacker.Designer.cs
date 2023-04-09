@@ -57,9 +57,6 @@ public partial class ModPacker : Form
         };
         #endregion
         
-        // loop through all resource files for test
-        //ResXResourceReader rsxr = new ResXResourceReader("items.resx");
-        
         currentConfig = Config.LoadAndReturnConfig();
         
         if (!currentConfig.Language.Equals("SystemLanguage"))
@@ -68,7 +65,8 @@ public partial class ModPacker : Form
            if (language is null) currentConfig.Language = "SystemLanguage";
            else Thread.CurrentThread.CurrentUICulture = language;
         }
-
+        
+        #region Control Text Assignments
         nameLabel.Text = Text.ModName;
         authorLabel.Text = Text.Author;
         versionLabel.Text = Text.Version;
@@ -100,8 +98,11 @@ public partial class ModPacker : Form
         originalZipLabel.Text = Text.AM2R11Loaded;
         createButton.Text = Text.CreateModPackage;
         createLabel.Text = Text.ModPackageCreated;
+        #endregion
         
-        Title = "Atomic v" + version;
+        Title = "Atomic v" + Version;
+        // TODO: "eto bug", this crashes because apparently "compressed symbols aren't supported".
+        //Icon = new Icon(new MemoryStream(Resources.icon64)); 
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
         
         MinimumSize = new Size(300, 200);
@@ -182,7 +183,7 @@ public partial class ModPacker : Form
         apkButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Android);
         linuxCheckBox.CheckedChanged += (_, _) => OSCheckboxChanged(ProfileOperatingSystems.Linux);
         linuxButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Linux);
-        macCheckBox.CheckedChanged += macCheckBox_CheckedChanged;
+        macCheckBox.CheckedChanged += MacCheckBox_CheckedChanged;
         macButton.Click += (_, _) => OSButtonClicked(ProfileOperatingSystems.Mac);
         customSaveCheckBox.CheckedChanged += CustomSaveCheckBoxChecked_Changed;
         customSaveButton.Click += CustomSaveDataButton_Click;
