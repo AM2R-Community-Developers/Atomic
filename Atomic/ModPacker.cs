@@ -13,7 +13,6 @@ namespace Atomic;
 
 public partial class ModPacker : Form
 {
-    // TODO: make sure all messageboxes have this form as parent
     private const string Version = Core.Version;
     private readonly FileFilter apkFileFilter = new FileFilter(Text.APKFileFilter, ".apk");
 
@@ -72,7 +71,7 @@ public partial class ModPacker : Form
 
                 if (match.Success == false)
                 {
-                    MessageBox.Show(Text.InvalidSaveDirectory);
+                    MessageBox.Show(this, Text.InvalidSaveDirectory);
                 }
                 else
                 {
@@ -122,7 +121,7 @@ public partial class ModPacker : Form
         }
         else if (macCheckBox.Checked.Value)
         {
-            MessageBox.Show(Text.YYCMacUnsupported, Text.Warning, MessageBoxButtons.OK, MessageBoxType.Warning);
+            MessageBox.Show(this, Text.YYCMacUnsupported, Text.Warning, MessageBoxButtons.OK, MessageBoxType.Warning);
             macCheckBox.Checked = false;
         }
     }
@@ -140,7 +139,7 @@ public partial class ModPacker : Form
         // TODO: use string.isnullorwhitespace
         if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
         {
-            MessageBox.Show(Text.FieldsMissing, Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
+            MessageBox.Show(this, Text.FieldsMissing, Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
             return;
         }
 
@@ -150,7 +149,7 @@ public partial class ModPacker : Form
 
         if (Path.GetInvalidFileNameChars().Any(nameTextBox.Text.Contains))
         {
-            MessageBox.Show(Text.NameInvalidCharacters + "\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
+            MessageBox.Show(this, Text.NameInvalidCharacters + "\n" + String.Join("\n", Path.GetInvalidFileNameChars()));
             return;
         }
 
@@ -158,7 +157,7 @@ public partial class ModPacker : Form
         IsZipAM2R11ReturnCodes result11 = Core.CheckIfZipIsAM2R11(modInfo.AM2R11Path);
         if (result11 != IsZipAM2R11ReturnCodes.Successful)
         {
-            MessageBox.Show(Text.AM2R11Invalid + " " + result11);
+            MessageBox.Show(this, Text.AM2R11Invalid + " " + result11);
             AbortPatch();
             return;
         }
@@ -193,7 +192,7 @@ public partial class ModPacker : Form
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.ToString(), Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
+                MessageBox.Show(this, exception.ToString(), Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
                 AbortPatch();
                 return false;
             }
@@ -205,7 +204,7 @@ public partial class ModPacker : Form
         {
             if (zipFile.Entries.All(f => f.Name != "profile.xml"))
                 return true;
-            DialogResult result = MessageBox.Show(Text.ProfileXMLFound, Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+            DialogResult result = MessageBox.Show(this, Text.ProfileXMLFound, Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
             if (result == DialogResult.Yes)
                 return true;
             AbortPatch();
@@ -219,7 +218,7 @@ public partial class ModPacker : Form
             if (windowsZip.Entries.All(f => f.FullName != "AM2R.exe"))
             {
                 // TODO: make method for these $1 replacements
-                DialogResult result = MessageBox.Show(Text.ModdedGameNotFound.Replace("$1", Text.Windows), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                DialogResult result = MessageBox.Show(this, Text.ModdedGameNotFound.Replace("$1", Text.Windows), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
@@ -239,7 +238,7 @@ public partial class ModPacker : Form
             ZipArchive linuxZip = ZipFile.Open(modInfo.LinuxModPath, ZipArchiveMode.Read);
             if (linuxZip.Entries.All(f => f.FullName != "AM2R") && linuxZip.Entries.All(f => f.FullName != "runner"))
             {
-                DialogResult result = MessageBox.Show(Text.ModdedGameNotFound.Replace("$1", Text.Linux), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                DialogResult result = MessageBox.Show(this, Text.ModdedGameNotFound.Replace("$1", Text.Linux), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
@@ -259,7 +258,7 @@ public partial class ModPacker : Form
             ZipArchive macZip = ZipFile.Open(modInfo.MacModPath, ZipArchiveMode.Read);
             if (macZip.Entries.All(f => f.FullName != "AM2R.app/Contents/MacOS/Mac_Runner"))
             {
-                DialogResult result = MessageBox.Show(Text.ModdedGameNotFound.Replace("$1", Text.Mac), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                DialogResult result = MessageBox.Show(this, Text.ModdedGameNotFound.Replace("$1", Text.Mac), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                     AbortPatch();
             }
