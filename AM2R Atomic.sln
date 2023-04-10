@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atomic.Gtk", "Atomic.Gtk\At
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atomic.Mac", "Atomic.Mac\Atomic.Mac.csproj", "{A0481858-CA50-4DB8-A547-193BD1D57D21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtomicLibTests", "AtomicLibTests\AtomicLibTests.csproj", "{705598A0-F06A-432C-869E-A98D480161FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{A0481858-CA50-4DB8-A547-193BD1D57D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0481858-CA50-4DB8-A547-193BD1D57D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0481858-CA50-4DB8-A547-193BD1D57D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{705598A0-F06A-432C-869E-A98D480161FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{705598A0-F06A-432C-869E-A98D480161FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{705598A0-F06A-432C-869E-A98D480161FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{705598A0-F06A-432C-869E-A98D480161FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

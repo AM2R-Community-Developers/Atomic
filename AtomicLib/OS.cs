@@ -74,7 +74,7 @@ public static class OS
     /// <summary>
     /// Checks if the Launcher is ran from a Flatpak.
     /// </summary>
-    /// <returns>see langword="true"/> if run from a Flatpak, <see langword="false"/> if not.</returns>
+    /// <returns><see langword="true"/> if run from a Flatpak, <see langword="false"/> if not.</returns>
     private static bool CheckIfRunFromFlatpak()
     {
         if (!IsLinux) return false;

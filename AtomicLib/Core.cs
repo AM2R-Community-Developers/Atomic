@@ -35,6 +35,15 @@ public static class Core
     
     public static void CreateModPack(ModCreationInfo modInfo, string output)
     {
+        if (modInfo is null)
+            throw new NullReferenceException(nameof(modInfo));
+        if (modInfo.Profile is null)
+            throw new NullReferenceException(nameof(modInfo.Profile));
+        if (!File.Exists(modInfo.AM2R11Path))
+            throw new FileNotFoundException("AM2R_11 file path could not be found!");
+        if (modInfo.Profile.SupportsAndroid && !File.Exists(modInfo.ApkModPath))
+            throw new FileNotFoundException("Android is marked as supported, but the APK path (" + modInfo.ApkModPath + ") could not be found!");
+        
         ProfileOperatingSystems profileOS = Enum.Parse<ProfileOperatingSystems>(modInfo.Profile.OperatingSystem);
         string modZipPath = profileOS switch
         {
@@ -43,7 +52,10 @@ public static class Core
             ProfileOperatingSystems.Mac => modInfo.MacModPath,
             _ => throw new NotSupportedException("The current operating system is not supported!")
         };
-        
+
+        if (!File.Exists(modZipPath))
+            throw new FileNotFoundException("The file path (" + modZipPath + ") for the OS (" + modInfo.Profile.OperatingSystem + ") could not be found!");
+                
         // Cleanup in case of previous errors
         if (Directory.Exists($"{Path.GetTempPath()}/Atomic"))
             Directory.Delete($"{Path.GetTempPath()}/Atomic", true);
@@ -55,6 +67,7 @@ public static class Core
         string tempProfilePath = Directory.CreateDirectory($"{tempPath}/profile").FullName;
 
         // Extract 1.1 and modded AM2R to their own directories in temp work
+        // We *probably* should check for 1.1 validity before extracting, *HOWEVER* that makes it kinda difficult to test against.
         ZipFile.ExtractToDirectory(modInfo.AM2R11Path, tempOriginalPath);
         ZipFile.ExtractToDirectory(modZipPath, tempModPath);
 
@@ -65,7 +78,9 @@ public static class Core
         {
             case ProfileOperatingSystems.Windows:
                 if (modInfo.Profile.UsesYYC)
+                {
                     CreatePatch($"{tempOriginalPath}/data.win", $"{tempModPath}/AM2R.exe", $"{tempProfilePath}/AM2R.xdelta");
+                }
                 else
                 {
                     CreatePatch($"{tempOriginalPath}/data.win", $"{tempModPath}/data.win", $"{tempProfilePath}/data.xdelta");
@@ -95,7 +110,7 @@ public static class Core
             
             // Extract APK first in order to create patch from the data.win 
             // - java -jar apktool.jar d "AM2RWrapper_old.apk"
-            RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" d -f -o \"{tempAndroid}\" \"{modInfo.ApkModPath}\"", tempAndroid);
+            RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" d -f -o \"{tempAndroid}\" \"{modInfo.ApkModPath}\"");
             
             // Create game.droid patch
             CreatePatch($"{tempOriginalPath}/data.win", $"{tempAndroid}/assets/game.droid", $"{tempProfilePath}/droid.xdelta");
@@ -200,7 +215,7 @@ public static class Core
     
     public static void RunJavaJar(string arguments = null, string workingDirectory = null)
     {
-        workingDirectory ??= Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        workingDirectory ??= Directory.GetCurrentDirectory();
         string proc = "",
                javaArgs = "";
 

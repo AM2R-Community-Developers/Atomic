@@ -10,7 +10,7 @@ namespace AtomicLib;
 [XmlRoot("config")]
 public class Config
 {
-    public static string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Atomic", "config.xml");
+    public static readonly string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create), "Atomic", "config.xml");
     
     /// <summary>
     /// Language used for the modpacker.
