@@ -136,7 +136,7 @@ public static class Core
             // And now we create the wrapper from it
             // Process startInfo
             // - java -jar apktool.jar b "AM2RWrapper_old" -o "AM2RWrapper.apk"
-            RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" b -f \"{tempAndroid}\" -o \"{tempProfilePath}/AM2RWrapper.apk\"", tempAndroid);
+            RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" b -f \"{tempAndroid}\" -o \"{tempProfilePath}/AM2RWrapper.apk\"");
             
             string tempAndroidWrapperPath = $"{tempProfilePath}/android";
             Directory.CreateDirectory(tempAndroidWrapperPath);
@@ -276,8 +276,7 @@ public static class Core
 
         // Open archive
         ZipArchive am2rZip = ZipFile.OpenRead(zipPath);
-
-
+        
         // Check if exe exists anywhere
         ZipArchiveEntry am2rExe = am2rZip.Entries.FirstOrDefault(x => x.FullName.Contains("AM2R.exe"));
         if (am2rExe == null)
@@ -311,8 +310,7 @@ public static class Core
         d3dx.ExtractToFile($"{tmpPath}/{d3dx.FullName}");
         if (CalculateMD5($"{tmpPath}/{d3dx.FullName}") != d3dHash)
             return IsZipAM2R11ReturnCodes.MissingOrInvalidD3DX943Dll;
-
-
+        
         // Clean up
         Directory.Delete(tmpPath, true);
 

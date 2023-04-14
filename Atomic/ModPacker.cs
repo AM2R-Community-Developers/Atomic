@@ -59,6 +59,7 @@ public partial class ModPacker : Form
         // TODO: clean this while loop a little
         string saveFolderPath = null;
         while (!wasSuccessful)
+        {
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
                 Match match = Match.Empty;
@@ -96,6 +97,7 @@ public partial class ModPacker : Form
             {
                 wasSuccessful = true;
             }
+        }
 
         customSaveTextBox.Text = saveFolderPath;
         UpdateCreateButton();
@@ -340,10 +342,6 @@ public partial class ModPacker : Form
     {
         // Set labels
         createLabel.Text = Text.ModPackagingAborted;
-
-        // Remove temp directory
-        if (Directory.Exists(Path.GetTempPath() + "/Atomic"))
-            Directory.Delete(Path.GetTempPath() + "/Atomic", true);
     }
 
     private void UpdateCreateButton()
@@ -362,11 +360,13 @@ public partial class ModPacker : Form
 
     private string SelectFile(string title, FileFilter filter)
     {
-        using OpenFileDialog fileFinder = new OpenFileDialog { Filters = { filter } };
-        fileFinder.Title = title;
-        fileFinder.CurrentFilter = fileFinder.Filters.First();
-        fileFinder.CheckFileExists = true;
-
+        using OpenFileDialog fileFinder = new OpenFileDialog
+        {
+            Filters = { filter },
+            Title = title,
+            CurrentFilter = filter,
+            CheckFileExists = true,
+        };
         if (fileFinder.ShowDialog(this) != DialogResult.Ok)
             return null;
 

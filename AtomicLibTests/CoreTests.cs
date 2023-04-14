@@ -208,4 +208,55 @@ public class CoreTests : IDisposable
             // TODO: make sure that if we're providing lowercase songs, that they'll be also blacklisted.
         }
     }
+
+    [Fact]
+    public void CreateModPack_ShouldCleanUpDirectoryIfItExistedBefore()
+    {
+        var modInfo = new ModCreationInfo();
+        modInfo.Profile = new ModProfileXML();
+        modInfo.Profile.OperatingSystem = "Windows";
+        modInfo.Profile.UsesCustomMusic = false;
+        modInfo.Profile.SupportsAndroid = false;
+        modInfo.Profile.UsesYYC = false;
+        modInfo.Profile.Name = "Cool Mod";
+        modInfo.Profile.Version = "cool version";
+        modInfo.Profile.ProfileNotes = "This is my very own cool mod";
+        modInfo.WindowsModPath = "GameWin.zip";
+        modInfo.AM2R11Path = am2r_11Path;
+        
+        string tempPath = Path.GetTempPath() + "/Atomic";
+        Directory.CreateDirectory(tempPath);
+        Assert.True(Directory.Exists(tempPath));
+        
+        Core.CreateModPack(modInfo, testTempDir + "foo.zip");
+
+        Assert.False(Directory.Exists(tempPath));
+    }
+    
+    [Fact]
+    public void CreateModPack_ShouldCleanUpOutputFileIfItExistedBefore()
+    {
+        var modInfo = new ModCreationInfo();
+        modInfo.Profile = new ModProfileXML();
+        modInfo.Profile.OperatingSystem = "Windows";
+        modInfo.Profile.UsesCustomMusic = false;
+        modInfo.Profile.SupportsAndroid = false;
+        modInfo.Profile.UsesYYC = false;
+        modInfo.Profile.Name = "Cool Mod";
+        modInfo.Profile.Version = "cool version";
+        modInfo.Profile.ProfileNotes = "This is my very own cool mod";
+        modInfo.WindowsModPath = "GameWin.zip";
+        modInfo.AM2R11Path = am2r_11Path;
+        
+        string tempPath = testTempDir + "foo.zip";
+        File.WriteAllText(tempPath, "foobar");
+        Assert.True(File.Exists(tempPath));
+        
+        Core.CreateModPack(modInfo, testTempDir + "foo.zip");
+
+        Assert.True(File.Exists(tempPath));
+        using var reader = new StreamReader(tempPath);
+        Assert.False(reader.ReadLine() == "foobar");
+    }
+    
 }
