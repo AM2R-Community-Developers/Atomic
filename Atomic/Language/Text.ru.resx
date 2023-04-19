@@ -121,7 +121,7 @@
         <value>Android</value>
     </data>
     <data name="SelectModdedFile" xml:space="preserve">
-        <value>Please select your modded {0} AM2R .$2</value>
+        <value>Please select your modded {0} AM2R .{1}</value>
     </data>
     <data name="APK" xml:space="preserve">
         <value>apk</value>

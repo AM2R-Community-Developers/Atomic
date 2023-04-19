@@ -393,7 +393,7 @@ public partial class ModPacker : Form
 
     private void OSButtonClicked(ProfileOperatingSystems os)
     {
-        string pickerMessage = Text.SelectModdedFile.Replace("$1", GetLocalizedStringOfOS(os)).Replace("$2", os == ProfileOperatingSystems.Android ? Text.APK : Text.Zip);
+        string pickerMessage = String.Format(Text.SelectModdedFile, GetLocalizedStringOfOS(os), os == ProfileOperatingSystems.Android ? Text.APK : Text.Zip);
         Label osLabel = labelLookupTable[os];
         FieldInfo osModPath = modPathLookupTable[os];
         PropertyInfo isOsModLoaded = isModLoadedLookupTable[os];
