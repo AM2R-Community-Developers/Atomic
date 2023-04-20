@@ -171,7 +171,7 @@ public partial class ModPacker : Form
         {
             string output;
 
-            using (SaveFileDialog saveFile = new SaveFileDialog { Title = Text.SaveOSModProfile.Replace("$1", GetLocalizedStringOfOS(os)), Filters = { zipFileFilter } })
+            using (SaveFileDialog saveFile = new SaveFileDialog { Title = String.Format(Text.SaveOSModProfile, GetLocalizedStringOfOS(os)), Filters = { zipFileFilter } })
             {
                 if (saveFile.ShowDialog(this) == DialogResult.Ok)
                 {
@@ -220,7 +220,7 @@ public partial class ModPacker : Form
             if (windowsZip.Entries.All(f => f.FullName != "AM2R.exe"))
             {
                 // TODO: make method for these $1 replacements
-                DialogResult result = MessageBox.Show(this, Text.ModdedGameNotFound.Replace("$1", Text.Windows), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                DialogResult result = MessageBox.Show(this, String.Format(Text.ModdedGameNotFound, Text.Windows), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
@@ -240,7 +240,7 @@ public partial class ModPacker : Form
             ZipArchive linuxZip = ZipFile.Open(modInfo.LinuxModPath, ZipArchiveMode.Read);
             if (linuxZip.Entries.All(f => f.FullName != "AM2R") && linuxZip.Entries.All(f => f.FullName != "runner"))
             {
-                DialogResult result = MessageBox.Show(this, Text.ModdedGameNotFound.Replace("$1", Text.Linux), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                DialogResult result = MessageBox.Show(this, String.Format(Text.ModdedGameNotFound, Text.Linux), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                 {
                     AbortPatch();
@@ -260,7 +260,7 @@ public partial class ModPacker : Form
             ZipArchive macZip = ZipFile.Open(modInfo.MacModPath, ZipArchiveMode.Read);
             if (macZip.Entries.All(f => f.FullName != "AM2R.app/Contents/MacOS/Mac_Runner"))
             {
-                DialogResult result = MessageBox.Show(this, Text.ModdedGameNotFound.Replace("$1", Text.Mac), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                DialogResult result = MessageBox.Show(this, String.Format(Text.ModdedGameNotFound, Text.Mac), Text.Warning, MessageBoxButtons.YesNo, MessageBoxType.Warning);
                 if (result != DialogResult.Yes)
                     AbortPatch();
             }
@@ -393,7 +393,7 @@ public partial class ModPacker : Form
 
     private void OSButtonClicked(ProfileOperatingSystems os)
     {
-        string pickerMessage = Text.SelectModdedFile.Replace("$1", GetLocalizedStringOfOS(os)).Replace("$2", os == ProfileOperatingSystems.Android ? Text.APK : Text.Zip);
+        string pickerMessage = String.Format(Text.SelectModdedFile, GetLocalizedStringOfOS(os), os == ProfileOperatingSystems.Android ? Text.APK : Text.Zip);
         Label osLabel = labelLookupTable[os];
         FieldInfo osModPath = modPathLookupTable[os];
         PropertyInfo isOsModLoaded = isModLoadedLookupTable[os];

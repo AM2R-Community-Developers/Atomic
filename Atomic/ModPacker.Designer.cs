@@ -78,21 +78,21 @@ public partial class ModPacker : Form
 
         yycCheckBox.Text = Text.UsesYYC;
 
-        windowsCheckBox.Text = Text.SupportsOS.Replace("$1", Text.Windows);
-        windowsButton.Text = Text.LoadOSZip.Replace("$1", Text.Windows);
-        windowsLabel.Text = Text.OSGameLoaded.Replace("$1", Text.Windows);
+        windowsCheckBox.Text = String.Format(Text.SupportsOS, Text.Windows);
+        windowsButton.Text = String.Format(Text.LoadOSZip, Text.Windows);
+        windowsLabel.Text = String.Format(Text.OSGameLoaded, Text.Windows);
 
         apkCheckBox.Text = Text.BundleAndroid;
         apkButton.Text = Text.LoadAndroidAPK;
         apkLabel.Text = Text.AndroidLoaded;
 
-        linuxCheckBox.Text = Text.SupportsOS.Replace("$1", Text.Linux);
-        linuxButton.Text = Text.LoadOSZip.Replace("$1", Text.Linux);
-        linuxLabel.Text = Text.OSGameLoaded.Replace("$1", Text.Linux);
+        linuxCheckBox.Text = String.Format(Text.SupportsOS, Text.Linux);
+        linuxButton.Text = String.Format(Text.LoadOSZip, Text.Linux);
+        linuxLabel.Text = String.Format(Text.OSGameLoaded, Text.Linux);
 
-        macCheckBox.Text = Text.SupportsOS.Replace("$1", Text.Mac);
-        macButton.Text = Text.LoadOSZip.Replace("$1", Text.Mac);
-        macLabel.Text = Text.OSGameLoaded.Replace("$1", Text.Mac);
+        macCheckBox.Text = String.Format(Text.SupportsOS, Text.Mac);
+        macButton.Text = String.Format(Text.LoadOSZip, Text.Mac);
+        macLabel.Text = String.Format(Text.OSGameLoaded, Text.Mac);
 
         originalZipButton.Text = Text.LoadAM2R11;
         originalZipLabel.Text = Text.AM2R11Loaded;
