@@ -100,7 +100,7 @@
         <value>Mod packaging aborted!</value>
     </data>
     <data name="ModdedGameNotFound" xml:space="preserve">
-        <value>Modded $1 game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?</value>
+        <value>Modded {value} game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?</value>
     </data>
     <data name="Mac" xml:space="preserve">
         <value>Mac</value>
@@ -115,13 +115,13 @@
         <value>profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?</value>
     </data>
     <data name="SaveOSModProfile" xml:space="preserve">
-        <value>Save $1 mod profile</value>
+        <value>Save {value} mod profile</value>
     </data>
     <data name="Android" xml:space="preserve">
         <value>Android</value>
     </data>
     <data name="SelectModdedFile" xml:space="preserve">
-        <value>Please select your modded $1 AM2R .$2</value>
+        <value>Please select your modded {value1 AM2R .{value2}</value>
     </data>
     <data name="APK" xml:space="preserve">
         <value>apk</value>
@@ -130,12 +130,12 @@
         <value>zip</value>
     </data>
     <data name="OSGameLoaded" xml:space="preserve">
-        <value>Modded $1 game loaded!</value>
+        <value>Modded {value} game loaded!</value>
     </data>
     <data name="SupportsOS" xml:space="preserve">
-        <value>Supports $1</value>
+        <value>Supports {value}</value>
     </data>
     <data name="LoadOSZip" xml:space="preserve">
-        <value>Load modded $1 .zip</value>
+        <value>Load modded {value} .zip</value>
     </data>
 </root>
