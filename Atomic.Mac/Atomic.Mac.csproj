@@ -4,7 +4,6 @@
         <TargetFramework>net6.0-macos</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>Exe</OutputType>
-        <PublishTrimmed>false</PublishTrimmed>
         <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
         <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
         <RollForward>LatestMajor</RollForward>
