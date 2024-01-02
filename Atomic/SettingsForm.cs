@@ -7,7 +7,6 @@ using Eto.Forms;
 
 namespace Atomic;
 
-// TODO: "eto bug" where this dialog behaves very weirdly if you try to resize it. As if the actual size is bigger than the display size
 public class SettingsForm : Dialog
 {
     public SettingsForm(Config config)
@@ -15,7 +14,8 @@ public class SettingsForm : Dialog
         currentConfig = config;
         Title = Text.SettingsTitle;
         Icon = new Icon(1f, new Bitmap(Resources.icon64));
-        Resizable = true;
+        // TODO: "eto bug" where this dialog behaves very weirdly if you try to resize it. As if the actual size is bigger than the display size
+        Resizable = false;
 
         var layout = new DynamicLayout() { Padding = 10, Spacing = new Size(20, 20) };
         
