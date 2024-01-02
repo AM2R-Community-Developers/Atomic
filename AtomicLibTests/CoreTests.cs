@@ -73,7 +73,7 @@ public class CoreTests : IDisposable
         modInfo.Profile.OperatingSystem = "asdfasdf";
         modInfo.AM2R11Path = am2r_11Path;
         
-        Assert.Throws<ArgumentException>(() => Core.CreateModPack(modInfo, testTempDir + "foo.zip"));
+        Assert.Throws<NotSupportedException>(() => Core.CreateModPack(modInfo, testTempDir + "foo.zip"));
     }
     
     [Fact]
@@ -210,6 +210,20 @@ public class CoreTests : IDisposable
     }
 
     [Fact]
+    public void CreateModPack_InvalidOSShouldThrow()
+    {
+        var modInfo = new ModCreationInfo();
+        modInfo.Profile = new ModProfileXML();
+        modInfo.Profile.OperatingSystem = "foobar";
+        modInfo.Profile.Name = "Cool Mod";
+        modInfo.Profile.Version = "cool version";
+        modInfo.Profile.ProfileNotes = "This is my very own cool mod";
+        modInfo.AM2R11Path = am2r_11Path;
+        
+        Assert.Throws<NotSupportedException>(() => Core.CreateModPack(modInfo, testTempDir + "foo.zip"));
+    }
+
+    [Fact]
     public void CreateModPack_ShouldCleanUpDirectoryIfItExistedBefore()
     {
         var modInfo = new ModCreationInfo();
@@ -258,5 +272,24 @@ public class CoreTests : IDisposable
         using var reader = new StreamReader(tempPath);
         Assert.False(reader.ReadLine() == "foobar");
     }
+
+    [Fact]
+    public void CreatePatch_ShouldThrowOnMissingXdelta()
+    {
+        
+        var path = Environment.GetEnvironmentVariable("PATH");
+        Environment.SetEnvironmentVariable("PATH", "");
+        Assert.Throws<IOException>(() => Core.CreatePatch("foo", "bar", "foobar"));
+        Environment.SetEnvironmentVariable("PATH", path);
+    }
     
+    [Fact]
+    public void RunJavaJar_ShouldThrowOnMissingJava()
+    {
+        
+        var path = Environment.GetEnvironmentVariable("PATH");
+        Environment.SetEnvironmentVariable("PATH", "");
+        Assert.Throws<IOException>(() => Core.RunJavaJar());
+        Environment.SetEnvironmentVariable("PATH", path);
+    }
 }

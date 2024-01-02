@@ -8,6 +8,7 @@ namespace AtomicLib;
 
 public enum ProfileOperatingSystems
 {
+    Unknown,
     Windows,
     Linux,
     Mac,
@@ -44,7 +45,9 @@ public static class Core
         if (modInfo.Profile.SupportsAndroid && !File.Exists(modInfo.ApkModPath))
             throw new FileNotFoundException("Android is marked as supported, but the APK path (" + modInfo.ApkModPath + ") could not be found!");
         
-        ProfileOperatingSystems profileOS = Enum.Parse<ProfileOperatingSystems>(modInfo.Profile.OperatingSystem);
+        ProfileOperatingSystems profileOS;
+        if (!Enum.TryParse(modInfo.Profile.OperatingSystem, out profileOS))
+            profileOS = ProfileOperatingSystems.Unknown;
         string modZipPath = profileOS switch
         {
             ProfileOperatingSystems.Windows => modInfo.WindowsModPath,
@@ -109,7 +112,7 @@ public static class Core
             string tempAndroid = Directory.CreateDirectory($"{tempPath}/android").FullName;
             
             // Extract APK first in order to create patch from the data.win 
-            // - java -jar apktool.jar d "AM2RWrapper_old.apk"
+            // java -jar apktool.jar d "AM2RWrapper_old.apk"
             RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" d -f -o \"{tempAndroid}\" \"{modInfo.ApkModPath}\"");
             
             // Create game.droid patch
@@ -135,7 +138,7 @@ public static class Core
 
             // And now we create the wrapper from it
             // Process startInfo
-            // - java -jar apktool.jar b "AM2RWrapper_old" -o "AM2RWrapper.apk"
+            // java -jar apktool.jar b "AM2RWrapper_old" -o "AM2RWrapper.apk"
             RunJavaJar($"\"{localPath}/utilities/android/apktool.jar\" b -f \"{tempAndroid}\" -o \"{tempProfilePath}/AM2RWrapper.apk\"");
             
             string tempAndroidWrapperPath = $"{tempProfilePath}/android";
@@ -209,7 +212,7 @@ public static class Core
         }
         catch (Win32Exception)
         {
-            throw new Exception("Xdelta3 could not be found! For Windows, make sure that the utilities folder exists, for other OS make sure it is installed and in PATH.");
+            throw new IOException("Xdelta3 could not be found! For Windows, make sure that the utilities folder exists, for other OS make sure it is installed and in PATH.");
         }
     }
     
@@ -251,7 +254,7 @@ public static class Core
         }
         catch
         {
-            throw new Exception("Java could not be found! Make sure it is installed and in PATH.");
+            throw new IOException("Java could not be found! Make sure it is installed and in PATH.");
         }
         
     }
