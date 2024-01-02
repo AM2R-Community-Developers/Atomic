@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0-macos</TargetFramework>
+        <TargetFramework>net8.0-macos</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>Exe</OutputType>
         <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
