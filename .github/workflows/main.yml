@@ -11,17 +11,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [ubuntu-latest, macos-13, windows-latest]
         configuration: [Release]
         include:
           - os: ubuntu-latest
             COMMAND: Atomic.Gtk -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
             ARTIFACT: builds/ubuntu-latest
             POSTBUILD: echo "nothing to do!"
-          - os: macOS-latest
+          - os: macos-13
             COMMAND: Atomic.Mac -o builds/macOS-latest
             ARTIFACT: builds/macOS-latest
-            POSTBUILD: rm -r builds/macOS-latest/* && mv Atomic.Mac/bin/Release/net6.0-macos/Atomic.Mac.app builds/macOS-latest/Atomic.Mac.app
+            POSTBUILD: rm -r builds/macOS-latest/* && mv Atomic.Mac/bin/Release/net8.0-macos/Atomic.Mac.app builds/macOS-latest/Atomic.Mac.app
           - os: windows-latest
             COMMAND: Atomic.Wpf -p:PublishSingleFile=true -p:DebugType=embedded -r win-x86 --no-self-contained -o builds/windows-latest
             ARTIFACT: builds/windows-latest
@@ -32,12 +32,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.x.x
     - name: Install Mac workload 
       working-directory: ./
       run: dotnet workload install macos && dotnet workload restore
+    - name: Switch XCode
+      run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app/Contents/Developer
+      if: matrix.os == 'macos-13'
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
