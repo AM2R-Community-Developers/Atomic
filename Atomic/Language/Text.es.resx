@@ -46,7 +46,7 @@
         <value>Añadir archivos para Android</value>
     </data>
     <data name="LoadAndroidAPK" xml:space="preserve">
-        <value>Load modded Android APK</value>
+        <value>Cargar archivo APK para Android modificado</value>
     </data>
     <data name="AndroidLoaded" xml:space="preserve">
         <value>¡APK modificado cargado!</value>
@@ -100,7 +100,7 @@
         <value>¡Paquete del mod cancelado!</value>
     </data>
     <data name="ModdedGameNotFound" xml:space="preserve">
-        <value>No se encuentra el juego modificado para $1. Asegúrese de que no se encuentra en una subcarpeta. \nEl perfil creado probablemente no pueda ser instalado. ¿Desea continuar?</value>
+        <value>No se encuentra el juego modificado para {0}. Asegúrese de que no se encuentra en una subcarpeta. \nEl perfil creado probablemente no pueda ser instalado. ¿Desea continuar?</value>
     </data>
     <data name="Mac" xml:space="preserve">
         <value>Mac</value>
@@ -115,13 +115,13 @@
         <value>profile.xml detectado. AM2RLauncher utiliza este archivo para determinar estadísticas del perfil y su inclusión podría hacer que el perfil no pueda ser instalado. ¿Desea continuar?</value>
     </data>
     <data name="SaveOSModProfile" xml:space="preserve">
-        <value>Guardar perfil del mod para $1</value>
+        <value>Guardar perfil del mod para {0}</value>
     </data>
     <data name="Android" xml:space="preserve">
         <value>Android</value>
     </data>
     <data name="SelectModdedFile" xml:space="preserve">
-        <value>Por favor, seleccione su archivo .$2 modificado de AM2R para $1</value>
+        <value>Por favor, seleccione su archivo .{1} modificado de AM2R para {0}</value>
     </data>
     <data name="APK" xml:space="preserve">
         <value>apk</value>
@@ -130,13 +130,13 @@
         <value>zip</value>
     </data>
     <data name="OSGameLoaded" xml:space="preserve">
-        <value>¡Juego modificado para $1 cargado!</value>
+        <value>¡Juego modificado para {0} cargado!</value>
     </data>
     <data name="SupportsOS" xml:space="preserve">
-        <value>Funciona en $1</value>
+        <value>Funciona en {0}</value>
     </data>
     <data name="LoadOSZip" xml:space="preserve">
-        <value>Load modded {0} .zip</value>
+        <value>Cargar archivo .zip para {0} modificado</value>
     </data>
     <data name="SettingsTitle" xml:space="preserve">
         <value>Opciones</value>
@@ -149,5 +149,8 @@
     </data>
     <data name="RememberFields" xml:space="preserve">
         <value>Rellenar los campos automáticamente con los valores utilizados en la última sesión</value>
+    </data>
+    <data name="FileMenu" xml:space="preserve">
+        <value>&amp;Archivo</value>
     </data>
 </root>
