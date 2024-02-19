@@ -211,7 +211,9 @@ public partial class ModPacker : Form
         settings.Executed += (sender, args) =>
         {
             var settings = new SettingsForm(currentConfig);
+            this.Enabled = false;
             settings.ShowModal();
+            this.Enabled = true;
         };
         var quit = new Command() { MenuText = Text.QuitMenu, Shortcut = Application.Instance.CommonModifier | Keys.Q};
         quit.Executed += (sender, args) => Application.Instance.Quit();
