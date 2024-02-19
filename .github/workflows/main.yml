@@ -39,7 +39,7 @@ jobs:
       working-directory: ./
       run: dotnet workload install macos && dotnet workload restore
     - name: Switch XCode
-      run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app/Contents/Developer
+      run: sudo xcode-select -switch /Applications/Xcode_15.1.app/Contents/Developer
       if: matrix.os == 'macos-13'
     - name: Restore dependencies
       run: dotnet restore
@@ -53,7 +53,7 @@ jobs:
     - name: Zip to Archive
       run: 7z a -tzip ${{ matrix.os }}.zip ./${{ matrix.ARTIFACT }}
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v4.1.0
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: ${{ matrix.os }}
         path: ${{ matrix.os }}.zip
