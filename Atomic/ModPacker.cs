@@ -42,7 +42,7 @@ public partial class ModPacker : Form
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace("\\", "\\\\"); // This is \ -> \\
         bool wasSuccessful = false;
         // TODO: instead of creating 3 different regexes, only create one regex and fill it out depending on current OS. Just leech off of the os check a bit further down for that.
-        Regex winSaveRegex = new Regex(@"C:\\Users\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid.
+        Regex winSaveRegex = new Regex($@"{home}\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid.
         Regex linSaveRegex = new Regex($@"{home}/\.config/"); // GMS hardcodes save into ~/.config on linux 
         Regex macSaveRegex = new Regex($@"{home}/Library/Application Support/");
 
