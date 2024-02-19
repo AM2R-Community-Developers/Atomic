@@ -19,7 +19,7 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="ModName" xml:space="preserve">
-        <value>Mod name:</value>
+        <value>Nom de mod:</value>
     </data>
     <data name="Author" xml:space="preserve">
         <value>Auteur(s) :</value>
@@ -28,79 +28,79 @@
         <value>Version:</value>
     </data>
     <data name="ModNotes" xml:space="preserve">
-        <value>Mod notes:</value>
+        <value>Notes de mod:</value>
     </data>
     <data name="UsesCustomSaves" xml:space="preserve">
-        <value>Uses custom save directory</value>
+        <value>Utilise un répertoire de sauvegarde personnalisé</value>
     </data>
     <data name="SelectFolder" xml:space="preserve">
-        <value>Select folder</value>
+        <value>Sélectionner le dossier</value>
     </data>
     <data name="UsesCustomMusic" xml:space="preserve">
-        <value>Uses custom music</value>
+        <value>Utilise des musiques personnalisées</value>
     </data>
     <data name="UsesYYC" xml:space="preserve">
-        <value>Uses YoYo Compiler</value>
+        <value>Utilise YoYo Compiler</value>
     </data>
     <data name="BundleAndroid" xml:space="preserve">
-        <value>Additionally bundle Android</value>
+        <value>Supporte Android</value>
     </data>
     <data name="LoadAndroidAPK" xml:space="preserve">
-        <value>Load modded Android APK</value>
+        <value>Charger le Android moddé fichier APK</value>
     </data>
     <data name="AndroidLoaded" xml:space="preserve">
-        <value>Modded APK loaded!</value>
+        <value>APK moddée chargée!</value>
     </data>
     <data name="LoadAM2R11" xml:space="preserve">
-        <value>Load 1.1</value>
+        <value>Charger la 1.1</value>
     </data>
     <data name="AM2R11Loaded" xml:space="preserve">
-        <value>1.1 loaded!</value>
+        <value>1.1 chargé!</value>
     </data>
     <data name="CreateModPackage" xml:space="preserve">
-        <value>Create mod package(s)</value>
+        <value>Créer archive(s) de mods</value>
     </data>
     <data name="ModPackageCreated" xml:space="preserve">
-        <value>Mod package created!</value>
+        <value>Archive de mod créée!</value>
     </data>
     <data name="ZipArchivesFileFilter" xml:space="preserve">
         <value>Archives Zip (*.zip)</value>
     </data>
     <data name="APKFileFilter" xml:space="preserve">
-        <value>Android application packages (*.apk)</value>
+        <value>Archive application Android (*.apk)</value>
     </data>
     <data name="InvalidSaveDirectory" xml:space="preserve">
-        <value>Invalid save directory! Please consult the GameMaker: Studio 1.4 documentation for valid save directories!</value>
+        <value>Dossier de sauvegarde invalide! Se réferrer à la doc de Gamemaker: Studio 1.4 pour les répertoires valides!</value>
     </data>
     <data name="YYCMacUnsupported" xml:space="preserve">
-        <value>YoYoCompiler isn't supported with Mac!</value>
+        <value>YoYo Compiler n’est pas supporté sur Mac!</value>
     </data>
     <data name="Warning" xml:space="preserve">
-        <value>Warning</value>
+        <value>Avertissement</value>
     </data>
     <data name="SelectAM2R11FileDialog" xml:space="preserve">
-        <value>Choisissez AM2R_1.1.zip</value>
+        <value>Sélectionner AM2R_1.1.zip</value>
     </data>
     <data name="FieldsMissing" xml:space="preserve">
-        <value>Mod name, author or version field missing! Mod packaging aborted.</value>
+        <value>Nom, auteur ou version de mod manquante! Archivage stoppé.</value>
     </data>
     <data name="Error" xml:space="preserve">
         <value>Erreur</value>
     </data>
     <data name="NameInvalidCharacters" xml:space="preserve">
-        <value>Name contains invalid characters! These characters are not allowed:</value>
+        <value>Le nom contient des caractères invalides! Ces caractères ne sont pas utilisables:</value>
     </data>
     <data name="AM2R11Invalid" xml:space="preserve">
-        <value>AM2R 1.1 zip is invalid! Error code:</value>
+        <value>zip de AM2R 1.1 invalide! Code d’erreur: </value>
     </data>
     <data name="PackagingMods" xml:space="preserve">
-        <value>Packaging mod(s)... This could take a while!</value>
+        <value>En train d’archiver le(s) mod(s)… ça peut prendre un moment!</value>
     </data>
     <data name="ModPackagingAborted" xml:space="preserve">
-        <value>Mod packaging aborted!</value>
+        <value>Archivage de mod arrêté!</value>
     </data>
     <data name="ModdedGameNotFound" xml:space="preserve">
-        <value>Modded {0} game not found, make sure it's not placed in any subfolders.\nCreated profile will likely not be installable, are you sure you want to continue?</value>
+        <value>Jeu {0} moddé non trouvé, soyez sûr qu’il ne soit pas dans un sous-dossier.\nLe profil crée ne sera sûrement pas installable, êtes-vous sûr de vouloir continuer?</value>
     </data>
     <data name="Mac" xml:space="preserve">
         <value>Mac</value>
@@ -112,16 +112,16 @@
         <value>Windows</value>
     </data>
     <data name="ProfileXMLFound" xml:space="preserve">
-        <value>profile.xml found. This file is used by the AM2RLauncher to determine profile stats and its inclusion may make the profile uninstallable. Are you sure you want to continue?</value>
+        <value>profile.xml trouvé. Ce fichier est utilisé par AM2RLauncher pour déterminer les stats de profil et son inclusion pourrait rendre le profil non désinstallable. Êtes-vous sûr de vouloir continuer?</value>
     </data>
     <data name="SaveOSModProfile" xml:space="preserve">
-        <value>Save {0} mod profile</value>
+        <value>Sauvegarder le profil de mod {0}</value>
     </data>
     <data name="Android" xml:space="preserve">
         <value>Android</value>
     </data>
     <data name="SelectModdedFile" xml:space="preserve">
-        <value>Please select your modded {0} AM2R .{1}</value>
+        <value>Veuiller sélectionner votre AM2R $1 moddé. Fichier $2</value>
     </data>
     <data name="APK" xml:space="preserve">
         <value>apk</value>
@@ -130,12 +130,27 @@
         <value>zip</value>
     </data>
     <data name="OSGameLoaded" xml:space="preserve">
-        <value>Modded {0} game loaded!</value>
+        <value>Jeu {0} moddé chargé!</value>
     </data>
     <data name="SupportsOS" xml:space="preserve">
-        <value>Supports {0}</value>
+        <value>Supporte {0}</value>
     </data>
     <data name="LoadOSZip" xml:space="preserve">
-        <value>Load modded {0} .zip</value>
+        <value>Charger le {0} moddé fichier .zip</value>
+    </data>
+    <data name="FileMenu" xml:space="preserve">
+        <value>&amp;Fichier</value>
+    </data>
+    <data name="QuitMenu" xml:space="preserve">
+        <value>&amp;Quitter</value>
+    </data>
+    <data name="RememberFields" xml:space="preserve">
+        <value>Remplir automatiquement selon les derniers paramètres</value>
+    </data>
+    <data name="SettingsMenu" xml:space="preserve">
+        <value>&amp;Préférences</value>
+    </data>
+    <data name="SettingsTitle" xml:space="preserve">
+        <value>Préférences</value>
     </data>
 </root>
