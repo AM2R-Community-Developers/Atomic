@@ -41,20 +41,26 @@ public partial class ModPacker : Form
         // TODO: get rid of the replace after doing the todo right below this. Currently necessary, as otherwise its trying to i.e. do a regex of "C:\Users\foo", and \U is not a valid regex escape sequence.
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace("\\", "\\\\"); // This is \ -> \\
         bool wasSuccessful = false;
-        // TODO: instead of creating 3 different regexes, only create one regex and fill it out depending on current OS. Just leech off of the os check a bit further down for that.
-        Regex winSaveRegex = new Regex($@"{home}\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid.
-        Regex linSaveRegex = new Regex($@"{home}/\.config/"); // GMS hardcodes save into ~/.config on linux 
-        Regex macSaveRegex = new Regex($@"{home}/Library/Application Support/");
 
         SelectFolderDialog dialog = new SelectFolderDialog();
+        Regex saveRegex = null;
         string initialDir = "";
         if (OS.IsWindows)
+        {
             initialDir = Environment.GetEnvironmentVariable("LocalAppData");
+            saveRegex = new Regex($@"{home}\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid.
+        }
         else if (OS.IsLinux)
+        {
             initialDir = home + "/.config";
+            saveRegex = new Regex($@"{home}/\.config/"); // GMS hardcodes save into ~/.config on linux 
+        }
         else if (OS.IsMac)
+        {
             initialDir = $@"{home}/Library/Application Support/";
-
+            saveRegex = new Regex($@"{home}/Library/Application Support/");
+        }
+        
         dialog.Directory = initialDir;
         // TODO: clean this while loop a little
         string saveFolderPath = null;
@@ -62,13 +68,7 @@ public partial class ModPacker : Form
         {
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
-                Match match = Match.Empty;
-                if (OS.IsWindows)
-                    match = winSaveRegex.Match(dialog.Directory);
-                else if (OS.IsLinux)
-                    match = linSaveRegex.Match(dialog.Directory);
-                else if (OS.IsMac)
-                    match = macSaveRegex.Match(dialog.Directory);
+                Match match = saveRegex.Match(dialog.Directory);
 
                 if (match.Success == false)
                 {
