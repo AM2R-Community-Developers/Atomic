@@ -333,7 +333,7 @@ public static class Core
     {
         foreach (var file in source.GetFiles())
         {
-            if (!blacklist.Contains(file.Name))
+            if (!blacklist.Contains(file.Name, StringComparer.OrdinalIgnoreCase))
                 file.CopyTo(destination + "/" + file.Name);
         }
 
