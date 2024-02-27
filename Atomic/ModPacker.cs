@@ -38,8 +38,7 @@ public partial class ModPacker : Form
 
     private void CustomSaveDataButton_Click(object sender, EventArgs e)
     {
-        // TODO: get rid of the replace after doing the todo right below this. Currently necessary, as otherwise its trying to i.e. do a regex of "C:\Users\foo", and \U is not a valid regex escape sequence.
-        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace("\\", "\\\\"); // This is \ -> \\
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         bool wasSuccessful = false;
 
         SelectFolderDialog dialog = new SelectFolderDialog();
@@ -48,6 +47,7 @@ public partial class ModPacker : Form
         if (OS.IsWindows)
         {
             initialDir = Environment.GetEnvironmentVariable("LocalAppData");
+            home = home.Replace("\\", "\\\\"); // This is \ -> \\
             saveRegex = new Regex($@"{home}\\.*\\AppData\\Local\\"); //this is to ensure, that the save directory is valid.
         }
         else if (OS.IsLinux)
