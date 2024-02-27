@@ -60,6 +60,10 @@ public partial class ModPacker : Form
             initialDir = $@"{home}/Library/Application Support/";
             saveRegex = new Regex($@"{home}/Library/Application Support/");
         }
+        else
+        {
+            throw new NotSupportedException("The current operating system is not supported!");
+        }
         
         dialog.Directory = initialDir;
         // TODO: clean this while loop a little
