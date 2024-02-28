@@ -48,7 +48,7 @@ public partial class ModPacker : Form
         {
             initialDir = Environment.GetEnvironmentVariable("LocalAppData");
             home = home.Replace("\\", "\\\\"); // This is \ -> \\
-            saveRegex = new Regex($@"{home}\\.*\\AppData\\Local\\"); // This is to ensure, that the save directory is valid.
+            saveRegex = new Regex($@"{home}\\AppData\\Local\\"); // This is to ensure, that the save directory is valid.
         }
         else if (OS.IsLinux)
         {
