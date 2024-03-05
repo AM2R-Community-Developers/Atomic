@@ -65,8 +65,10 @@ public static class OS
     {
         // We check for wine by seeing if a reg entry exists.
         // Not the best way, and could be removed from the future, but good enough for our purposes.
+        #pragma warning disable CA1416
         if (IsWindows && (Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software\\Wine") != null))
             return true;
+        #pragma warning restore CA1416
 
         return false;
     }
