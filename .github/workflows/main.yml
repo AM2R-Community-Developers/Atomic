@@ -2,7 +2,7 @@ name: Build and Upload
 
 on:
   push:
-    paths-ignore: 
+    paths-ignore:
       - 'README.md'
   workflow_dispatch:
 
@@ -15,7 +15,7 @@ jobs:
         configuration: [Release]
         include:
           - os: ubuntu-latest
-            COMMAND: Atomic.Gtk -p:PublishSingleFile=true -p:DebugType=embedded -r ubuntu.18.04-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
+            COMMAND: Atomic.Gtk -p:PublishSingleFile=true -p:DebugType=embedded -r linux-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
             ARTIFACT: builds/ubuntu-latest
             POSTBUILD: echo "nothing to do!"
           - os: macos-13
@@ -27,7 +27,7 @@ jobs:
             ARTIFACT: builds/windows-latest
             POSTBUILD: echo "nothing to do!"
     runs-on: ${{ matrix.os }}
-    
+
 
     steps:
     - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.x.x
-    - name: Install Mac workload 
+    - name: Install Mac workload
       working-directory: ./
       run: dotnet workload install macos && dotnet workload restore
     - name: Switch XCode
