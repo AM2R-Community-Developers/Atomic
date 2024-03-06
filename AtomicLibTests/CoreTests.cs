@@ -1,10 +1,8 @@
 using System.IO.Compression;
-using System.Xml.Serialization;
 using AtomicLib;
 using AtomicLib.XML;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace AtomicLibTests;
 
