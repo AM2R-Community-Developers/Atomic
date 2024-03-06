@@ -18,7 +18,7 @@
     </description>
     <launchable type="desktop-id">io.github.am2r_community_developers.Atomic.desktop</launchable>
     <url type="homepage">https://github.com/AM2R-Community-Developers/Atomic</url>
-    <url type="bugtracker">https://github.com/AM2R-Community-Developers/Atomicissues</url>
+    <url type="bugtracker">https://github.com/AM2R-Community-Developers/Atomic/issues</url>
     <releases>
         <release version="2.1.0" date="2022-12-29"/>
     </releases>
@@ -26,7 +26,7 @@
     <screenshots>
         <screenshot type="default">
             <caption>Atomic main window</caption>
-            <image type="source" width="743" height="647">https://media.discordapp.net/attachments/509717926807601182/1058091940874301511/image.png</image>
+            <image type="source" width="743" height="647">https://raw.githubusercontent.com/AM2R-Community-Developers/Atomic/6b504f8aad23859f7053421b057b1bf1c546704e/distribution/linux/screenshot.png</image>
         </screenshot>
     </screenshots>
 </component>
