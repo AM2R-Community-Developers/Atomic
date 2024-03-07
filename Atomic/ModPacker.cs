@@ -142,8 +142,7 @@ public partial class ModPacker : Form
 
     private void CreateButton_Click(object sender, EventArgs e)
     {
-        // TODO: use string.isnullorwhitespace
-        if (nameTextBox.Text == "" || authorTextBox.Text == "" || versionTextBox.Text == "")
+        if (String.IsNullOrWhiteSpace(nameTextBox.Text) || String.IsNullOrWhiteSpace(authorTextBox.Text) || String.IsNullOrWhiteSpace(versionTextBox.Text))
         {
             MessageBox.Show(this, Text.FieldsMissing, Text.Error, MessageBoxButtons.OK, MessageBoxType.Error);
             return;
