@@ -321,7 +321,7 @@ public static class Core
         return IsZipAM2R11ReturnCodes.Successful;
     }
     
-    public static string CalculateMD5(string filename)
+    private static string CalculateMD5(string filename)
     {
         using var stream = File.OpenRead(filename);
         using var md5 = MD5.Create();
@@ -329,7 +329,7 @@ public static class Core
         return BitConverter.ToString(hash).Replace("-", "").ToLower();
     }
     
-    public static void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
+    private static void CopyFilesRecursive(DirectoryInfo source, string[] blacklist, string destination)
     {
         foreach (var file in source.GetFiles())
         {
