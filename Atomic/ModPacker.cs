@@ -367,7 +367,6 @@ public partial class ModPacker : Form
         {
             Filters = { filter },
             Title = title,
-            CurrentFilter = filter,
             CheckFileExists = true,
         };
         if (fileFinder.ShowDialog(this) != DialogResult.Ok)
