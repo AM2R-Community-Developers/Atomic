@@ -41,8 +41,8 @@ public static class Core
     /// Creates an AM2R modpack using information form <paramref name="modInfo"/>.
     /// Final modpack zip is outputted to <paramref name="output"/>.
     /// </summary>
-    /// <param name="modInfo"></param>
-    /// <param name="output"></param>
+    /// <param name="modInfo">A <see cref="ModCreationInfo"/> object containing information about the mod that will be packed.</param>
+    /// <param name="output">Path where the mod will be outputted to.</param>
     public static void CreateModPack(ModCreationInfo modInfo, string output)
     {
         if (modInfo is null)
@@ -205,9 +205,9 @@ public static class Core
     /// between <paramref name="original"/> and <paramref name="modified"/>.
     /// Outputs to <paramref name="output"/>.
     /// </summary>
-    /// <param name="original"></param>
-    /// <param name="modified"></param>
-    /// <param name="output"></param>
+    /// <param name="original">Path to the original file.</param>
+    /// <param name="modified">Path to the modified file.</param>
+    /// <param name="output">Path where the patch will be outputted to.</param>
     public static void CreatePatch(string original, string modified, string output)
     {
         // Specify process start info
@@ -238,8 +238,9 @@ public static class Core
     /// to it.
     /// Optionally accepts a <paramref name="workingDirectory"/>.
     /// </summary>
-    /// <param name="arguments"></param>
-    /// <param name="workingDirectory"></param>
+    /// <param name="arguments">Path to the Java jar file and other arguments to be used when running it.</param>
+    /// <param name="workingDirectory">Path to a directory to use as the Working Directory when executing the Java jar file.
+    /// Will use the current directory if not specified.</param>
     public static void RunJavaJar(string arguments = null, string workingDirectory = null)
     {
         workingDirectory ??= Directory.GetCurrentDirectory();
