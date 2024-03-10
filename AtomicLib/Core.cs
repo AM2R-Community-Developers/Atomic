@@ -7,7 +7,7 @@ using AtomicLib.XML;
 namespace AtomicLib;
 
 /// <summary>
-/// An enum, that has all possible operating systems for a AM2R Mod.
+/// An enum, that has all possible operating systems for an AM2R Mod.
 /// </summary>
 public enum ProfileOperatingSystems
 {
@@ -30,15 +30,13 @@ public enum IsZipAM2R11ReturnCodes
     GameIsInASubfolder
 }
 
-// TODO: documentation
-
 public static class Core
 {
     public const string Version = "2.1.0";
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
     /// <summary>
-    /// Creates an AM2R modpack using information form <paramref name="modInfo"/>.
+    /// Creates an AM2R modpack using information from <paramref name="modInfo"/>.
     /// Final modpack zip is outputted to <paramref name="output"/>.
     /// </summary>
     /// <param name="modInfo">A <see cref="ModCreationInfo"/> object containing information about the mod that will be packed.</param>
