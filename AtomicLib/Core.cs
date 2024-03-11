@@ -232,7 +232,7 @@ public static class Core
     }
     
     /// <summary>
-    /// Executes a given java jar and passes the specified <paramref name="arguments"/>
+    /// Executes a given Java jar file and passes the specified <paramref name="arguments"/>
     /// to it.
     /// Optionally accepts a <paramref name="workingDirectory"/>.
     /// </summary>
