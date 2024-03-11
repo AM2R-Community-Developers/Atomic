@@ -6,6 +6,9 @@ using AtomicLib.XML;
 
 namespace AtomicLib;
 
+/// <summary>
+/// An enum, that has all possible operating systems for an AM2R Mod.
+/// </summary>
 public enum ProfileOperatingSystems
 {
     Unknown,
@@ -27,13 +30,17 @@ public enum IsZipAM2R11ReturnCodes
     GameIsInASubfolder
 }
 
-// TODO: documentation
-
 public static class Core
 {
     public const string Version = "2.1.0";
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
+    /// <summary>
+    /// Creates an AM2R modpack using information from <paramref name="modInfo"/>.
+    /// Final modpack zip is outputted to <paramref name="output"/>.
+    /// </summary>
+    /// <param name="modInfo">A <see cref="ModCreationInfo"/> object containing information about the mod that will be packed.</param>
+    /// <param name="output">Path where the mod will be outputted to.</param>
     public static void CreateModPack(ModCreationInfo modInfo, string output)
     {
         if (modInfo is null)
@@ -191,6 +198,14 @@ public static class Core
         Directory.Delete(tempPath, true);
     }
     
+    /// <summary>
+    /// Uses xdelta3 to create a patch file that represents the differences
+    /// between <paramref name="original"/> and <paramref name="modified"/>.
+    /// Outputs to <paramref name="output"/>.
+    /// </summary>
+    /// <param name="original">Path to the original file.</param>
+    /// <param name="modified">Path to the modified file.</param>
+    /// <param name="output">Path where the patch will be outputted to.</param>
     public static void CreatePatch(string original, string modified, string output)
     {
         // Specify process start info
@@ -216,6 +231,14 @@ public static class Core
         }
     }
     
+    /// <summary>
+    /// Executes a given Java jar file and passes the specified <paramref name="arguments"/>
+    /// to it.
+    /// Optionally accepts a <paramref name="workingDirectory"/>.
+    /// </summary>
+    /// <param name="arguments">Path to the Java jar file and other arguments to be used when running it.</param>
+    /// <param name="workingDirectory">Path to a directory to use as the Working Directory when executing the Java jar file.
+    /// Will use the current directory if not specified.</param>
     public static void RunJavaJar(string arguments = null, string workingDirectory = null)
     {
         workingDirectory ??= Directory.GetCurrentDirectory();
