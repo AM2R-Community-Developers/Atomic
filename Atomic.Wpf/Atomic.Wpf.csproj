@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Eto.Platform.Wpf" Version="2.8.2" />
+      <PackageReference Include="Eto.Platform.Wpf" Version="2.8.3" />
     </ItemGroup>
 
     <ItemGroup>
