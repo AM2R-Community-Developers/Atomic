@@ -4,6 +4,6 @@ Categories=Utility
 Encoding=UTF-8
 Name=Atomic
 Comment=A mod packaging toolchain for AM2R mods.
-Exec=Atomic
+Exec=atomic
 Icon=Atomic
 Terminal=false
