@@ -32,7 +32,7 @@ public enum IsZipAM2R11ReturnCodes
 
 public static class Core
 {
-    public const string Version = "2.1.0";
+    public const string Version = "2.2.0";
     private static readonly string localPath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
     
     /// <summary>

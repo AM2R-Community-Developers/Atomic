@@ -20,6 +20,7 @@
     <url type="homepage">https://github.com/AM2R-Community-Developers/Atomic</url>
     <url type="bugtracker">https://github.com/AM2R-Community-Developers/Atomic/issues</url>
     <releases>
+        <release version="2.2.0" date="2024-03-13"/>
         <release version="2.1.0" date="2022-12-29"/>
     </releases>
       <content_rating type="oars-1.1" />

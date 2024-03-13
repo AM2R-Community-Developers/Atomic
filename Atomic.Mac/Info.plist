@@ -7,7 +7,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>io.github.am2r_community_developers.Atomic</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.0</string>
+	<string>2.2.0</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.15</string>
 	<key>CFBundleDevelopmentRegion</key>
