@@ -41,7 +41,7 @@ jobs:
       run: dotnet workload install macos && dotnet workload restore
       # We used to do this because of not keeping up with the macos side, is this still necessary to do?
     - name: Switch XCode
-      run: sudo xcode-select -switch /Applications/Xcode_26.1.app/Contents/Developer
+      run: sudo xcode-select -switch /Applications/Xcode_26.6.app/Contents/Developer
       if: matrix.os == 'macos-latest'
     - name: Restore dependencies
       run: dotnet restore
