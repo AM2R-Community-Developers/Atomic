@@ -12,17 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         configuration: [Release]
         include:
           - os: ubuntu-latest
             COMMAND: Atomic.Gtk -p:PublishSingleFile=true -p:DebugType=embedded -r linux-x64 --no-self-contained -o builds/ubuntu-latest -p:BuildPlatform=Gtk
             ARTIFACT: builds/ubuntu-latest
             POSTBUILD: echo "nothing to do!"
-          - os: macos-13
+          - os: macos-latest
             COMMAND: Atomic.Mac -o builds/macOS-latest
             ARTIFACT: builds/macOS-latest
-            POSTBUILD: rm -r builds/macOS-latest/* && mv Atomic.Mac/bin/Release/net8.0-macos/Atomic.Mac.app builds/macOS-latest/Atomic.Mac.app
+            POSTBUILD: rm -r builds/macOS-latest/* && mv Atomic.Mac/bin/Release/net10.0-macos/Atomic.Mac.app builds/macOS-latest/Atomic.Mac.app
           - os: windows-latest
             COMMAND: Atomic.Wpf -p:PublishSingleFile=true -p:DebugType=embedded -r win-x86 --no-self-contained -o builds/windows-latest
             ARTIFACT: builds/windows-latest
@@ -39,9 +39,10 @@ jobs:
     - name: Install Mac workload
       working-directory: ./
       run: dotnet workload install macos && dotnet workload restore
+      # We used to do this because of not keeping up with the macos side, is this still necessary to do?
     - name: Switch XCode
-      run: sudo xcode-select -switch /Applications/Xcode_15.1.app/Contents/Developer
-      if: matrix.os == 'macos-13'
+      run: sudo xcode-select -switch /Applications/Xcode_26.1.app/Contents/Developer
+      if: matrix.os == 'macos-latest'
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
