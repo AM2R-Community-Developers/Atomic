@@ -101,9 +101,7 @@ public partial class ModPacker : Form
         #endregion
         
         Title = "Atomic v" + Version;
-        // TODO: "eto bug", this crashes because apparently "compressed symbols aren't supported".
-        //Icon = new Icon(new MemoryStream(Resources.icon64)); 
-        Icon = new Icon(1f, new Bitmap(Resources.icon64));
+        Icon = new Icon(new MemoryStream(Resources.icon64)); 
         
         MinimumSize = new Size(300, 200);
 
