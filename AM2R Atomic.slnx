@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Atomic.Gtk/Atomic.Gtk.csproj" />
+  <Project Path="Atomic.Mac/Atomic.Mac.csproj" />
+  <Project Path="Atomic.Wpf/Atomic.Wpf.csproj" />
+  <Project Path="Atomic/Atomic.csproj" />
+  <Project Path="AtomicLib/AtomicLib.csproj" />
+  <Project Path="AtomicLibTests/AtomicLibTests.csproj" />
+</Solution>
