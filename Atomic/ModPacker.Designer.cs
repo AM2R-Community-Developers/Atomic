@@ -101,7 +101,15 @@ public partial class ModPacker : Form
         #endregion
         
         Title = "Atomic v" + Version;
-        Icon = new Icon(new MemoryStream(Resources.icon64)); 
+        try
+        {
+            Icon = new Icon(new MemoryStream(Resources.icon64)); 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Couldn't load icon due to {e}");
+        }
+        
         
         MinimumSize = new Size(300, 200);
 
