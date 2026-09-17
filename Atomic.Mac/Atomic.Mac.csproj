@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>Exe</OutputType>
         <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
-        <SupportedOSPlatformVersion>10.15</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion>12.0</SupportedOSPlatformVersion>
         <RollForward>LatestMajor</RollForward>
     </PropertyGroup>
 
