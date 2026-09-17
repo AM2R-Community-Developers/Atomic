@@ -34,7 +34,7 @@
         <value>Verwendet eigenes Speicherverzeichnis</value>
     </data>
     <data name="SelectFolder" xml:space="preserve">
-        <value>Ordner auswhählen</value>
+        <value>Ordner auswählen</value>
     </data>
     <data name="UsesCustomMusic" xml:space="preserve">
         <value>Verwendet eigene Musik</value>
