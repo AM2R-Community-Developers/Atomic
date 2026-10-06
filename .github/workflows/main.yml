@@ -36,12 +36,13 @@ jobs:
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x.x
+    # Mac workload needs to match with a specific xcode version. 
+    # See: https://github.com/dotnet/macios/releases
     - name: Install Mac workload
       working-directory: ./
-      run: dotnet workload install macos && dotnet workload restore
-      # We used to do this because of not keeping up with the macos side, is this still necessary to do?
+      run: dotnet workload install macos --version 10.0.401 && dotnet workload restore
     - name: Switch XCode
-      run: sudo xcode-select -switch /Applications/Xcode_27.0.app/Contents/Developer
+      run: sudo xcode-select -switch /Applications/Xcode_26.6.app/Contents/Developer
       if: matrix.os == 'macos-latest'
     - name: Restore dependencies
       run: dotnet restore
