@@ -40,7 +40,8 @@ jobs:
     # See: https://github.com/dotnet/macios/releases
     - name: Install Mac workload
       working-directory: ./
-      run: dotnet workload install macos --version 10.0.401 && dotnet workload restore
+      run: dotnet workload install macos --version 10.0.401
+      if: matrix.os == 'macos-latest'
     - name: Switch XCode
       run: sudo xcode-select -switch /Applications/Xcode_26.6.app/Contents/Developer
       if: matrix.os == 'macos-latest'
