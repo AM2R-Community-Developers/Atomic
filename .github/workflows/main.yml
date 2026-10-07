@@ -45,8 +45,6 @@ jobs:
     - name: Switch XCode
       run: sudo xcode-select -switch /Applications/Xcode_26.6.app/Contents/Developer
       if: matrix.os == 'macos-latest'
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Build
       run: dotnet publish ${{ matrix.COMMAND }} -c "${{ matrix.configuration }}"
     - name: Post-Build
